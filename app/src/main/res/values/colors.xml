@@ -3,6 +3,11 @@
     <color name="colorPrimary">#37da6a</color>
     <color name="colorPrimaryDark">#148627</color>
     <color name="colorAccent">#42baf2</color>
+
+    <color name="colorPrimary_land">#3786da</color>
+    <color name="colorPrimaryDark_land">#1d5ba1</color>
+    <color name="colorAccent_land">#323b40</color>
+
     <color name="colorError">#f1252b</color>
     <color name="colorBorder">#535151</color>
 </resources>

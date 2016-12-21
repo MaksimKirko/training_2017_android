@@ -14,13 +14,12 @@ public class Fragment1 extends Fragment {
 
     private TextView T1;
 
-    public Fragment1() {
-    }
+    public static final String T1_EXTRA = "T1_TEXT";
 
     public static Fragment1 newInstance(String T1_text) {
         Fragment1 F1 = new Fragment1();
         Bundle args = new Bundle();
-        args.putString("T1_text", T1_text);
+        args.putString(T1_EXTRA, T1_text);
         F1.setArguments(args);
         return F1;
     }
@@ -32,7 +31,7 @@ public class Fragment1 extends Fragment {
         setRetainInstance(false);
         View v = inflater.inflate(R.layout.fragment_f1, container, false);
 
-        String T1_text = getArguments().getString("T1_text");
+        String T1_text = getArguments().getString(T1_EXTRA);
 
         T1 = (TextView) v.findViewById(R.id.T1);
         T1.setText(T1_text);

@@ -1,15 +1,12 @@
 package com.github.maximkirko.training_2017_android;
 
 import android.app.Fragment;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.github.maximkirko.training_2017_android.util.DrawableUtils;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -19,14 +16,14 @@ public class Fragment2 extends Fragment {
     private TextView T2;
     private ImageView I;
 
-    public Fragment2() {
-    }
+    public static final String S_EXTRA = "S_TEXT";
+    public static String IMAGE_ID_EXTRA = "IMAGE_ID";
 
     public static Fragment2 newInstance(String S_text, int imageId) {
         Fragment2 F2 = new Fragment2();
         Bundle args = new Bundle();
-        args.putString("S_text", S_text);
-        args.putInt("imageId", imageId);
+        args.putString(S_EXTRA, S_text);
+        args.putInt(IMAGE_ID_EXTRA, imageId);
         F2.setArguments(args);
         return F2;
     }
@@ -41,8 +38,8 @@ public class Fragment2 extends Fragment {
         T2 = (TextView) v.findViewById(R.id.T2);
         I = (ImageView) v.findViewById(R.id.I);
 
-        String S_text = getArguments().getString("S_text");
-        int imageId = getArguments().getInt("imageId");
+        String S_text = getArguments().getString(S_EXTRA);
+        int imageId = getArguments().getInt(IMAGE_ID_EXTRA);
 
         T2.setText(S_text);
         I.setImageResource(imageId);

@@ -4,11 +4,9 @@
 
     <string name="E1_hint">Заголовок</string>
 
-    <string-array name="S_values">
-        <item name="Cat">Кот</item>
-        <item name="Dog">Собака</item>
-        <item name="Racoon">Енот</item>
-    </string-array>
+    <string name="CAT">Кот</string>
+    <string name="DOG">Собака</string>
+    <string name="RACOON">Енот</string>
 
     <string name="C_text">Инвертировать порядок фрагментов</string>
     <string name="B_text">Отправить</string>

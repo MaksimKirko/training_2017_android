@@ -1,18 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="@dimen/a1_padding"
-    tools:context="com.github.maximkirko.training_2017_android.A1">
+    android:padding="@dimen/a1_padding">
 
     <EditText
         android:id="@+id/E1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/a1_views_margin_top"
         android:hint="@string/E1_hint"
         android:inputType="textPersonName" />
 
@@ -21,7 +17,6 @@
         style="@style/E2_style"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/a1_views_margin_top"
         android:background="@drawable/border"
         android:inputType="textMultiLine" />
 
@@ -49,6 +44,5 @@
         android:layout_marginTop="@dimen/a1_views_margin_top"
         android:onClick="onBClick"
         android:text="@string/B_text" />
-
 
 </LinearLayout>

@@ -6,16 +6,16 @@
 
     <!--my dimens-->
     <dimen name="a1_padding">16dp</dimen>
-    <dimen name="a1_views_margin_top">30dp</dimen>
+    <dimen name="a1_views_margin_top">20dp</dimen>
 
     <dimen name="a2_padding">16dp</dimen>
 
     <dimen name="f1_padding">2dp</dimen>
-    <dimen name="f1_views_margin_top">30dp</dimen>
+    <dimen name="f1_views_margin_top">20dp</dimen>
 
     <dimen name="f2_padding">2dp</dimen>
-    <dimen name="f2_views_margin_top">30dp</dimen>
-    <dimen name="f2_picture_height">60dp</dimen>
-    <dimen name="f2_picture_width">60dp</dimen>
+    <dimen name="f2_views_margin_top">20dp</dimen>
+    <dimen name="f2_picture_height">400dp</dimen>
+    <dimen name="f2_picture_width">40dp</dimen>
 
 </resources>

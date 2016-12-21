@@ -4,18 +4,19 @@
     <string name="E1_hint">Title</string>
     <string name="error_hint">Input text</string>
 
+    <string name="CAT">Cat</string>
+    <string name="DOG">Dog</string>
+    <string name="RACOON">Racoon</string>
+
     <string-array name="S_values">
-        <item name="Cat">Cat</item>
-        <item name="Dog">Dog</item>
-        <item name="Racoon">Racoon</item>
+        <item>@string/CAT</item>
+        <item>@string/DOG</item>
+        <item>@string/RACOON</item>
     </string-array>
 
     <string name="C_text">Invert fragments order</string>
     <string name="B_text">Send</string>
     <string name="title_activity_a2">A2</string>
     <string name="action_settings">Settings</string>
-
-    <string name="fragment_f1_tag">F1</string>
-    <string name="fragment_f2_tag">F2</string>
 
 </resources>
