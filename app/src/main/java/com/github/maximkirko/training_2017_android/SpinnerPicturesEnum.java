@@ -5,9 +5,9 @@ package com.github.maximkirko.training_2017_android;
  */
 
 public enum SpinnerPicturesEnum {
-    CAT(R.drawable.ic_cat),
-    DOG(R.drawable.ic_dog),
-    RACOON(R.drawable.ic_racoon);
+    CAT(R.drawable.cat),
+    DOG(R.drawable.dog),
+    RACOON(R.drawable.racoon);
 
     private int mResourceId;
 

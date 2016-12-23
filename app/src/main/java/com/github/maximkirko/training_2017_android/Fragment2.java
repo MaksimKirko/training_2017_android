@@ -16,8 +16,8 @@ public class Fragment2 extends Fragment {
     private TextView T2;
     private ImageView I;
 
-    public static final String S_EXTRA = "S_TEXT";
-    public static String IMAGE_ID_EXTRA = "IMAGE_ID";
+    private static final String S_EXTRA = "S_TEXT";
+    private static String IMAGE_ID_EXTRA = "IMAGE_ID";
 
     public static Fragment2 newInstance(String S_text, int imageId) {
         Fragment2 F2 = new Fragment2();

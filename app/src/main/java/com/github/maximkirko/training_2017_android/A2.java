@@ -37,7 +37,7 @@ public class A2 extends AppCompatActivity {
         Intent intent = getIntent();
         getIntentExtras(intent);
 
-        toolbar = getToolbar();
+        toolbar = (Toolbar) findViewById(R.id.toolbar);;
         if (toolbar != null) {
             setToolbarSettings(toolbar);
             setViewsValues();
@@ -50,10 +50,6 @@ public class A2 extends AppCompatActivity {
             setFragmentsOrder(fragmentTransaction, F1, F2);
         }
 
-    }
-
-    private Toolbar getToolbar() {
-        return (Toolbar) findViewById(R.id.toolbar);
     }
 
     private void setToolbarSettings(Toolbar toolbar) {

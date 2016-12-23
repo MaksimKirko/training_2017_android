@@ -12,7 +12,6 @@
     <style name="E2_style" parent="Base.V12.Widget.AppCompat.EditText">
         <item name="android:lines">3</item>
         <item name="android:maxLines">3</item>
-        <item name="android:singleLine">false</item>
     </style>
 
     <style name="AppTheme.NoActionBar">

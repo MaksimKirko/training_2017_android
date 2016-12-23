@@ -14,7 +14,7 @@ public class Fragment1 extends Fragment {
 
     private TextView T1;
 
-    public static final String T1_EXTRA = "T1_TEXT";
+    private static final String T1_EXTRA = "T1_TEXT";
 
     public static Fragment1 newInstance(String T1_text) {
         Fragment1 F1 = new Fragment1();

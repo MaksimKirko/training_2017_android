@@ -8,7 +8,7 @@
     android:padding="@dimen/f1_padding"
     android:background="@drawable/border"
     android:layout_gravity="center"
-    android:layout_weight="50"
+    android:layout_weight="1"
     tools:context="com.github.maximkirko.training_2017_android.Fragment1">
 
 
