@@ -13,8 +13,8 @@
     <dimen name="f1_views_margin_top">30dp</dimen>
 
     <dimen name="f2_padding">2dp</dimen>
-    <dimen name="_vief2ws_margin_top">30dp</dimen>
-    <dimen name="f2_picture_height">60dp</dimen>
-    <dimen name="f2_picture_width">60dp</dimen>
+    <dimen name="f2_views_margin_top">30dp</dimen>
+    <dimen name="f2_picture_height">120dp</dimen>
+    <dimen name="f2_picture_width">120dp</dimen>
 
 </resources>

@@ -8,13 +8,12 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-
-    <style name="E2_style" parent="Base.V12.Widget.AppCompat.EditText">
+    <style name="E2_style" parent="Base.V7.Widget.AppCompat.EditText">
         <item name="android:lines">3</item>
         <item name="android:maxLines">3</item>
     </style>
 
-    <style name="AppTheme.NoActionBar">
+    <style name="AppTheme.NoActionBar" parent="AppTheme">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>

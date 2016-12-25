@@ -31,18 +31,25 @@ public class Fragment2 extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         setRetainInstance(false);
         View v = inflater.inflate(R.layout.fragment_f2, container, false);
 
+        initViews(v);
+        setViewsValues();
+
+        return v;
+    }
+
+    private void initViews(View v) {
         T2 = (TextView) v.findViewById(R.id.T2);
         I = (ImageView) v.findViewById(R.id.I);
+    }
+
+    private void setViewsValues() {
 
         String S_text = getArguments().getString(S_EXTRA);
         int imageId = getArguments().getInt(IMAGE_ID_EXTRA);
-
         T2.setText(S_text);
         I.setImageResource(imageId);
-        return v;
     }
 }

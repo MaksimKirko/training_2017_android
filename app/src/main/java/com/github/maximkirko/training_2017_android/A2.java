@@ -6,18 +6,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 
-import java.util.Properties;
+import com.github.maximkirko.training_2017_android.builders.A1Data;
 
 public class A2 extends AppCompatActivity {
 
-//    intent extras
-    private String E1_text;
-    private String E2_text;
-    private String S_text;
-    private int S_pos;
-    private boolean C_value;
-    private int imageId;
+    //    intent extras
+    private A1Data a1Data;
 
     //    views
     private Toolbar toolbar;
@@ -37,41 +33,42 @@ public class A2 extends AppCompatActivity {
         Intent intent = getIntent();
         getIntentExtras(intent);
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);;
-        if (toolbar != null) {
-            setToolbarSettings(toolbar);
-            setViewsValues();
-        }
+        setToolbarSettings(toolbar);
 
-        F1 = Fragment1.newInstance(E2_text);
-        F2 = Fragment2.newInstance(S_text, imageId);
+        F1 = Fragment1.newInstance(a1Data.getE2_text());
+        F2 = Fragment2.newInstance(a1Data.getS_text(), a1Data.getI_Id());
 
         if (savedInstanceState == null) {
             setFragmentsOrder(fragmentTransaction, F1, F2);
         }
-
-    }
-
-    private void setToolbarSettings(Toolbar toolbar) {
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     private void getIntentExtras(Intent intent) {
-        E1_text = intent.getStringExtra(A1.E1_EXTRA);
-        E2_text = intent.getStringExtra(A1.E2_EXTRA);
-        S_text = intent.getStringExtra(A1.S_EXTRA);
-        S_pos = intent.getIntExtra(A1.S_POS_EXTRA, 0);
-        C_value = intent.getBooleanExtra(A1.C_EXTRA, true);
+
+        a1Data = A1Data.newBuilder()
+                .setE1_text(intent.getStringExtra(A1.E1_EXTRA))
+                .setE2_text(intent.getStringExtra(A1.E2_EXTRA))
+                .setS_text(intent.getStringExtra(A1.S_EXTRA))
+                .setI_Id(intent.getIntExtra(A1.S_POS_EXTRA, 0))
+                .setC_value(intent.getBooleanExtra(A1.C_EXTRA, true))
+                .build();
+
+        System.out.println(a1Data.toString());
     }
 
-    private void setViewsValues() {
-        getSupportActionBar().setTitle(E1_text);
-        imageId = S_pos;
+    private void setToolbarSettings(Toolbar toolbar) {
+
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        if (toolbar != null) {
+            setSupportActionBar(toolbar);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setTitle(a1Data.getE1_text());
+        }
     }
 
     private void setFragmentsOrder(FragmentTransaction fragmentTransaction, Fragment f1, Fragment f2) {
-        if (C_value) {
+        if (a1Data.isC_value()) {
             buildFragment(fragmentTransaction, f2, F2_TAG);
             buildFragment(fragmentTransaction, f1, F1_TAG);
         } else {
@@ -86,4 +83,20 @@ public class A2 extends AppCompatActivity {
         fragmentTransaction.commit();
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        if (item.getItemId() == android.R.id.home) {
+            super.onBackPressed();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        super.onBackPressed();
+    }
 }

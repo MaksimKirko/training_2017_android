@@ -31,11 +31,18 @@ public class Fragment1 extends Fragment {
         setRetainInstance(false);
         View v = inflater.inflate(R.layout.fragment_f1, container, false);
 
-        String T1_text = getArguments().getString(T1_EXTRA);
-
-        T1 = (TextView) v.findViewById(R.id.T1);
-        T1.setText(T1_text);
+        initViews(v);
+        setViewsValues();
 
         return v;
+    }
+
+    private void initViews(View v) {
+        T1 = (TextView) v.findViewById(R.id.T1);
+    }
+
+    private void setViewsValues() {
+        String T1_text = getArguments().getString(T1_EXTRA);
+        T1.setText(T1_text);
     }
 }

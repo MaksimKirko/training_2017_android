@@ -4,7 +4,6 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
 
-    <!--my dimens-->
     <dimen name="a1_padding">16dp</dimen>
     <dimen name="a1_views_margin_top">20dp</dimen>
 
@@ -15,7 +14,7 @@
 
     <dimen name="f2_padding">2dp</dimen>
     <dimen name="f2_views_margin_top">20dp</dimen>
-    <dimen name="f2_picture_height">400dp</dimen>
-    <dimen name="f2_picture_width">40dp</dimen>
+    <dimen name="f2_picture_height">100dp</dimen>
+    <dimen name="f2_picture_width">100dp</dimen>
 
 </resources>

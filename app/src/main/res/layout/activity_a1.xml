@@ -30,8 +30,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="@dimen/a1_views_margin_top">
-    </Spinner>
+        android:layout_marginTop="@dimen/a1_views_margin_top"></Spinner>
 
     <CheckBox
         android:id="@+id/C"
@@ -47,7 +46,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="@dimen/a1_views_margin_top"
-        android:onClick="onBClick"
         android:text="@string/B_text" />
 
 
