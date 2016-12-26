@@ -7,6 +7,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
+import java.io.IOException;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -18,29 +19,48 @@ public class MainActivity extends AppCompatActivity {
 
     private List<Song> music;
 
+    private JSONReader jsonReader;
+
+    public static final String SONG_EXTRA = "SONG";
+    public static final int MUSIC_RESOURCE_ID = R.raw.music;
+
     public View.OnClickListener onMusicRecyclerViewClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            int itemPosition = musicRecyclerView.getChildLayoutPosition(view);
-            Song song = music.get(itemPosition);
+
+            Song song = getSongByClick(view);
             Intent intent = new Intent(MainActivity.this, SongActivity.class);
-            //setIntentExtras(intent);
+            intent.putExtra(SONG_EXTRA, song);
             startActivity(intent);
         }
     };
+
+    private Song getSongByClick(View view) {
+        int itemPosition = musicRecyclerView.getChildLayoutPosition(view);
+        return music.get(itemPosition);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        initJSONReader();
         initAdapter();
         initItemDecoration();
         initRecyclerView();
     }
 
+    private void initJSONReader() {
+        jsonReader = new JSONReader(MUSIC_RESOURCE_ID);
+    }
+
     private void initAdapter() {
-        music = Song.getSongsList();
+        try {
+            music = jsonReader.readJsonStream(this);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         recyclerViewAdapter = new MusicRecyclerViewAdapter(music, onMusicRecyclerViewClickListener);
     }
 

@@ -22,7 +22,7 @@
         android:text="Description" />
 
     <ImageView
-        android:id="@+id/item_image"
+        android:id="@+id/song_activity_image"
         android:layout_width="@dimen/song_activity_image_height"
         android:layout_height="@dimen/song_activity_image_width"
         android:layout_margin="@dimen/music_recycler_view_item_image_margin"

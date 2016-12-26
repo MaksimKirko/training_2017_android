@@ -51,9 +51,13 @@ public class MusicRecyclerViewAdapter extends RecyclerView.Adapter<MusicRecycler
 
     @Override
     public void onBindViewHolder(SongViewHolder songViewHolder, int position) {
-        songViewHolder.title.setText(music.get(position).getTitle());
-        songViewHolder.description.setText(music.get(position).getDescription());
-        songViewHolder.imageView.setImageResource(music.get(position).getImageId());
+
+        Song song = music.get(position);
+        Song.validate(song);
+
+        songViewHolder.title.setText(song.getTitle());
+        songViewHolder.description.setText(song.getDescription());
+        songViewHolder.imageView.setImageResource(song.getImageId());
     }
 
     //TODO google it!
