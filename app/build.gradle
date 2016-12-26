@@ -4,7 +4,7 @@ android {
     compileSdkVersion 25
     buildToolsVersion "25.0.1"
     defaultConfig {
-        applicationId "com.github.maximkirko.training_2017_android"
+        applicationId "com.github.maximkirko.training_2017_android_sprint1"
         minSdkVersion 15
         targetSdkVersion 25
         versionCode 1
