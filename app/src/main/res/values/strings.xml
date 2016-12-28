@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">training_2017_android</string>
+
+    <string name="header_example">Album title</string>
 </resources>

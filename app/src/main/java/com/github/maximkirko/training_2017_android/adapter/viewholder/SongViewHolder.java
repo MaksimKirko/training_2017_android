@@ -5,8 +5,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.github.maximkirko.training_2017_android.activity.MusicListActivity;
-
 public class SongViewHolder extends RecyclerView.ViewHolder {
 
     private TextView title;

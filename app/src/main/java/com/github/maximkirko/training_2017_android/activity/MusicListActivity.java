@@ -33,8 +33,6 @@ public class MusicListActivity extends AppCompatActivity {
     public static final int MUSIC_RESOURCE_ID = R.raw.music;
     public static final int CARDS_SPACE_PIXEL = 10;
 
-    //    private View.OnClickListener onClickListener;
-    //    itemView.setOnClickListener(onClickListener);
     public View.OnClickListener onMusicRecyclerViewClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
@@ -50,7 +48,7 @@ public class MusicListActivity extends AppCompatActivity {
     }
 
     private Song getSongByClick(View view) {
-        int itemPosition = musicRecyclerView.getChildLayoutPosition(view);
+        int itemPosition = musicRecyclerView.getChildLayoutPosition(view) - 1;
         return music.get(itemPosition);
     }
 
