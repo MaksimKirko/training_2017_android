@@ -4,8 +4,8 @@
     style="@style/CardView.Light"
     android:id="@+id/card_song"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_margin="@dimen/music_recycler_view_item_card_layout_margin">
+    android:layout_height="wrap_content">
+    <!--android:layout_margin="@dimen/music_recycler_view_item_card_layout_margin"-->>
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"

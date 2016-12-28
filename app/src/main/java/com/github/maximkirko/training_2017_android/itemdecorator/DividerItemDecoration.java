@@ -1,4 +1,4 @@
-package com.github.maximkirko.training_2017_android;
+package com.github.maximkirko.training_2017_android.itemdecorator;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -26,7 +26,6 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
 
     @Override
     public void onDraw(Canvas c, RecyclerView parent, RecyclerView.State state) {
-
         int left = parent.getPaddingLeft();
         int right = parent.getWidth() - parent.getPaddingRight();
 

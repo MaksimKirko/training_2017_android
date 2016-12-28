@@ -1,9 +1,12 @@
-package com.github.maximkirko.training_2017_android;
+package com.github.maximkirko.training_2017_android.activity;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.github.maximkirko.training_2017_android.R;
+import com.github.maximkirko.training_2017_android.model.Song;
 
 /**
  * Created by MadMax on 25.12.2016.
@@ -22,7 +25,7 @@ public class SongActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.song_activity);
 
-        song = this.getIntent().getParcelableExtra(MainActivity.SONG_EXTRA);
+        song = this.getIntent().getParcelableExtra(MusicListActivity.SONG_EXTRA);
 
         initViews();
         setViewsValues();

@@ -1,7 +1,11 @@
-package com.github.maximkirko.training_2017_android;
+package com.github.maximkirko.training_2017_android.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
+import com.github.maximkirko.training_2017_android.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,14 +16,13 @@ import java.util.List;
 
 public class Song implements Parcelable {
 
-    private static final String DEFAULT_TITLE = "Unknown title";
-    private static final String DEFAULT_DESCRIPTION = "Unknown description";
-    private static final int DEFAULT_IMAGE_ID = R.drawable.rv_item_image_default;
-
-
     private String title;
     private String description;
     private int imageId;
+
+    private static final String DEFAULT_TITLE = "Unknown title";
+    private static final String DEFAULT_DESCRIPTION = "Unknown description";
+    private static final int DEFAULT_IMAGE_ID = R.drawable.rv_item_image_default;
 
     public Song() {
 
@@ -36,27 +39,30 @@ public class Song implements Parcelable {
         imageId = in.readInt();
     }
 
+    @NonNull
     public String getTitle() {
-        return title;
+        return (title == null) ? DEFAULT_TITLE : title;
     }
 
-    public void setTitle(String title) {
+    public void setTitle(@Nullable String title) {
         this.title = title;
     }
 
+    @NonNull
     public String getDescription() {
-        return description;
+        return (description == null) ? DEFAULT_DESCRIPTION : description;
     }
 
-    public void setDescription(String description) {
+    public void setDescription(@Nullable String description) {
         this.description = description;
     }
 
+    @NonNull
     public int getImageId() {
-        return imageId;
+        return (imageId == 0) ? DEFAULT_IMAGE_ID : imageId;
     }
 
-    public void setImageId(int imageId) {
+    public void setImageId(@Nullable int imageId) {
         this.imageId = imageId;
     }
 
@@ -67,18 +73,6 @@ public class Song implements Parcelable {
                 ", description='" + description + '\'' +
                 ", imageId=" + imageId +
                 '}';
-    }
-
-    public static void validate(Song song) {
-        if(song.getTitle() == null) {
-            song.setTitle(DEFAULT_TITLE);
-        }
-        if(song.getDescription() == null) {
-            song.setDescription(DEFAULT_DESCRIPTION);
-        }
-        if(song.getImageId() == 0) {
-            song.setImageId(DEFAULT_IMAGE_ID);
-        }
     }
 
     public static List<Song> getSongsList() {
