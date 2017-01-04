@@ -5,6 +5,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.github.maximkirko.training_2017_android.R;
+
 public class SongViewHolder extends RecyclerView.ViewHolder {
 
     private TextView title;
@@ -15,49 +17,46 @@ public class SongViewHolder extends RecyclerView.ViewHolder {
         return title;
     }
 
+    public void setTitle(TextView title) {
+        this.title = title;
+    }
+
     public TextView getDescription() {
         return description;
+    }
+
+    public void setDescription(TextView description) {
+        this.description = description;
     }
 
     public ImageView getImageView() {
         return imageView;
     }
 
-    private SongViewHolder(View itemView) {
+    public void setImageView(ImageView imageView) {
+        this.imageView = imageView;
+    }
+
+    public void setOnClickListener(View.OnClickListener onClickListener) {
+        itemView.setOnClickListener(onClickListener);
+    }
+
+    public SongViewHolder(View itemView) {
         super(itemView);
+        this.title = (TextView) itemView.findViewById(R.id.item_title);
+        this.description = (TextView) itemView.findViewById(R.id.item_desription);
+        this.imageView = (ImageView) itemView.findViewById(R.id.item_image);
+
     }
 
-    public static Builder newBuilder(View itemView) {
-        return new SongViewHolder(itemView).new Builder();
-    }
+    public SongViewHolder(View itemView, String title, String description, int imageId) {
+        super(itemView);
+        this.title = (TextView) itemView.findViewById(R.id.item_title);
+        this.description = (TextView) itemView.findViewById(R.id.item_desription);
+        this.imageView = (ImageView) itemView.findViewById(R.id.item_image);
 
-    public class Builder {
-
-        private Builder() {
-
-        }
-
-        public Builder setTitle(TextView title) {
-            SongViewHolder.this.title = title;
-            return this;
-        }
-
-        public Builder setDescription(TextView description) {
-            SongViewHolder.this.description = description;
-            return this;
-        }
-
-        public Builder setImageView(ImageView imageView) {
-            SongViewHolder.this.imageView = imageView;
-            return this;
-        }
-
-        public SongViewHolder build() {
-            SongViewHolder songViewHolder = new SongViewHolder(itemView);
-            songViewHolder.title = SongViewHolder.this.title;
-            songViewHolder.description = SongViewHolder.this.description;
-            songViewHolder.imageView = SongViewHolder.this.imageView;
-            return songViewHolder;
-        }
+        this.title.setText(title);
+        this.description.setText(description);
+        this.imageView.setImageResource(imageId);
     }
 }

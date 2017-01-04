@@ -4,6 +4,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
+import com.github.maximkirko.training_2017_android.R;
+
 /**
  * Created by MadMax on 28.12.2016.
  */
@@ -16,29 +18,18 @@ public class HeaderViewHolder extends RecyclerView.ViewHolder {
         return title;
     }
 
-    private HeaderViewHolder(View itemView) {
+    public void setTitle(TextView title) {
+        this.title = title;
+    }
+
+    public HeaderViewHolder(View itemView) {
         super(itemView);
+        this.title = (TextView) itemView.findViewById(R.id.header_title);
     }
 
-    public static Builder newBuilder(View itemView) {
-        return new HeaderViewHolder(itemView).new Builder();
-    }
-
-    public class Builder {
-
-        private Builder() {
-
-        }
-
-        public HeaderViewHolder.Builder setTitle(TextView title) {
-            HeaderViewHolder.this.title = title;
-            return this;
-        }
-
-        public HeaderViewHolder build() {
-            HeaderViewHolder headerViewHolder = new HeaderViewHolder(itemView);
-            headerViewHolder.title = HeaderViewHolder.this.title;
-            return headerViewHolder;
-        }
+    public HeaderViewHolder(View itemView, String title) {
+        super(itemView);
+        this.title = (TextView) itemView.findViewById(R.id.header_title);
+        this.title.setText(title);
     }
 }

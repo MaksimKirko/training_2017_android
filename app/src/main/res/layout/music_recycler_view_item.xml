@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@style/CardView.Light"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/card_song"
+    style="@style/CardView.Light"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
     <!--android:layout_margin="@dimen/music_recycler_view_item_card_layout_margin"-->>
@@ -12,23 +13,27 @@
         android:layout_height="wrap_content">
 
         <TextView
-            style="@style/TextAppearance.AppCompat.Title"
             android:id="@+id/item_title"
+            style="@style/TextAppearance.AppCompat.Title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_margin="@dimen/music_recycler_view_item_title_margin"
-            android:text="Title" />
+            android:maxLines="3"
+            android:maxWidth="@dimen/music_recycler_view_item_line_width"
+            tools:text="Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title" />
 
         <TextView
-            style="@style/Base.TextAppearance.AppCompat.Widget.ActionMode.Subtitle"
             android:id="@+id/item_desription"
+            style="@style/Base.TextAppearance.AppCompat.Widget.ActionMode.Subtitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_below="@+id/item_title"
             android:layout_margin="@dimen/music_recycler_view_item_desctiption_margin"
-            android:text="Description" />
+            android:maxLines="2"
+            android:maxWidth="@dimen/music_recycler_view_item_line_width"
+            tools:text="Description Description Description Description Description " />
 
         <ImageView
             android:id="@+id/item_image"

@@ -13,6 +13,8 @@
     <dimen name="song_activity_image_width">64dp</dimen>
     <dimen name="song_activity_image_height">64dp</dimen>
 
-    <dimen name="music_recycler_view_header_title_line_width">30dp</dimen>
+    <dimen name="music_recycler_view_header_title_line_width">60dp</dimen>
+
+    <dimen name="music_recycler_view_item_line_width">320dp</dimen>
 
 </resources>

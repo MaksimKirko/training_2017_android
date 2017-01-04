@@ -1,12 +1,9 @@
 package com.github.maximkirko.training_2017_android.adapter;
 
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.github.maximkirko.training_2017_android.R;
 import com.github.maximkirko.training_2017_android.adapter.viewholder.HeaderViewHolder;
@@ -23,7 +20,6 @@ public class MusicRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
 
     private List<Song> music;
     private View.OnClickListener onClickListener;
-    private View itemView;
 
     private static final int TYPE_HEADER = 0;
     private static final int TYPE_ITEM = 1;
@@ -38,16 +34,21 @@ public class MusicRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
 
+        View itemView;
+
         if (viewType == TYPE_HEADER) {
             itemView = LayoutInflater.from(viewGroup.getContext())
                     .inflate(R.layout.music_recycler_view_header, viewGroup, false);
-            return HeaderViewHolder.newBuilder(itemView).build();
+            return new HeaderViewHolder(itemView);
         }
         if (viewType == TYPE_ITEM) {
             itemView = LayoutInflater.from(viewGroup.getContext())
                     .inflate(R.layout.music_recycler_view_item, viewGroup, false);
             itemView.setOnClickListener(onClickListener);
-            return SongViewHolder.newBuilder(itemView).build();
+
+            SongViewHolder songViewHolder = new SongViewHolder(itemView);
+            songViewHolder.setOnClickListener(onClickListener);
+            return songViewHolder;
         }
 
         return null;
@@ -63,33 +64,11 @@ public class MusicRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
-
-
         if (position == HEADER_POSITION) {
-
-            TextView title = (TextView) itemView.findViewById(R.id.header_title);
-
-            viewHolder = HeaderViewHolder.newBuilder(itemView)
-                    .setTitle(title)
-                    .build();
-
+            viewHolder = new HeaderViewHolder(viewHolder.itemView);
         } else {
             Song song = music.get(position - 1);
-//            Log.i("song in pos", position - 1 + " = " + song.toString());
-
-            TextView title = (TextView) itemView.findViewById(R.id.item_title);
-            TextView description = (TextView) itemView.findViewById(R.id.item_desription);
-            ImageView imageView = (ImageView) itemView.findViewById(R.id.item_image);
-
-            title.setText(song.getTitle());
-            description.setText(song.getDescription());
-            imageView.setImageResource(song.getImageId());
-
-            viewHolder = SongViewHolder.newBuilder(itemView)
-                    .setTitle(title)
-                    .setDescription(description)
-                    .setImageView(imageView)
-                    .build();
+            viewHolder = new SongViewHolder(viewHolder.itemView, song.getTitle(), song.getDescription(), song.getImageId());
         }
     }
 
