@@ -9,7 +9,7 @@ import java.util.List;
  * Created by MadMax on 28.12.2016.
  */
 
-public interface IReader<T> {
+public interface Reader<T> {
 
     List<T> readToList(Context context) throws IOException;
 }

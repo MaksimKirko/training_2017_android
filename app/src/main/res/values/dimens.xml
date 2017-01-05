@@ -6,8 +6,8 @@
     <dimen name="music_recycler_view_item_desctiption_margin">8dp</dimen>
     <dimen name="music_recycler_view_item_image_margin">8dp</dimen>
 
-    <dimen name="music_recycler_view_item_image_width">32dp</dimen>
-    <dimen name="music_recycler_view_item_image_height">32dp</dimen>
+    <dimen name="music_recycler_view_item_image_width">64dp</dimen>
+    <dimen name="music_recycler_view_item_image_height">64dp</dimen>
 
     <dimen name="song_activity_padding_top">36dp</dimen>
     <dimen name="song_activity_image_width">64dp</dimen>
@@ -16,5 +16,7 @@
     <dimen name="music_recycler_view_header_title_line_width">60dp</dimen>
 
     <dimen name="music_recycler_view_item_line_width">320dp</dimen>
+
+    <dimen name="fab_margin">16dp</dimen>
 
 </resources>

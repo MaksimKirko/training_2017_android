@@ -2,7 +2,7 @@ package com.github.maximkirko.training_2017_android.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.StringDef;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -10,16 +10,17 @@ import android.view.View;
 
 import com.github.maximkirko.training_2017_android.R;
 import com.github.maximkirko.training_2017_android.adapter.MusicRecyclerViewAdapter;
+import com.github.maximkirko.training_2017_android.adapter.viewholder.SongClickListener;
 import com.github.maximkirko.training_2017_android.itemanimator.LandingAnimator;
 import com.github.maximkirko.training_2017_android.itemdecorator.SpacesItemDecoration;
-import com.github.maximkirko.training_2017_android.load.IReader;
 import com.github.maximkirko.training_2017_android.load.JSONReader;
+import com.github.maximkirko.training_2017_android.load.Reader;
 import com.github.maximkirko.training_2017_android.model.Song;
 
 import java.io.IOException;
 import java.util.List;
 
-public class MusicListActivity extends AppCompatActivity {
+public class MusicListActivity extends AppCompatActivity implements SongClickListener {
 
     private RecyclerView musicRecyclerView;
     private RecyclerView.Adapter recyclerViewAdapter;
@@ -29,19 +30,19 @@ public class MusicListActivity extends AppCompatActivity {
 
     private List<Song> music;
 
-    private IReader<Song> jsonReader;
+    private Reader<Song> jsonReader;
 
     public static final String SONG_EXTRA = "SONG";
     public static final int MUSIC_RESOURCE_ID = R.raw.music;
     public static final int CARDS_SPACE_PIXEL = 10;
 
-    public View.OnClickListener onMusicRecyclerViewClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            Song song = getSongByClick(view);
-            startSongActivity(song);
-        }
-    };
+    private FloatingActionButton fabAdd;
+    private FloatingActionButton fabRemove;
+
+    @Override
+    public void onItemClick(Song song) {
+        startSongActivity(song);
+    }
 
     private void startSongActivity(Song song) {
         Intent intent = new Intent(MusicListActivity.this, SongActivity.class);
@@ -64,6 +65,30 @@ public class MusicListActivity extends AppCompatActivity {
         initItemDecoration();
         initItemAnimator();
         initRecyclerView();
+        initFabs();
+    }
+
+    private void initFabs() {
+        fabAdd = (FloatingActionButton) findViewById(R.id.fabAdd);
+        fabAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                music.add(new Song());
+                recyclerViewAdapter.notifyItemInserted(music.size());
+            }
+        });
+
+        fabRemove = (FloatingActionButton) findViewById(R.id.fabRemove);
+        fabRemove.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int index = music.size();
+                if (index > 1) {
+                    music.remove(index - 1);
+                    recyclerViewAdapter.notifyItemRemoved(index + 1);
+                }
+            }
+        });
     }
 
     private void initJSONReader() {
@@ -76,7 +101,7 @@ public class MusicListActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        recyclerViewAdapter = new MusicRecyclerViewAdapter(music, onMusicRecyclerViewClickListener);
+        recyclerViewAdapter = new MusicRecyclerViewAdapter(music, this);
     }
 
     private void initItemDecoration() {
@@ -96,5 +121,4 @@ public class MusicListActivity extends AppCompatActivity {
         musicRecyclerView.setItemAnimator(itemAnimator);
         musicRecyclerView.setAdapter(recyclerViewAdapter);
     }
-
 }

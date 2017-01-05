@@ -15,7 +15,7 @@ import java.util.List;
  * Created by MadMax on 26.12.2016.
  */
 
-public class JSONReader implements IReader<Song> {
+public class JSONReader implements Reader<Song> {
 
     private int resourceId;
 

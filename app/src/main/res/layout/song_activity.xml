@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:paddingTop="@dimen/song_activity_padding_top">
 
@@ -11,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/music_recycler_view_item_title_margin"
-        android:text="Title" />
+        tools:text="Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title" />
 
     <TextView
         android:id="@+id/song_activity_description"
@@ -19,7 +20,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/music_recycler_view_item_desctiption_margin"
-        android:text="Description" />
+        tools:text="Description Description Description Description Description " />
 
     <ImageView
         android:id="@+id/song_activity_image"

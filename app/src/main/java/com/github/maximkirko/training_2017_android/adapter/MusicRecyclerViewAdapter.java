@@ -1,5 +1,6 @@
 package com.github.maximkirko.training_2017_android.adapter;
 
+import android.support.annotation.IntDef;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,10 +8,14 @@ import android.view.ViewGroup;
 
 import com.github.maximkirko.training_2017_android.R;
 import com.github.maximkirko.training_2017_android.adapter.viewholder.HeaderViewHolder;
+import com.github.maximkirko.training_2017_android.adapter.viewholder.SongClickListener;
 import com.github.maximkirko.training_2017_android.adapter.viewholder.SongViewHolder;
 import com.github.maximkirko.training_2017_android.model.Song;
 
+import java.lang.annotation.Retention;
 import java.util.List;
+
+import static java.lang.annotation.RetentionPolicy.SOURCE;
 
 /**
  * Created by MadMax on 25.12.2016.
@@ -19,16 +24,21 @@ import java.util.List;
 public class MusicRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private List<Song> music;
-    private View.OnClickListener onClickListener;
 
     private static final int TYPE_HEADER = 0;
     private static final int TYPE_ITEM = 1;
 
+    @Retention(SOURCE)
+    @IntDef({TYPE_HEADER, TYPE_ITEM})
+    public @interface ItemType {    }
+
     private static final int HEADER_POSITION = 0;
 
-    public MusicRecyclerViewAdapter(List<Song> music, View.OnClickListener onClickListener) {
+    private SongClickListener songClickListener;
+
+    public MusicRecyclerViewAdapter(List<Song> music, SongClickListener songClickListener) {
         this.music = music;
-        this.onClickListener = onClickListener;
+        this.songClickListener = songClickListener;
     }
 
     @Override
@@ -44,10 +54,9 @@ public class MusicRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
         if (viewType == TYPE_ITEM) {
             itemView = LayoutInflater.from(viewGroup.getContext())
                     .inflate(R.layout.music_recycler_view_item, viewGroup, false);
-            itemView.setOnClickListener(onClickListener);
 
             SongViewHolder songViewHolder = new SongViewHolder(itemView);
-            songViewHolder.setOnClickListener(onClickListener);
+            songViewHolder.setSongClickListener(songClickListener);
             return songViewHolder;
         }
 
