@@ -3,20 +3,19 @@
     <dimen name="music_recycler_view_item_card_layout_margin">2dp</dimen>
 
     <dimen name="music_recycler_view_item_title_margin">8dp</dimen>
-    <dimen name="music_recycler_view_item_desctiption_margin">8dp</dimen>
+    <dimen name="music_recycler_view_item_description_margin">8dp</dimen>
     <dimen name="music_recycler_view_item_image_margin">8dp</dimen>
 
-    <dimen name="music_recycler_view_item_image_width">64dp</dimen>
-    <dimen name="music_recycler_view_item_image_height">64dp</dimen>
+    <dimen name="music_recycler_view_item_image_width">48dp</dimen>
+    <dimen name="music_recycler_view_item_image_height">48dp</dimen>
+
+    <dimen name="music_recycler_view_header_title_margin">8dp</dimen>
 
     <dimen name="song_activity_padding_top">36dp</dimen>
     <dimen name="song_activity_image_width">64dp</dimen>
     <dimen name="song_activity_image_height">64dp</dimen>
 
-    <dimen name="music_recycler_view_header_title_line_width">60dp</dimen>
-
-    <dimen name="music_recycler_view_item_line_width">320dp</dimen>
-
     <dimen name="fab_margin">16dp</dimen>
 
+    <dimen name="example_DP">1dp</dimen>
 </resources>

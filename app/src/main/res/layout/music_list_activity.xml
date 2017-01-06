@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.github.maximkirko.training_2017_android.activity.MusicListActivity">
+    tools:context="com.github.maximkirko.training_2017_android.activity.MusicListActivity"
+    android:background="@color/music_list_background_color">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"

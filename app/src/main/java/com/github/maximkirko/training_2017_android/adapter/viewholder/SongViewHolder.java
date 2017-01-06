@@ -1,7 +1,8 @@
 package com.github.maximkirko.training_2017_android.adapter.viewholder;
 
+import android.content.Context;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -60,13 +61,13 @@ public class SongViewHolder extends RecyclerView.ViewHolder implements View.OnCl
         this.songClickListener = new WeakReference<SongClickListener>(songClickListener);
     }
 
-    public SongViewHolder(View itemView) {
+    public SongViewHolder(View itemView, Context context) {
         super(itemView);
+        itemView.setLayoutParams(ItemSizeAware.getLayoutParams(context));
         itemView.setOnClickListener(this);
         this.title = (TextView) itemView.findViewById(R.id.item_title);
         this.description = (TextView) itemView.findViewById(R.id.item_desription);
         this.imageView = (ImageView) itemView.findViewById(R.id.item_image);
-
     }
 
     public SongViewHolder(View itemView, String title, String description, int imageId) {

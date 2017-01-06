@@ -19,7 +19,7 @@
         style="@style/Base.TextAppearance.AppCompat.Widget.ActionMode.Subtitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/music_recycler_view_item_desctiption_margin"
+        android:layout_margin="@dimen/music_recycler_view_item_description_margin"
         tools:text="Description Description Description Description Description " />
 
     <ImageView

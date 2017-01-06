@@ -6,16 +6,19 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 
 import com.github.maximkirko.training_2017_android.R;
 import com.github.maximkirko.training_2017_android.adapter.MusicRecyclerViewAdapter;
 import com.github.maximkirko.training_2017_android.adapter.viewholder.SongClickListener;
 import com.github.maximkirko.training_2017_android.itemanimator.LandingAnimator;
+import com.github.maximkirko.training_2017_android.itemdecorator.MusicListItemDecorator;
 import com.github.maximkirko.training_2017_android.itemdecorator.SpacesItemDecoration;
 import com.github.maximkirko.training_2017_android.load.JSONReader;
 import com.github.maximkirko.training_2017_android.load.Reader;
 import com.github.maximkirko.training_2017_android.model.Song;
+import com.github.maximkirko.training_2017_android.util.ScreenUtils;
 
 import java.io.IOException;
 import java.util.List;
@@ -34,7 +37,6 @@ public class MusicListActivity extends AppCompatActivity implements SongClickLis
 
     public static final String SONG_EXTRA = "SONG";
     public static final int MUSIC_RESOURCE_ID = R.raw.music;
-    public static final int CARDS_SPACE_PIXEL = 10;
 
     private FloatingActionButton fabAdd;
     private FloatingActionButton fabRemove;
@@ -50,11 +52,6 @@ public class MusicListActivity extends AppCompatActivity implements SongClickLis
         startActivity(intent);
     }
 
-    private Song getSongByClick(View view) {
-        int itemPosition = musicRecyclerView.getChildLayoutPosition(view) - 1;
-        return music.get(itemPosition);
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,6 +63,11 @@ public class MusicListActivity extends AppCompatActivity implements SongClickLis
         initItemAnimator();
         initRecyclerView();
         initFabs();
+//
+//        Log.i("WIDTH", ScreenUtils.getScreenWidth() + "");
+//        Log.i("HEIGHT", ScreenUtils.getScreenHeight() + "");
+//
+//        Log.i("DP", this.getResources().getDimensionPixelSize(R.dimen.example_DP) + "");
     }
 
     private void initFabs() {
@@ -101,11 +103,12 @@ public class MusicListActivity extends AppCompatActivity implements SongClickLis
         } catch (IOException e) {
             e.printStackTrace();
         }
-        recyclerViewAdapter = new MusicRecyclerViewAdapter(music, this);
+        recyclerViewAdapter = new MusicRecyclerViewAdapter(music, this, this);
     }
 
     private void initItemDecoration() {
-        itemDecoration = new SpacesItemDecoration(CARDS_SPACE_PIXEL); //new DividerItemDecoration(this, R.drawable.divider);
+        int offset = this.getResources().getDimensionPixelSize(R.dimen.music_recycler_view_item_card_layout_margin);
+        itemDecoration = new MusicListItemDecorator(offset, offset);
     }
 
     private void initItemAnimator() {

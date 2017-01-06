@@ -1,5 +1,7 @@
 package com.github.maximkirko.training_2017_android.adapter.viewholder;
 
+import android.content.Context;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
@@ -22,8 +24,9 @@ public class HeaderViewHolder extends RecyclerView.ViewHolder {
         this.title = title;
     }
 
-    public HeaderViewHolder(View itemView) {
+    public HeaderViewHolder(View itemView, Context context) {
         super(itemView);
+        itemView.setLayoutParams(ItemSizeAware.getLayoutParams(context));
         this.title = (TextView) itemView.findViewById(R.id.header_title);
     }
 
