@@ -11,11 +11,9 @@ import android.view.View;
 public class MusicListItemDecorator extends RecyclerView.ItemDecoration {
 
     private int edgeMargin;
-    private int middleMargin;
 
-    public MusicListItemDecorator(int edgeMargin, int middleMargin) {
+    public MusicListItemDecorator(int edgeMargin) {
         this.edgeMargin = edgeMargin;
-        this.middleMargin = middleMargin;
     }
 
     @Override
@@ -23,11 +21,18 @@ public class MusicListItemDecorator extends RecyclerView.ItemDecoration {
                                RecyclerView.State state) {
         final int position = parent.getChildLayoutPosition(view);
         if (position % 2 == 0) {
+            outRect.right = edgeMargin / 2;
             outRect.left = edgeMargin;
         }
-        outRect.right =
-                (position == parent.getAdapter().getItemCount() - 1) ? edgeMargin : middleMargin;
-        outRect.top = middleMargin;
-        outRect.bottom = middleMargin;
+        if (position % 2 != 0) {
+            outRect.left = edgeMargin / 2;
+            outRect.right = edgeMargin;
+        }
+
+        if (position <= 1) {
+            outRect.top = edgeMargin;
+        }
+
+        outRect.bottom = edgeMargin;
     }
 }

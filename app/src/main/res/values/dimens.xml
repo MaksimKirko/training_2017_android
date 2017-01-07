@@ -1,6 +1,6 @@
 <resources>
 
-    <dimen name="music_recycler_view_item_card_layout_margin">2dp</dimen>
+    <dimen name="music_recycler_view_item_card_layout_margin">12dp</dimen>
 
     <dimen name="music_recycler_view_item_title_margin">8dp</dimen>
     <dimen name="music_recycler_view_item_description_margin">8dp</dimen>

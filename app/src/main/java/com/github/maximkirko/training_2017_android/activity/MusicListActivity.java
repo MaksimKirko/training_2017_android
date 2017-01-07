@@ -6,7 +6,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 
 import com.github.maximkirko.training_2017_android.R;
@@ -14,16 +13,15 @@ import com.github.maximkirko.training_2017_android.adapter.MusicRecyclerViewAdap
 import com.github.maximkirko.training_2017_android.adapter.viewholder.SongClickListener;
 import com.github.maximkirko.training_2017_android.itemanimator.LandingAnimator;
 import com.github.maximkirko.training_2017_android.itemdecorator.MusicListItemDecorator;
-import com.github.maximkirko.training_2017_android.itemdecorator.SpacesItemDecoration;
 import com.github.maximkirko.training_2017_android.load.JSONReader;
 import com.github.maximkirko.training_2017_android.load.Reader;
 import com.github.maximkirko.training_2017_android.model.Song;
-import com.github.maximkirko.training_2017_android.util.ScreenUtils;
 
 import java.io.IOException;
 import java.util.List;
 
-public class MusicListActivity extends AppCompatActivity implements SongClickListener {
+public class MusicListActivity extends AppCompatActivity
+        implements SongClickListener {
 
     private RecyclerView musicRecyclerView;
     private RecyclerView.Adapter recyclerViewAdapter;
@@ -63,11 +61,38 @@ public class MusicListActivity extends AppCompatActivity implements SongClickLis
         initItemAnimator();
         initRecyclerView();
         initFabs();
-//
-//        Log.i("WIDTH", ScreenUtils.getScreenWidth() + "");
-//        Log.i("HEIGHT", ScreenUtils.getScreenHeight() + "");
-//
-//        Log.i("DP", this.getResources().getDimensionPixelSize(R.dimen.example_DP) + "");
+    }
+
+    private void initJSONReader() {
+        jsonReader = new JSONReader(MUSIC_RESOURCE_ID);
+    }
+
+    private void initAdapter() {
+        try {
+            music = jsonReader.readToList(this);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        recyclerViewAdapter = new MusicRecyclerViewAdapter(music, this, this);
+    }
+
+    private void initItemDecoration() {
+        int offset = this.getResources().getDimensionPixelSize(R.dimen.music_recycler_view_item_card_layout_margin);
+        itemDecoration = new MusicListItemDecorator(offset);
+    }
+
+    private void initItemAnimator() {
+        itemAnimator = new LandingAnimator();
+    }
+
+    private void initRecyclerView() {
+        layoutManager = new GridLayoutManager(this, 2);
+
+        musicRecyclerView = (RecyclerView) findViewById(R.id.music_recycler_view);
+        musicRecyclerView.setLayoutManager(layoutManager);
+        musicRecyclerView.addItemDecoration(itemDecoration);
+        musicRecyclerView.setItemAnimator(itemAnimator);
+        musicRecyclerView.setAdapter(recyclerViewAdapter);
     }
 
     private void initFabs() {
@@ -91,37 +116,5 @@ public class MusicListActivity extends AppCompatActivity implements SongClickLis
                 }
             }
         });
-    }
-
-    private void initJSONReader() {
-        jsonReader = new JSONReader(MUSIC_RESOURCE_ID);
-    }
-
-    private void initAdapter() {
-        try {
-            music = jsonReader.readToList(this);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        recyclerViewAdapter = new MusicRecyclerViewAdapter(music, this, this);
-    }
-
-    private void initItemDecoration() {
-        int offset = this.getResources().getDimensionPixelSize(R.dimen.music_recycler_view_item_card_layout_margin);
-        itemDecoration = new MusicListItemDecorator(offset, offset);
-    }
-
-    private void initItemAnimator() {
-        itemAnimator = new LandingAnimator();
-    }
-
-    private void initRecyclerView() {
-        layoutManager = new GridLayoutManager(this, 2);
-
-        musicRecyclerView = (RecyclerView) findViewById(R.id.music_recycler_view);
-        musicRecyclerView.setLayoutManager(layoutManager);
-        musicRecyclerView.addItemDecoration(itemDecoration);
-        musicRecyclerView.setItemAnimator(itemAnimator);
-        musicRecyclerView.setAdapter(recyclerViewAdapter);
     }
 }
