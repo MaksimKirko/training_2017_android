@@ -59,17 +59,13 @@ public class MusicRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
 
         if (viewType == TYPE_HEADER) {
             itemView = LayoutInflater.from(viewGroup.getContext())
-                    .inflate(R.layout.music_recycler_view_header, viewGroup, false);
-            return new HeaderViewHolder(itemView, context);
+                    .inflate(R.layout.musiclist_recycler_view_header, viewGroup, false);
+            return new HeaderViewHolder(itemView);
         }
         if (viewType == TYPE_ITEM) {
             itemView = LayoutInflater.from(viewGroup.getContext())
-                    .inflate(R.layout.music_recycler_view_item, viewGroup, false);
-
-
-            SongViewHolder songViewHolder = new SongViewHolder(itemView, context);
-            songViewHolder.setSongClickListener(songClickListener);
-            return songViewHolder;
+                    .inflate(R.layout.musiclist_recycler_view_item, viewGroup, false);
+            return new SongViewHolder(itemView, songClickListener);
         }
 
         return null;
@@ -77,11 +73,11 @@ public class MusicRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
-        if (position == HEADER_POSITION) {
-            viewHolder = new HeaderViewHolder(viewHolder.itemView, context);
-        } else {
+        if (viewHolder instanceof HeaderViewHolder) {
+            ((HeaderViewHolder) viewHolder).onBindData(null);
+        } else if (viewHolder instanceof SongViewHolder) {
             Song song = music.get(position - 1);
-            viewHolder = new SongViewHolder(viewHolder.itemView, song.getTitle(), song.getDescription(), song.getImageId());
+            ((SongViewHolder) viewHolder).onBindData(song.getTitle(), song.getDescription(), song.getImageId());
         }
     }
 

@@ -34,7 +34,7 @@ public class MusicListActivity extends AppCompatActivity
     private Reader<Song> jsonReader;
 
     public static final String SONG_EXTRA = "SONG";
-    public static final int MUSIC_RESOURCE_ID = R.raw.music;
+    public static final int MUSIC_RESOURCE_ID = R.raw.musiclist_data;
 
     private FloatingActionButton fabAdd;
     private FloatingActionButton fabRemove;
@@ -53,7 +53,7 @@ public class MusicListActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.music_list_activity);
+        setContentView(R.layout.musiclist_activity);
 
         initJSONReader();
         initAdapter();
@@ -77,7 +77,7 @@ public class MusicListActivity extends AppCompatActivity
     }
 
     private void initItemDecoration() {
-        int offset = this.getResources().getDimensionPixelSize(R.dimen.music_recycler_view_item_card_layout_margin);
+        int offset = this.getResources().getDimensionPixelSize(R.dimen.margin_musiclist_item_card);
         itemDecoration = new MusicListItemDecorator(offset);
     }
 
@@ -96,7 +96,7 @@ public class MusicListActivity extends AppCompatActivity
     }
 
     private void initFabs() {
-        fabAdd = (FloatingActionButton) findViewById(R.id.fabAdd);
+        fabAdd = (FloatingActionButton) findViewById(R.id.fab_musiclist_add);
         fabAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -105,7 +105,7 @@ public class MusicListActivity extends AppCompatActivity
             }
         });
 
-        fabRemove = (FloatingActionButton) findViewById(R.id.fabRemove);
+        fabRemove = (FloatingActionButton) findViewById(R.id.fab_musiclist_remove);
         fabRemove.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

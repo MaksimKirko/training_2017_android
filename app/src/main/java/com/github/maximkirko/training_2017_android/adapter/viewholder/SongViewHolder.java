@@ -1,6 +1,7 @@
 package com.github.maximkirko.training_2017_android.adapter.viewholder;
 
-import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
@@ -14,8 +15,8 @@ import java.lang.ref.WeakReference;
 
 public class SongViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-    private TextView title;
-    private TextView description;
+    private TextView titleView;
+    private TextView descriptionView;
     private ImageView imageView;
 
     private WeakReference<SongClickListener> songClickListener;
@@ -30,41 +31,26 @@ public class SongViewHolder extends RecyclerView.ViewHolder implements View.OnCl
 
     private Song getSongByClick() {
         Song song = new Song();
-        song.setTitle(title.getText().toString());
-        song.setDescription(description.getText().toString());
+        song.setTitle(titleView.getText().toString());
+        song.setDescription(descriptionView.getText().toString());
         return song;
     }
 
-    public TextView getTitle() {
-        return title;
-    }
+    public SongViewHolder(@NonNull View itemView, @NonNull SongClickListener songClickListener) {
+        super(itemView);
 
-    public void setTitle(TextView title) {
-        this.title = title;
-    }
-
-    public void setSongClickListener(SongClickListener songClickListener) {
+        itemView.setLayoutParams(ItemSizeUtils.getLayoutParams(itemView.getContext()));
         this.songClickListener = new WeakReference<>(songClickListener);
-    }
-
-    // TODO: need to change
-    public SongViewHolder(View itemView, Context context) {
-        super(itemView);
-        itemView.setLayoutParams(ItemSizeUtils.getLayoutParams(context));
         itemView.setOnClickListener(this);
-        this.title = (TextView) itemView.findViewById(R.id.item_title);
-        this.description = (TextView) itemView.findViewById(R.id.item_desription);
-        this.imageView = (ImageView) itemView.findViewById(R.id.item_image);
+
+        this.titleView = (TextView) itemView.findViewById(R.id.textview_musiclist_itemtitle);
+        this.descriptionView = (TextView) itemView.findViewById(R.id.textview_musiclist_item_description);
+        this.imageView = (ImageView) itemView.findViewById(R.id.imageview_musiclist_item_icon);
     }
 
-    public SongViewHolder(View itemView, String title, String description, int imageId) {
-        super(itemView);
-        this.title = (TextView) itemView.findViewById(R.id.item_title);
-        this.description = (TextView) itemView.findViewById(R.id.item_desription);
-        this.imageView = (ImageView) itemView.findViewById(R.id.item_image);
-
-        this.title.setText(title);
-        this.description.setText(description);
+    public void onBindData(@Nullable String title, @Nullable String description, @Nullable int imageId) {
+        this.titleView.setText(title);
+        this.descriptionView.setText(description);
         this.imageView.setImageResource(imageId);
     }
 }

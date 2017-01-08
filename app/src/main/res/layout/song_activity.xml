@@ -1,33 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    android:paddingTop="@dimen/song_activity_padding_top">
+    android:paddingTop="@dimen/padding_top_song">
 
     <TextView
-        android:id="@+id/song_activity_title"
+        android:id="@+id/textview_songactivity_title"
         style="@style/TextAppearance.AppCompat.Title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/music_recycler_view_item_title_margin"
+        android:layout_margin="@dimen/margin_musiclist_item_title"
         tools:text="Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title" />
 
     <TextView
-        android:id="@+id/song_activity_description"
+        android:id="@+id/textview_songactivity_description"
         style="@style/Base.TextAppearance.AppCompat.Widget.ActionMode.Subtitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/music_recycler_view_item_description_margin"
+        android:layout_margin="@dimen/margin_musiclist_item_description"
         tools:text="Description Description Description Description Description " />
 
     <ImageView
-        android:id="@+id/song_activity_image"
-        android:layout_width="@dimen/song_activity_image_height"
-        android:layout_height="@dimen/song_activity_image_width"
-        android:layout_margin="@dimen/music_recycler_view_item_image_margin"
+        android:id="@+id/imageview_songactivity_icon"
+        android:layout_width="@dimen/height_song_image"
+        android:layout_height="@dimen/width_song_image"
         android:layout_gravity="center_horizontal"
-        android:src="@drawable/rv_item_image_default" />
+        android:layout_margin="@dimen/margin_musiclist_item_image"
+        android:src="@drawable/musiclist_defaultimage" />
 
 </LinearLayout>

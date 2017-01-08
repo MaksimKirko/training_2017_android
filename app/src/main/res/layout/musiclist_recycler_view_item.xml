@@ -2,7 +2,7 @@
 
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/card_song"
+    android:id="@+id/cardview_musiclist_item"
     style="@style/CardView.Light"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
@@ -24,21 +24,21 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/item_title"
+                    android:id="@+id/textview_musiclist_itemtitle"
                     style="@style/TextAppearance.AppCompat.Title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/music_recycler_view_item_title_margin"
+                    android:layout_margin="@dimen/margin_musiclist_item_title"
                     android:ellipsize="end"
                     android:maxLines="3"
                     tools:text="Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title" />
 
                 <TextView
-                    android:id="@+id/item_desription"
-                    style="@style/Base.TextAppearance.AppCompat.Widget.ActionMode.Subtitle"
+                    android:id="@+id/textview_musiclist_item_description"
+                    style="@style/TextAppearance.AppCompat.Subhead"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/music_recycler_view_item_description_margin"
+                    android:layout_margin="@dimen/margin_musiclist_item_description"
                     android:maxLines="2"
                     tools:text="Description Description Description Description Description " />
 
@@ -46,13 +46,13 @@
 
 
             <ImageView
-                android:id="@+id/item_image"
-                android:layout_width="@dimen/music_recycler_view_item_image_width"
-                android:layout_height="@dimen/music_recycler_view_item_image_height"
+                android:id="@+id/imageview_musiclist_item_icon"
+                android:layout_width="@dimen/width_musiclist_item_image"
+                android:layout_height="@dimen/height_musiclist_item_image"
                 android:layout_gravity="center_vertical"
-                android:layout_margin="@dimen/music_recycler_view_item_image_margin"
+                android:layout_margin="@dimen/margin_musiclist_item_image"
                 android:minWidth="32dp"
-                android:src="@drawable/rv_item_image_default" />
+                android:src="@drawable/musiclist_defaultimage" />
 
         </LinearLayout>
 

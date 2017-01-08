@@ -1,6 +1,6 @@
 package com.github.maximkirko.training_2017_android.adapter.viewholder;
 
-import android.content.Context;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
@@ -14,25 +14,15 @@ import com.github.maximkirko.training_2017_android.util.ItemSizeUtils;
 
 public class HeaderViewHolder extends RecyclerView.ViewHolder {
 
-    private TextView title;
+    private TextView titleView;
 
-    public TextView getTitle() {
-        return title;
-    }
-
-    public void setTitle(TextView title) {
-        this.title = title;
-    }
-
-    public HeaderViewHolder(View itemView, Context context) {
+    public HeaderViewHolder(View itemView) {
         super(itemView);
-        itemView.setLayoutParams(ItemSizeUtils.getLayoutParams(context));
-        this.title = (TextView) itemView.findViewById(R.id.header_title);
+        itemView.setLayoutParams(ItemSizeUtils.getLayoutParams(itemView.getContext()));
+        this.titleView = (TextView) itemView.findViewById(R.id.textview_musiclist_headertitle);
     }
 
-    public HeaderViewHolder(View itemView, String title) {
-        super(itemView);
-        this.title = (TextView) itemView.findViewById(R.id.header_title);
-        this.title.setText(title);
+    public void onBindData(@Nullable String title) {
+        this.titleView.setText(title);
     }
 }

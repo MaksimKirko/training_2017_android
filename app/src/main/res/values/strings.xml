@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">training_2017_android</string>
 
-    <string name="header_example">Album title</string>
-    <string name="title_activity_alter_music">AlterMusicActivity</string>
+    <string name="musiclist_header_text_default">Album title</string>
 </resources>

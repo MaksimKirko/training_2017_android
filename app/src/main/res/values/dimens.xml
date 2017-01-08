@@ -1,21 +1,20 @@
 <resources>
 
-    <dimen name="music_recycler_view_item_card_layout_margin">12dp</dimen>
+    <dimen name="margin_musiclist_item_card">6dp</dimen>
 
-    <dimen name="music_recycler_view_item_title_margin">8dp</dimen>
-    <dimen name="music_recycler_view_item_description_margin">8dp</dimen>
-    <dimen name="music_recycler_view_item_image_margin">8dp</dimen>
+    <dimen name="margin_musiclist_item_title">8dp</dimen>
+    <dimen name="margin_musiclist_item_description">8dp</dimen>
+    <dimen name="margin_musiclist_item_image">8dp</dimen>
 
-    <dimen name="music_recycler_view_item_image_width">48dp</dimen>
-    <dimen name="music_recycler_view_item_image_height">48dp</dimen>
+    <dimen name="width_musiclist_item_image">48dp</dimen>
+    <dimen name="height_musiclist_item_image">48dp</dimen>
 
-    <dimen name="music_recycler_view_header_title_margin">8dp</dimen>
+    <dimen name="margin_musiclist_header_title">8dp</dimen>
 
-    <dimen name="song_activity_padding_top">36dp</dimen>
-    <dimen name="song_activity_image_width">64dp</dimen>
-    <dimen name="song_activity_image_height">64dp</dimen>
+    <dimen name="padding_top_song">36dp</dimen>
+    <dimen name="width_song_image">64dp</dimen>
+    <dimen name="height_song_image">64dp</dimen>
 
-    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="margin_musiclist_fab">16dp</dimen>
 
-    <dimen name="example_DP">1dp</dimen>
 </resources>

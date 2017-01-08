@@ -4,13 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/music_list_background_color"
     android:fitsSystemWindows="true"
-    tools:context="com.github.maximkirko.training_2017_android.activity.MusicListActivity"
-    android:background="@color/music_list_background_color">
+    tools:context="com.github.maximkirko.training_2017_android.activity.MusicListActivity">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/activity_main"
+        android:id="@+id/activity_musiclist"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
@@ -25,29 +25,29 @@
     </LinearLayout>
 
     <RelativeLayout
-        android:id="@+id/fab_container"
+        android:id="@+id/container_musiclist_buttons"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal">
 
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fabRemove"
+            android:id="@+id/fab_musiclist_remove"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/fab_margin"
-            app:srcCompat="@android:drawable/ic_menu_delete"
             android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true" />
+            android:layout_margin="@dimen/margin_musiclist_fab"
+            app:srcCompat="@android:drawable/ic_menu_delete" />
 
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fabAdd"
+            android:id="@+id/fab_musiclist_add"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:srcCompat="@android:drawable/ic_menu_add"
-            android:layout_alignTop="@+id/fabRemove"
-            android:layout_toLeftOf="@+id/fabRemove"
-            android:layout_toStartOf="@+id/fabRemove" />
+            android:layout_alignTop="@+id/fab_musiclist_remove"
+            android:layout_toLeftOf="@+id/fab_musiclist_remove"
+            android:layout_toStartOf="@+id/fab_musiclist_remove"
+            app:srcCompat="@android:drawable/ic_menu_add" />
 
     </RelativeLayout>
 

@@ -32,9 +32,9 @@ public class SongActivity extends AppCompatActivity {
     }
 
     private void initViews() {
-        tvTitle = (TextView) findViewById(R.id.song_activity_title);
-        tvDescription = (TextView) findViewById(R.id.song_activity_description);
-        ivImage = (ImageView) findViewById(R.id.song_activity_image);
+        tvTitle = (TextView) findViewById(R.id.textview_songactivity_title);
+        tvDescription = (TextView) findViewById(R.id.textview_songactivity_description);
+        ivImage = (ImageView) findViewById(R.id.imageview_songactivity_icon);
     }
 
     private void setViewsValues() {
