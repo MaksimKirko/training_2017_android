@@ -9,9 +9,9 @@ import android.view.ViewGroup;
 
 import com.github.maximkirko.training_2017_android.R;
 import com.github.maximkirko.training_2017_android.adapter.viewholder.HeaderViewHolder;
-import com.github.maximkirko.training_2017_android.adapter.viewholder.SongClickListener;
-import com.github.maximkirko.training_2017_android.adapter.viewholder.SongViewHolder;
-import com.github.maximkirko.training_2017_android.model.Song;
+import com.github.maximkirko.training_2017_android.adapter.viewholder.UserClickListener;
+import com.github.maximkirko.training_2017_android.adapter.viewholder.UserViewHolder;
+import com.github.maximkirko.training_2017_android.model.User;
 
 import java.lang.annotation.Retention;
 import java.util.List;
@@ -22,10 +22,10 @@ import static java.lang.annotation.RetentionPolicy.SOURCE;
  * Created by MadMax on 25.12.2016.
  */
 
-public class MusicRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class FriendsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private List<Song> music;
-    private SongClickListener songClickListener;
+    private List<User> friends;
+    private UserClickListener songClickListener;
     private Context context;
 
     private static final int HEADER_POSITION = 0;
@@ -47,8 +47,8 @@ public class MusicRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
         return TYPE_ITEM;
     }
 
-    public MusicRecyclerViewAdapter(List<Song> music, SongClickListener songClickListener, Context context) {
-        this.music = music;
+    public FriendsRecyclerViewAdapter(List<User> friends, UserClickListener songClickListener, Context context) {
+        this.friends = friends;
         this.songClickListener = songClickListener;
         this.context = context;
     }
@@ -59,13 +59,13 @@ public class MusicRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
 
         if (viewType == TYPE_HEADER) {
             itemView = LayoutInflater.from(viewGroup.getContext())
-                    .inflate(R.layout.musiclist_recycler_view_header, viewGroup, false);
+                    .inflate(R.layout.friendslist_recycler_view_header, viewGroup, false);
             return new HeaderViewHolder(itemView);
         }
         if (viewType == TYPE_ITEM) {
             itemView = LayoutInflater.from(viewGroup.getContext())
-                    .inflate(R.layout.musiclist_recycler_view_item, viewGroup, false);
-            return new SongViewHolder(itemView, songClickListener);
+                    .inflate(R.layout.friendslist_recycler_view_item, viewGroup, false);
+            return new UserViewHolder(itemView, songClickListener);
         }
 
         return null;
@@ -75,9 +75,9 @@ public class MusicRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
         if (viewHolder instanceof HeaderViewHolder) {
             ((HeaderViewHolder) viewHolder).onBindData(null);
-        } else if (viewHolder instanceof SongViewHolder) {
-            Song song = music.get(position - 1);
-            ((SongViewHolder) viewHolder).onBindData(song.getTitle(), song.getDescription(), song.getImageId());
+        } else if (viewHolder instanceof UserViewHolder) {
+            User user = friends.get(position - 1);
+            ((UserViewHolder) viewHolder).onBindData(user.first_name, user.last_name, user.online, 0);
         }
     }
 
@@ -88,6 +88,6 @@ public class MusicRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
 
     @Override
     public int getItemCount() {
-        return music.size() + 1;
+        return friends.size() + 1;
     }
 }

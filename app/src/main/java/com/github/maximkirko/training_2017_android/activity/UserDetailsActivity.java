@@ -12,7 +12,7 @@ import com.github.maximkirko.training_2017_android.model.Song;
  * Created by MadMax on 25.12.2016.
  */
 
-public class SongActivity extends AppCompatActivity {
+public class UserDetailsActivity extends AppCompatActivity {
 
     private TextView tvTitle;
     private TextView tvDescription;
@@ -23,23 +23,23 @@ public class SongActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.song_activity);
+        setContentView(R.layout.user_details_activity);
 
-        song = this.getIntent().getParcelableExtra(MusicListActivity.SONG_EXTRA);
+        song = this.getIntent().getParcelableExtra(FriendsListActivity.USER_EXTRA);
 
         initViews();
         setViewsValues();
     }
 
     private void initViews() {
-        tvTitle = (TextView) findViewById(R.id.textview_songactivity_title);
-        tvDescription = (TextView) findViewById(R.id.textview_songactivity_description);
-        ivImage = (ImageView) findViewById(R.id.imageview_songactivity_icon);
+        tvTitle = (TextView) findViewById(R.id.textview_user_details_activity_name);
+        tvDescription = (TextView) findViewById(R.id.textview_user_details_activity_description);
+        ivImage = (ImageView) findViewById(R.id.imageview_user_details_activity_photo);
     }
 
     private void setViewsValues() {
         tvTitle.setText(song.getTitle());
         tvDescription.setText(song.getDescription());
-        ivImage.setImageResource(song.getImageId());
+//        ivImage.setImageResource(song.getImageId());
     }
 }

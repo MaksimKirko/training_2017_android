@@ -22,7 +22,7 @@ public class Song implements Parcelable {
 
     private static final String DEFAULT_TITLE = "Unknown title";
     private static final String DEFAULT_DESCRIPTION = "Unknown description";
-    private static final int DEFAULT_IMAGE_ID = R.drawable.musiclist_defaultimage;
+    private static final int DEFAULT_IMAGE_ID = R.drawable.musiclist_default_image;
 
     public Song() {
 
@@ -83,7 +83,7 @@ public class Song implements Parcelable {
             Song song = new Song();
             song.setTitle("Title " + i);
             song.setDescription("Description " + i);
-            song.setImageId(R.drawable.musiclist_defaultimage);
+            song.setImageId(R.drawable.musiclist_default_image);
             songs.add(song);
         }
 

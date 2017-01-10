@@ -1,0 +1,175 @@
+{
+  "response": {
+    "count": 86,
+    "items": [
+      {
+        "id": 3742103,
+        "first_name": "Дима",
+        "last_name": "Хомич",
+        "nickname": "",
+        "photo_50": "https:\/\/pp.vk.me\/c837525\/v837525103\/1aed3\/O2HE7JyOjfU.jpg",
+        "online": 1
+      },
+      {
+        "id": 11201186,
+        "first_name": "Илья",
+        "last_name": "Кроха",
+        "nickname": "",
+        "photo_50": "https:\/\/pp.vk.me\/c631926\/v631926186\/1f761\/f3qqX2FMI5M.jpg",
+        "online": 1,
+        "online_app": "3140623",
+        "online_mobile": 1
+      },
+      {
+        "id": 15954620,
+        "first_name": "Ольга",
+        "last_name": "Ярощук",
+        "nickname": "",
+        "photo_50": "https:\/\/pp.vk.me\/c625828\/v625828620\/20a9b\/5mDt4C8vzbs.jpg",
+        "online": 1
+      },
+      {
+        "id": 24529951,
+        "first_name": "Александр",
+        "last_name": "Франскевич",
+        "deactivated": "banned",
+        "online": 0,
+        "photo_50": "https:\/\/vk.com\/images\/deactivated_50.png"
+      },
+      {
+        "id": 28549098,
+        "first_name": "Саша",
+        "last_name": "Терешков",
+        "nickname": "[:3]",
+        "photo_50": "https:\/\/pp.vk.me\/c631327\/v631327098\/36cd8\/0FReIIeLNfY.jpg",
+        "online": 1
+      },
+      {
+        "id": 34937564,
+        "first_name": "Стас",
+        "last_name": "Савин",
+        "nickname": "",
+        "photo_50": "https:\/\/pp.vk.me\/c606727\/v606727564\/357a\/gU2EjRtCSf4.jpg",
+        "online": 0
+      },
+      {
+        "id": 37466277,
+        "first_name": "Влад",
+        "last_name": "Юревич",
+        "nickname": "",
+        "photo_50": "https:\/\/pp.vk.me\/c626728\/v626728277\/150e7\/GDmLc09-6jk.jpg",
+        "online": 1
+      },
+      {
+        "id": 38971465,
+        "first_name": "Артём",
+        "last_name": "Красковский",
+        "nickname": "",
+        "photo_50": "https:\/\/pp.vk.me\/c626625\/v626625465\/3d6\/lCbE2M0BWy0.jpg",
+        "online": 0
+      },
+      {
+        "id": 39116380,
+        "first_name": "Андрей",
+        "last_name": "Шут",
+        "nickname": "",
+        "photo_50": "https:\/\/pp.vk.me\/c618717\/v618717380\/1d177\/-MlWMH38ulA.jpg",
+        "online": 1
+      },
+      {
+        "id": 39919660,
+        "first_name": "Александр",
+        "last_name": "Болкунец",
+        "nickname": "",
+        "photo_50": "https:\/\/pp.vk.me\/c636822\/v636822660\/31a86\/qbc8mlGCQ0I.jpg",
+        "online": 0
+      },
+      {
+        "id": 40819333,
+        "first_name": "Анюта",
+        "last_name": "Кеда",
+        "nickname": "",
+        "photo_50": "https:\/\/pp.vk.me\/c624127\/v624127333\/4d495\/UdbN5hQPEto.jpg",
+        "online": 1,
+        "online_app": "3502561",
+        "online_mobile": 1
+      },
+      {
+        "id": 44542276,
+        "first_name": "Наталья",
+        "last_name": "Белошевская",
+        "nickname": "",
+        "photo_50": "https:\/\/pp.vk.me\/c638819\/v638819276\/1d8a\/cWaqIRgYW9E.jpg",
+        "online": 0
+      },
+      {
+        "id": 48269466,
+        "first_name": "Ярослав",
+        "last_name": "Ковшовик",
+        "nickname": "",
+        "photo_50": "https:\/\/pp.vk.me\/c627129\/v627129466\/2fa76\/liiwIcfghdo.jpg",
+        "online": 0
+      },
+      {
+        "id": 50181012,
+        "first_name": "Карина",
+        "last_name": "Денисевич",
+        "nickname": "",
+        "photo_50": "https:\/\/pp.vk.me\/c630928\/v630928012\/3b81e\/BSiIN1MIcSc.jpg",
+        "online": 0
+      },
+      {
+        "id": 50577095,
+        "first_name": "Олег",
+        "last_name": "Балаханов",
+        "nickname": "",
+        "photo_50": "https:\/\/pp.vk.me\/c631631\/v631631095\/255a7\/8pkWbNEGtMg.jpg",
+        "online": 0
+      },
+      {
+        "id": 50780779,
+        "first_name": "Роман",
+        "last_name": "Денищик",
+        "nickname": "",
+        "photo_50": "https:\/\/pp.vk.me\/c636319\/v636319779\/42ba7\/ZaU0gHzH-YY.jpg",
+        "online": 1
+      },
+      {
+        "id": 53380273,
+        "first_name": "Семён",
+        "last_name": "Кардаш",
+        "nickname": "",
+        "photo_50": "https:\/\/pp.vk.me\/c637420\/v637420273\/23e60\/lPY5ST4Pa08.jpg",
+        "online": 1,
+        "online_app": "3140623",
+        "online_mobile": 1
+      },
+      {
+        "id": 63465390,
+        "first_name": "Артём",
+        "last_name": "Матвеенков",
+        "nickname": "",
+        "photo_50": "https:\/\/pp.vk.me\/c626923\/v626923390\/18129\/pRlKkcCSAk0.jpg",
+        "online": 1,
+        "online_app": "3682744",
+        "online_mobile": 1
+      },
+      {
+        "id": 65189194,
+        "first_name": "Юрий",
+        "last_name": "Высоцкий",
+        "nickname": "",
+        "photo_50": "https:\/\/pp.vk.me\/c638421\/v638421194\/179f5\/5SZDjEHkR9Q.jpg",
+        "online": 1
+      },
+      {
+        "id": 74566016,
+        "first_name": "Александр",
+        "last_name": "Ратников",
+        "nickname": "",
+        "photo_50": "https:\/\/pp.vk.me\/c626725\/v626725016\/41983\/48z8_A822vk.jpg",
+        "online": 0
+      }
+    ]
+  }
+}

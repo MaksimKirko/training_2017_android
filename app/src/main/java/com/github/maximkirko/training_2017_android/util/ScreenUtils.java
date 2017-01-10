@@ -6,7 +6,7 @@ import android.content.res.Resources;
  * Created by MadMax on 06.01.2017.
  */
 
-public class ScreenUtils {
+public final class ScreenUtils {
 
     public static int getScreenWidth() {
         return Resources.getSystem().getDisplayMetrics().widthPixels;
