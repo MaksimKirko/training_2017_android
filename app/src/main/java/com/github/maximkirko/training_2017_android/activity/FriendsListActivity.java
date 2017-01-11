@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -18,11 +19,11 @@ import com.github.maximkirko.training_2017_android.adapter.FriendsRecyclerViewAd
 import com.github.maximkirko.training_2017_android.adapter.viewholder.UserClickListener;
 import com.github.maximkirko.training_2017_android.itemanimator.LandingAnimator;
 import com.github.maximkirko.training_2017_android.itemdecorator.SpacesItemDecoration;
-import com.github.maximkirko.training_2017_android.load.FriendsJSONReader;
-import com.github.maximkirko.training_2017_android.load.Reader;
 import com.github.maximkirko.training_2017_android.loader.FriendsAsyncLoader;
-import com.github.maximkirko.training_2017_android.model.Song;
+import com.github.maximkirko.training_2017_android.loader.UserPhotoLoader;
 import com.github.maximkirko.training_2017_android.model.User;
+import com.github.maximkirko.training_2017_android.read.FriendsJSONReader;
+import com.github.maximkirko.training_2017_android.read.Reader;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKCallback;
 import com.vk.sdk.VKScope;
@@ -35,7 +36,7 @@ import java.io.IOException;
 import java.util.List;
 
 public class FriendsListActivity extends AppCompatActivity
-        implements UserClickListener, LoaderManager.LoaderCallbacks<String> {
+        implements UserClickListener {
 
     //    region Views
     private FloatingActionButton fabAdd;
@@ -56,18 +57,20 @@ public class FriendsListActivity extends AppCompatActivity
     private VKParameters vkParameters;
 
     private static final String ACCESS_PERMISSION_PREFERENCE = "ACCESS_PERMISSION";
+
     private static final int LOADER_FRIENDS_ID = 1;
+    private static final int LOADER_PHOTO_ID = 2;
 
     public static final String USER_EXTRA = "USER";
 
     @Override
-    public void onItemClick(Song song) {
-        startSongActivity(song);
+    public void onItemClick(int position) {
+        startUserDetailsActivity(friends.get(position));
     }
 
-    private void startSongActivity(Song song) {
+    private void startUserDetailsActivity(User user) {
         Intent intent = new Intent(FriendsListActivity.this, UserDetailsActivity.class);
-        intent.putExtra(USER_EXTRA, song);
+        intent.putExtra(USER_EXTRA, user);
         startActivity(intent);
     }
 
@@ -84,7 +87,7 @@ public class FriendsListActivity extends AppCompatActivity
         }
         initFabs();
         initVKParameters();
-        getLoaderManager().initLoader(LOADER_FRIENDS_ID, null, this);
+        getLoaderManager().initLoader(LOADER_FRIENDS_ID, null, new FriendsLoaderCallback());
         startFriendsLoader();
     }
 
@@ -143,47 +146,90 @@ public class FriendsListActivity extends AppCompatActivity
     private void initVKParameters() {
         vkParameters = new VKParameters();
         vkParameters.put(VKApiConst.ACCESS_TOKEN, VKSdk.getAccessToken());
+        vkParameters.put(VKApiConst.COUNT, 10);
         vkParameters.put(VKApiConst.FIELDS, "nickname, online, photo_50");
     }
 
     public void startFriendsLoader() {
-        Loader<String> loader;
-        loader = getLoaderManager().getLoader(LOADER_FRIENDS_ID);
+        Loader<String> loader = getLoaderManager().getLoader(LOADER_FRIENDS_ID);
         loader.forceLoad();
     }
 
-    @Override
-    public Loader<String> onCreateLoader(int id, Bundle args) {
-        Loader<String> loader = null;
-        if (id == LOADER_FRIENDS_ID) {
-            loader = new FriendsAsyncLoader(this, vkParameters);
+    private class FriendsLoaderCallback implements LoaderManager.LoaderCallbacks<String> {
+
+        @Override
+        public Loader<String> onCreateLoader(int id, Bundle bundle) {
+            if (id == LOADER_FRIENDS_ID) {
+                return new FriendsAsyncLoader(getApplicationContext(), vkParameters);
+            }
+            return null;
         }
-        return loader;
+
+        @Override
+        public void onLoaderReset(Loader<String> loader) {
+
+        }
+
+        @Override
+        public void onLoadFinished(Loader<String> loader, String s) {
+            initFriendsList(s);
+
+            for (User user : friends) {
+                getUserPhoto(user.photo_50);
+            }
+
+            initAdapter();
+            initItemDecoration();
+            initItemAnimator();
+            initRecyclerView();
+        }
+
+        private void getUserPhoto(String url) {
+            Bundle bundle = new Bundle();
+            bundle.putString(UserPhotoLoaderCallback.PHOTO_URL_EXTRA, url);
+            getLoaderManager().initLoader(LOADER_PHOTO_ID, bundle, new UserPhotoLoaderCallback());
+            getLoaderManager().getLoader(LOADER_PHOTO_ID).forceLoad();
+        }
     }
 
-    @Override
-    public void onLoadFinished(Loader<String> loader, String s) {
-        initJSONReader(s);
-        initAdapter();
-        initItemDecoration();
-        initItemAnimator();
-        initRecyclerView();
+    private class UserPhotoLoaderCallback implements LoaderManager.LoaderCallbacks<Bitmap> {
+
+        public static final String PHOTO_URL_EXTRA = "PHOTO_URL";
+        private int USER_POSITION = 0;
+
+        @Override
+        public Loader<Bitmap> onCreateLoader(int id, Bundle bundle) {
+            if (id == LOADER_PHOTO_ID) {
+                return new UserPhotoLoader(getApplicationContext(), bundle.getString(PHOTO_URL_EXTRA));
+            }
+            return null;
+        }
+
+        @Override
+        public void onLoadFinished(Loader<Bitmap> loader, Bitmap bitmap) {
+            User user = friends.get(USER_POSITION);
+            user.setUserPhoto50(bitmap);
+            friends.set(USER_POSITION, user);
+            USER_POSITION++;
+            onStop();
+        }
+
+        @Override
+        public void onLoaderReset(Loader<Bitmap> loader) {
+
+        }
     }
 
-    @Override
-    public void onLoaderReset(Loader<String> loader) {
-    }
-
-    private void initJSONReader(String jsonFriendsList) {
+    private void initFriendsList(String jsonFriendsList) {
         friendsJsonReader = new FriendsJSONReader(jsonFriendsList);
-    }
-
-    private void initAdapter() {
         try {
-            friends = friendsJsonReader.readToList(this);
+            friends = friendsJsonReader.readToList();
         } catch (IOException e) {
             Log.e(IOException.class.getSimpleName(), e.getMessage());
         }
+    }
+
+    private void initAdapter() {
         recyclerViewAdapter = new FriendsRecyclerViewAdapter(friends, this, this);
     }
 

@@ -6,7 +6,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.github.maximkirko.training_2017_android.R;
-import com.github.maximkirko.training_2017_android.model.Song;
+import com.github.maximkirko.training_2017_android.model.User;
 
 /**
  * Created by MadMax on 25.12.2016.
@@ -18,14 +18,14 @@ public class UserDetailsActivity extends AppCompatActivity {
     private TextView tvDescription;
     private ImageView ivImage;
 
-    private Song song;
+    private User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.user_details_activity);
 
-        song = this.getIntent().getParcelableExtra(FriendsListActivity.USER_EXTRA);
+        user = this.getIntent().getParcelableExtra(FriendsListActivity.USER_EXTRA);
 
         initViews();
         setViewsValues();
@@ -38,8 +38,8 @@ public class UserDetailsActivity extends AppCompatActivity {
     }
 
     private void setViewsValues() {
-        tvTitle.setText(song.getTitle());
-        tvDescription.setText(song.getDescription());
-//        ivImage.setImageResource(song.getImageId());
+        tvTitle.setText(user.first_name + " " + user.last_name);
+        tvDescription.setText(user.online ? "Online" : "");
+        ivImage.setImageBitmap(user.getUserPhoto50());
     }
 }

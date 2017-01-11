@@ -1,5 +1,6 @@
 package com.github.maximkirko.training_2017_android.adapter.viewholder;
 
+import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
@@ -8,7 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.github.maximkirko.training_2017_android.R;
-import com.github.maximkirko.training_2017_android.model.Song;
+import com.github.maximkirko.training_2017_android.model.User;
 import com.github.maximkirko.training_2017_android.util.ItemSizeUtils;
 
 import java.lang.ref.WeakReference;
@@ -25,15 +26,12 @@ public class UserViewHolder extends RecyclerView.ViewHolder implements View.OnCl
     public void onClick(View v) {
         UserClickListener userClickListener = this.userClickListener.get();
         if (userClickListener != null) {
-            userClickListener.onItemClick(getUserByClick());
+            userClickListener.onItemClick(getUserPositionByClick());
         }
     }
 
-    private Song getUserByClick() {
-        Song song = new Song();
-        song.setTitle(nameView.getText().toString());
-        song.setDescription(onlineStatusView.getText().toString());
-        return song;
+    private int getUserPositionByClick() {
+        return getAdapterPosition() - 1;
     }
 
     public UserViewHolder(@NonNull View itemView, @NonNull UserClickListener userClickListener) {
@@ -48,9 +46,9 @@ public class UserViewHolder extends RecyclerView.ViewHolder implements View.OnCl
         this.userPhotoView = (ImageView) itemView.findViewById(R.id.imageview_friendslist_item_photo);
     }
 
-    public void onBindData(@NonNull String first_name, @NonNull String last_name, @NonNull boolean online, @Nullable int imageId) {
+    public void onBindData(@NonNull String first_name, @NonNull String last_name, @NonNull boolean online, @Nullable Bitmap userPhoto) {
         this.nameView.setText(first_name + " " + last_name);
         this.onlineStatusView.setText(online ? "Online" : "");
-//        this.userPhotoView.setImageResource(imageId);
+        this.userPhotoView.setImageBitmap(userPhoto);
     }
 }

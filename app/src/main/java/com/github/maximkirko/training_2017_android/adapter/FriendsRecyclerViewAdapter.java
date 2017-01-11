@@ -77,7 +77,7 @@ public class FriendsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
             ((HeaderViewHolder) viewHolder).onBindData(null);
         } else if (viewHolder instanceof UserViewHolder) {
             User user = friends.get(position - 1);
-            ((UserViewHolder) viewHolder).onBindData(user.first_name, user.last_name, user.online, 0);
+            ((UserViewHolder) viewHolder).onBindData(user.first_name, user.last_name, user.online, user.getUserPhoto50());
         }
     }
 

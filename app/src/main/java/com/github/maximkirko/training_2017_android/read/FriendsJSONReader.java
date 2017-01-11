@@ -1,15 +1,10 @@
-package com.github.maximkirko.training_2017_android.load;
+package com.github.maximkirko.training_2017_android.read;
 
-import android.content.Context;
-import android.support.annotation.Nullable;
 import android.util.JsonReader;
 
 import com.github.maximkirko.training_2017_android.model.User;
 
-import org.json.JSONObject;
-
 import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -22,24 +17,15 @@ import java.util.List;
 
 public class FriendsJSONReader implements Reader<User> {
 
-    private int resourceId;
     private String jsonFriendsList;
-
-    public FriendsJSONReader(int recourceId) {
-        this.resourceId = recourceId;
-    }
 
     public FriendsJSONReader(String jsonFriendsList) {
         this.jsonFriendsList = jsonFriendsList;
     }
 
-    public List<User> readToList(Context context) throws IOException {
+    public List<User> readToList() throws IOException {
         InputStream in;
-        if (jsonFriendsList != null) {
-            in = new ByteArrayInputStream(jsonFriendsList.getBytes());
-        } else {
-            in = context.getResources().openRawResource(resourceId);
-        }
+        in = new ByteArrayInputStream(jsonFriendsList.getBytes());
         JsonReader reader = new JsonReader(new InputStreamReader(in, "UTF-8"));
         try {
             return readUsersArray(reader);

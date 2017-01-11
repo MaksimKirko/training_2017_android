@@ -2,6 +2,7 @@ package com.github.maximkirko.training_2017_android.loader;
 
 import android.content.AsyncTaskLoader;
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.vk.sdk.api.VKApi;
@@ -23,7 +24,7 @@ public class FriendsAsyncLoader extends AsyncTaskLoader<String> {
     private String jsonFriendsList;
     private static boolean flag = false;
 
-    public FriendsAsyncLoader(Context context, VKParameters params) {
+    public FriendsAsyncLoader(@NonNull Context context, @NonNull VKParameters params) {
         super(context);
         this.params = params;
     }
@@ -51,7 +52,7 @@ public class FriendsAsyncLoader extends AsyncTaskLoader<String> {
                 flag = true;
             }
         });
-        while(!flag) {
+        while (!flag) {
 
         }
         return jsonFriendsList;
