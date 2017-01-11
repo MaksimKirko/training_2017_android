@@ -1,7 +1,9 @@
 package com.github.maximkirko.training_2017_android.activity;
 
+import android.app.LoaderManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.Loader;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -15,31 +17,25 @@ import com.github.maximkirko.training_2017_android.R;
 import com.github.maximkirko.training_2017_android.adapter.FriendsRecyclerViewAdapter;
 import com.github.maximkirko.training_2017_android.adapter.viewholder.UserClickListener;
 import com.github.maximkirko.training_2017_android.itemanimator.LandingAnimator;
-import com.github.maximkirko.training_2017_android.itemdecorator.MusicListItemDecorator;
 import com.github.maximkirko.training_2017_android.itemdecorator.SpacesItemDecoration;
 import com.github.maximkirko.training_2017_android.load.FriendsJSONReader;
 import com.github.maximkirko.training_2017_android.load.Reader;
+import com.github.maximkirko.training_2017_android.loader.FriendsAsyncLoader;
 import com.github.maximkirko.training_2017_android.model.Song;
 import com.github.maximkirko.training_2017_android.model.User;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKCallback;
 import com.vk.sdk.VKScope;
 import com.vk.sdk.VKSdk;
-import com.vk.sdk.api.VKApi;
 import com.vk.sdk.api.VKApiConst;
 import com.vk.sdk.api.VKError;
 import com.vk.sdk.api.VKParameters;
-import com.vk.sdk.api.VKRequest;
-import com.vk.sdk.api.VKResponse;
-import com.vk.sdk.api.methods.VKApiFriends;
-
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.List;
 
 public class FriendsListActivity extends AppCompatActivity
-        implements UserClickListener {
+        implements UserClickListener, LoaderManager.LoaderCallbacks<String> {
 
     //    region Views
     private FloatingActionButton fabAdd;
@@ -55,16 +51,14 @@ public class FriendsListActivity extends AppCompatActivity
 //    endregion
 
     private List<User> friends;
-    Reader<User> friendsJsonReader;
-
+    private Reader<User> friendsJsonReader;
     private SharedPreferences sharedPreferences;
+    private VKParameters vkParameters;
+
     private static final String ACCESS_PERMISSION_PREFERENCE = "ACCESS_PERMISSION";
+    private static final int LOADER_FRIENDS_ID = 1;
 
     public static final String USER_EXTRA = "USER";
-    public static final int FRIENDS_RESOURCE_ID = R.raw.friendslist_vk_data;
-    private static String jsonFriendsList;
-
-    private static boolean flag = false;
 
     @Override
     public void onItemClick(Song song) {
@@ -88,15 +82,10 @@ public class FriendsListActivity extends AppCompatActivity
             VKSdk.login(this, VKScope.FRIENDS);
             saveAccessPermission();
         }
-
-        getFriendsList();
-
-        initJSONReader();
-        initAdapter();
-        initItemDecoration();
-        initItemAnimator();
-        initRecyclerView();
         initFabs();
+        initVKParameters();
+        getLoaderManager().initLoader(LOADER_FRIENDS_ID, null, this);
+        startFriendsLoader();
     }
 
     private void initSharedPreferences() {
@@ -128,35 +117,65 @@ public class FriendsListActivity extends AppCompatActivity
         }
     }
 
-    private void getFriendsList() {
-        VKParameters params = new VKParameters();
-        params.put(VKApiConst.ACCESS_TOKEN, VKSdk.getAccessToken());
-        params.put(VKApiConst.FIELDS, "nickname, online, photo_50");
-        final VKRequest request = VKApi.friends().get(params);
-        request.executeWithListener(new VKRequest.VKRequestListener() {
+    private void initFabs() {
+        fabAdd = (FloatingActionButton) findViewById(R.id.fab_friendslist_add);
+        fabAdd.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onComplete(VKResponse response) {
-                jsonFriendsList = response.json.toString();
-                Log.i("RESPONSE", response.json.toString());
-                flag = true;
+            public void onClick(View view) {
+                friends.add(new User());
+                recyclerViewAdapter.notifyItemInserted(friends.size());
             }
+        });
 
+        fabRemove = (FloatingActionButton) findViewById(R.id.fab_friendslist_remove);
+        fabRemove.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onError(VKError error) {
-                Log.i("ERROR", "request");
-                flag = true;
-            }
-
-            @Override
-            public void attemptFailed(VKRequest request, int attemptNumber, int totalAttempts) {
-                Log.i("ATTEMPT FAILED", "request");
-                flag = true;
+            public void onClick(View view) {
+                int index = friends.size();
+                if (index > 1) {
+                    friends.remove(index - 1);
+                    recyclerViewAdapter.notifyItemRemoved(index + 1);
+                }
             }
         });
     }
 
-    private void initJSONReader() {
-        friendsJsonReader = new FriendsJSONReader(FRIENDS_RESOURCE_ID);
+    private void initVKParameters() {
+        vkParameters = new VKParameters();
+        vkParameters.put(VKApiConst.ACCESS_TOKEN, VKSdk.getAccessToken());
+        vkParameters.put(VKApiConst.FIELDS, "nickname, online, photo_50");
+    }
+
+    public void startFriendsLoader() {
+        Loader<String> loader;
+        loader = getLoaderManager().getLoader(LOADER_FRIENDS_ID);
+        loader.forceLoad();
+    }
+
+    @Override
+    public Loader<String> onCreateLoader(int id, Bundle args) {
+        Loader<String> loader = null;
+        if (id == LOADER_FRIENDS_ID) {
+            loader = new FriendsAsyncLoader(this, vkParameters);
+        }
+        return loader;
+    }
+
+    @Override
+    public void onLoadFinished(Loader<String> loader, String s) {
+        initJSONReader(s);
+        initAdapter();
+        initItemDecoration();
+        initItemAnimator();
+        initRecyclerView();
+    }
+
+    @Override
+    public void onLoaderReset(Loader<String> loader) {
+    }
+
+    private void initJSONReader(String jsonFriendsList) {
+        friendsJsonReader = new FriendsJSONReader(jsonFriendsList);
     }
 
     private void initAdapter() {
@@ -185,28 +204,5 @@ public class FriendsListActivity extends AppCompatActivity
         friendsRecyclerView.addItemDecoration(itemDecoration);
         friendsRecyclerView.setItemAnimator(itemAnimator);
         friendsRecyclerView.setAdapter(recyclerViewAdapter);
-    }
-
-    private void initFabs() {
-        fabAdd = (FloatingActionButton) findViewById(R.id.fab_friendslist_add);
-        fabAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                friends.add(new User());
-                recyclerViewAdapter.notifyItemInserted(friends.size());
-            }
-        });
-
-        fabRemove = (FloatingActionButton) findViewById(R.id.fab_friendslist_remove);
-        fabRemove.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                int index = friends.size();
-                if (index > 1) {
-                    friends.remove(index - 1);
-                    recyclerViewAdapter.notifyItemRemoved(index + 1);
-                }
-            }
-        });
     }
 }
