@@ -154,7 +154,8 @@ public class BitmapMemoryManager implements Parcelable {
     @Nullable
     private Bitmap getBitmapFromDiskCache(String url) {
         try {
-            File path = FileUtils.getImageDirectory(url);
+            File directory = FileUtils.getImageDirectory(url);
+            File path = new File(directory, Uri.parse(url).getLastPathSegment());
             return BitmapFactory.decodeStream(new FileInputStream(path));
         } catch (FileNotFoundException e) {
             Log.e(e.getClass().getSimpleName(), e.getMessage());
