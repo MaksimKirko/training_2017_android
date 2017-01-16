@@ -1,6 +1,5 @@
 package com.github.maximkirko.training_2017_android.adapter;
 
-import android.content.Context;
 import android.support.annotation.IntDef;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,7 +10,9 @@ import com.github.maximkirko.training_2017_android.R;
 import com.github.maximkirko.training_2017_android.adapter.viewholder.HeaderViewHolder;
 import com.github.maximkirko.training_2017_android.adapter.viewholder.UserClickListener;
 import com.github.maximkirko.training_2017_android.adapter.viewholder.UserViewHolder;
+import com.github.maximkirko.training_2017_android.memorymanage.BitmapMemoryManager;
 import com.github.maximkirko.training_2017_android.model.User;
+import com.github.maximkirko.training_2017_android.util.UsersUtils;
 
 import java.lang.annotation.Retention;
 import java.util.List;
@@ -26,7 +27,7 @@ public class FriendsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
 
     private List<User> friends;
     private UserClickListener songClickListener;
-    private Context context;
+    private BitmapMemoryManager bitmapMemoryManager;
 
     private static final int HEADER_POSITION = 0;
 
@@ -47,10 +48,10 @@ public class FriendsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
         return TYPE_ITEM;
     }
 
-    public FriendsRecyclerViewAdapter(List<User> friends, UserClickListener songClickListener, Context context) {
+    public FriendsRecyclerViewAdapter(List<User> friends, UserClickListener songClickListener, BitmapMemoryManager bitmapMemoryManager) {
         this.friends = friends;
         this.songClickListener = songClickListener;
-        this.context = context;
+        this.bitmapMemoryManager = bitmapMemoryManager;
     }
 
     @Override
@@ -65,7 +66,7 @@ public class FriendsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
         if (viewType == TYPE_ITEM) {
             itemView = LayoutInflater.from(viewGroup.getContext())
                     .inflate(R.layout.friendslist_recycler_view_item, viewGroup, false);
-            return new UserViewHolder(itemView, songClickListener);
+            return new UserViewHolder(itemView, songClickListener, bitmapMemoryManager);
         }
 
         return null;
@@ -74,10 +75,10 @@ public class FriendsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
         if (viewHolder instanceof HeaderViewHolder) {
-            ((HeaderViewHolder) viewHolder).onBindData(null);
+            ((HeaderViewHolder) viewHolder).onBindData(friends.size(), UsersUtils.getOnlineCount(friends));
         } else if (viewHolder instanceof UserViewHolder) {
             User user = friends.get(position - 1);
-            ((UserViewHolder) viewHolder).onBindData(user.first_name, user.last_name, user.online, user.getUserPhoto50());
+            ((UserViewHolder) viewHolder).onBindData(user, position - 1);
         }
     }
 

@@ -8,7 +8,7 @@ import com.vk.sdk.VKSdk;
  * Created by MadMax on 09.01.2017.
  */
 
-public class VKFriendsApplication extends Application {
+public class VKSimpleChatApplication extends Application {
 
     @Override
     public void onCreate() {

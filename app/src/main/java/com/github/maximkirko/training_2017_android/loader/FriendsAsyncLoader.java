@@ -3,13 +3,17 @@ package com.github.maximkirko.training_2017_android.loader;
 import android.content.AsyncTaskLoader;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.vk.sdk.api.VKApi;
-import com.vk.sdk.api.VKError;
+import com.vk.sdk.api.VKApiConst;
 import com.vk.sdk.api.VKParameters;
-import com.vk.sdk.api.VKRequest;
-import com.vk.sdk.api.VKResponse;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 /**
  * Created by MadMax on 11.01.2017.
@@ -17,44 +21,56 @@ import com.vk.sdk.api.VKResponse;
 
 public class FriendsAsyncLoader extends AsyncTaskLoader<String> {
 
-    private static final String LOG_REQUEST_COMPLETE = "REQUEST COMPLETE";
-    private static final String LOG_REQUEST_ERROR = "REQUEST ERROR";
-
+    private static final String BASE_URL = "https://api.vk.com/method/";
     private VKParameters params;
-    private String jsonFriendsList;
-    private static boolean flag = false;
 
     public FriendsAsyncLoader(@NonNull Context context, @NonNull VKParameters params) {
         super(context);
         this.params = params;
     }
 
+
+    @Nullable
     @Override
     public String loadInBackground() {
-        final VKRequest request = VKApi.friends().get(this.params);
-        request.executeWithListener(new VKRequest.VKRequestListener() {
-            @Override
-            public void onComplete(VKResponse response) {
-                jsonFriendsList = response.json.toString();
-                Log.i(LOG_REQUEST_COMPLETE, response.json.toString());
-                flag = true;
-            }
 
-            @Override
-            public void onError(VKError error) {
-                Log.e(LOG_REQUEST_ERROR, error.errorMessage);
-                flag = true;
-            }
+        String urlString = getUrlString();
 
-            @Override
-            public void attemptFailed(VKRequest request, int attemptNumber, int totalAttempts) {
-                Log.e(LOG_REQUEST_ERROR, "attempt failed");
-                flag = true;
+        try {
+            URL url = new URL(urlString);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setDoInput(true);
+            connection.connect();
+            BufferedReader br = new BufferedReader(new InputStreamReader((connection.getInputStream())));
+            StringBuilder sb = new StringBuilder();
+            String output;
+            while ((output = br.readLine()) != null) {
+                sb.append(output);
             }
-        });
-        while (!flag) {
-
+            return sb.toString();
+        } catch (IOException e) {
+            Log.e(IOException.class.getSimpleName(), e.getMessage());
         }
-        return jsonFriendsList;
+        return null;
+    }
+
+    private String getUrlString() {
+//        method name
+        String urlString = BASE_URL + "friends.get?";
+
+//        params
+        for (VKParameters.Entry<String, Object> entry : params.entrySet()) {
+            if (entry.getKey() != "access_token" && entry.getValue() != null) {
+                urlString += entry.getKey() + "=" + entry.getValue() + "&";
+            }
+        }
+
+//        access token
+        urlString += "access_token=" + params.get(VKApiConst.ACCESS_TOKEN);
+//        VK API version
+        urlString += "&v=5.8";
+
+        urlString = urlString.replaceAll(" ", "%20");
+        return urlString;
     }
 }

@@ -8,11 +8,11 @@ import android.view.View;
  * Created by MadMax on 06.01.2017.
  */
 
-public class MusicListItemDecorator extends RecyclerView.ItemDecoration {
+public class GridLayoutItemDecorator extends RecyclerView.ItemDecoration {
 
     private int edgeMargin;
 
-    public MusicListItemDecorator(int edgeMargin) {
+    public GridLayoutItemDecorator(int edgeMargin) {
         this.edgeMargin = edgeMargin;
     }
 

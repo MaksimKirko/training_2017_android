@@ -1,5 +1,7 @@
 package com.github.maximkirko.training_2017_android.read;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.JsonReader;
 
 import com.github.maximkirko.training_2017_android.model.User;
@@ -19,7 +21,7 @@ public class FriendsJSONReader implements Reader<User> {
 
     private String jsonFriendsList;
 
-    public FriendsJSONReader(String jsonFriendsList) {
+    public FriendsJSONReader(@NonNull String jsonFriendsList) {
         this.jsonFriendsList = jsonFriendsList;
     }
 
@@ -62,7 +64,7 @@ public class FriendsJSONReader implements Reader<User> {
         int id = 0;
         String first_name = null;
         String last_name = null;
-        String photo_50 = null;
+        String photo_100 = null;
         int online = 0;
 
         reader.beginObject();
@@ -74,8 +76,8 @@ public class FriendsJSONReader implements Reader<User> {
                 first_name = reader.nextString();
             } else if (name.equals("last_name")) {
                 last_name = reader.nextString();
-            } else if (name.equals("photo_50")) {
-                photo_50 = reader.nextString();
+            } else if (name.equals("photo_100")) {
+                photo_100 = reader.nextString();
             } else if (name.equals("online")) {
                 online = reader.nextInt();
             } else {
@@ -84,6 +86,6 @@ public class FriendsJSONReader implements Reader<User> {
         }
         reader.endObject();
 
-        return new User(id, first_name, last_name, photo_50, online != 0);
+        return new User(id, first_name, last_name, photo_100, online != 0);
     }
 }

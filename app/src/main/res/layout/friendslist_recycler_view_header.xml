@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/cardview_musiclist_header"
     style="@style/CardView.Light"
     android:layout_width="match_parent"
@@ -10,13 +11,46 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/textview_musiclist_headertitle"
-            style="@style/TextAppearance.AppCompat.Title"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/margin_friendslist_header_title"
-            android:maxLines="2"
-            android:text="@string/musiclist_header_text_default" />
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/textview_frriendslist_header_friendscount_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin_friendslist_header_title"
+                android:maxLines="1"
+                android:text="@string/friendslist_header_friendscount_title" />
+
+            <TextView
+                android:id="@+id/textview_frriendslist_header_friendscount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin_friendslist_header_title"
+                android:maxLines="1" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/textview_frriendslist_header_friendscount_online_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin_friendslist_header_title"
+                android:maxLines="1"
+                android:text="@string/friendslist_header_friendscount_online_title" />
+
+            <TextView
+                android:id="@+id/textview_frriendslist_header_friendscount_online"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin_friendslist_header_title"
+                android:maxLines="1" />
+        </LinearLayout>
     </LinearLayout>
 </android.support.v7.widget.CardView>

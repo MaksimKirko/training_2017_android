@@ -25,11 +25,12 @@
 
                 <ImageView
                     android:id="@+id/imageview_friendslist_item_photo"
-                    android:layout_width="@dimen/width_friendslist_item_image"
-                    android:layout_height="@dimen/height_friendslist_item_image"
+                    android:layout_width="@dimen/size_friendslist_item_image"
+                    android:layout_height="@dimen/size_friendslist_item_image"
                     android:layout_gravity="center"
                     android:layout_margin="@dimen/margin_friendslist_item_image"
-                    android:src="@drawable/all_default_user_image" />
+                    android:scaleType="centerCrop"
+                    tools:src="@drawable/all_default_user_image" />
 
                 <TextView
                     android:id="@+id/textview_friendslist_item_online_status"
@@ -63,14 +64,14 @@
                     tools:text="Name Name Name Name Name Name" />
 
                 <Button
-                    style="@style/Base.Widget.AppCompat.Button.Borderless.Colored"
+                    style="@style/Widget.AppCompat.Button.Borderless.Colored"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/margin_friendslist_item_title"
                     android:layout_gravity="start"
+                    android:layout_margin="@dimen/margin_friendslist_item_title"
                     android:gravity="start"
                     android:maxLines="2"
-                    android:text="Написать сообщение" />
+                    android:text="@string/friendslist_item_send_message_button_text" />
 
             </LinearLayout>
         </LinearLayout>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/all_background_color"
+    android:orientation="vertical"
+    tools:context="com.github.maximkirko.training_2017_android.activity.WelcomeActivity"
+    android:gravity="center">
+
+    <TextView
+        style="@style/TextAppearance.AppCompat.Title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_margin="@dimen/margin_welcome_activity_all"
+        android:text="@string/welcome_activity_title" />
+
+    <Button
+        android:id="@+id/button_welcome_activity_login"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_welcome_activity_all"
+        android:text="@string/welcome_activity_button_login_text" />
+</LinearLayout>

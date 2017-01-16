@@ -1,6 +1,6 @@
 package com.github.maximkirko.training_2017_android.adapter.viewholder;
 
-import android.support.annotation.Nullable;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
@@ -14,15 +14,18 @@ import com.github.maximkirko.training_2017_android.util.ItemSizeUtils;
 
 public class HeaderViewHolder extends RecyclerView.ViewHolder {
 
-    private TextView titleView;
+    private TextView friendsCountView;
+    private TextView friendsCountOnlineView;
 
     public HeaderViewHolder(View itemView) {
         super(itemView);
         itemView.setLayoutParams(ItemSizeUtils.getLayoutParams(itemView.getContext()));
-        this.titleView = (TextView) itemView.findViewById(R.id.textview_musiclist_headertitle);
+        friendsCountView = (TextView) itemView.findViewById(R.id.textview_frriendslist_header_friendscount);
+        friendsCountOnlineView = (TextView) itemView.findViewById(R.id.textview_frriendslist_header_friendscount_online);
     }
 
-    public void onBindData(@Nullable String title) {
-        this.titleView.setText(title);
+    public void onBindData(@NonNull int friendsCount, @NonNull int friendsCountOnline) {
+        friendsCountView.setText(friendsCount + "");
+        friendsCountOnlineView.setText(friendsCountOnline + "");
     }
 }

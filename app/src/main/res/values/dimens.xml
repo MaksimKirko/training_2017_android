@@ -1,5 +1,7 @@
 <resources>
 
+    <dimen name="margin_welcome_activity_all">8dp</dimen>
+
     <dimen name="margin_friendslist_item_card">6dp</dimen>
 
     <dimen name="margin_friendslist_item_title">12dp</dimen>
@@ -7,14 +9,12 @@
     <dimen name="margin_friendslist_item_image">8dp</dimen>
     <dimen name="margin_friendslist_item_online_status">4dp</dimen>
 
-    <dimen name="width_friendslist_item_image">72dp</dimen>
-    <dimen name="height_friendslist_item_image">72dp</dimen>
+    <dimen name="size_friendslist_item_image">72dp</dimen>
 
     <dimen name="margin_friendslist_header_title">8dp</dimen>
 
-    <dimen name="padding_top_song">36dp</dimen>
-    <dimen name="width_song_image">128dp</dimen>
-    <dimen name="height_song_image">128dp</dimen>
+    <dimen name="padding_top_user_details">36dp</dimen>
+    <dimen name="size_user_details_photo">128dp</dimen>
 
     <dimen name="margin_friendslist_fab">16dp</dimen>
 

@@ -2,8 +2,15 @@
     <string name="app_name">training_2017_android</string>
     <integer name="com_vk_sdk_AppId">5814025</integer>
 
-    <string name="all_online_status_true">Online</string>
-    <string name="friendslist_item_send_message_button_text">Написать сообщение</string>
+    <string name="welcome_activity_title">Welcome to VK Simple Chat</string>
+    <string name="welcome_activity_button_login_text">Login</string>
 
-    <string name="musiclist_header_text_default">Album title</string>
+    <string name="all_online_status_true">Online</string>
+    <string name="friendslist_item_send_message_button_text">Write message</string>
+
+    <string name="friendslist_header_friendscount_title">Friends: </string>
+    <string name="friendslist_header_friendscount_online_title">Online: </string>\
+
+    <string name="user_details_button_open_original_text">Open page</string>
+
 </resources>

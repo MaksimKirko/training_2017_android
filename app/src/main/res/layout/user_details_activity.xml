@@ -4,23 +4,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:paddingTop="@dimen/padding_top_song">
+    android:paddingTop="@dimen/padding_top_user_details">
 
     <ImageView
         android:id="@+id/imageview_user_details_activity_photo"
-        android:layout_width="@dimen/height_song_image"
-        android:layout_height="@dimen/width_song_image"
+        android:layout_width="@dimen/size_user_details_photo"
+        android:layout_height="@dimen/size_user_details_photo"
         android:layout_gravity="center_horizontal"
         android:layout_margin="@dimen/margin_friendslist_item_image"
         android:src="@drawable/all_default_user_image" />
-
-    <TextView
-        android:id="@+id/textview_user_details_activity_name"
-        style="@style/TextAppearance.AppCompat.Title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/margin_friendslist_item_title"
-        tools:text="Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title" />
 
     <TextView
         android:id="@+id/textview_user_details_activity_description"
@@ -28,7 +20,23 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_friendslist_item_description"
+        android:gravity="center"
         tools:text="Description Description Description Description Description " />
 
+    <TextView
+        android:id="@+id/textview_user_details_activity_name"
+        style="@style/TextAppearance.AppCompat.Title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_friendslist_item_title"
+        android:gravity="center"
+        tools:text="Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title Title" />
 
+    <Button
+        android:id="@+id/button_user_details_activity_open_page"
+        style="@style/Widget.AppCompat.Button.Borderless.Colored"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/user_details_button_open_original_text"/>
 </LinearLayout>
