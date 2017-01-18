@@ -14,7 +14,7 @@ public class UsersUtils {
     public static int getOnlineCount(List<User> users) {
         int i = 0;
         for (User user : users) {
-            if (user.online) {
+            if (user.isOnline()) {
                 i++;
             }
         }
@@ -24,7 +24,7 @@ public class UsersUtils {
     public static List<User> getOnline(List<User> users) {
         List<User> onlineUsers = new ArrayList<>();
         for (User user : users) {
-            if (user.online) {
+            if (user.isOnline()) {
                 onlineUsers.add(user);
             }
         }

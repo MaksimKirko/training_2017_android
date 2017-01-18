@@ -6,6 +6,11 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.github.maximkirko.training_2017_android.BuildConfig;
+import com.github.maximkirko.training_2017_android.R;
+import com.github.maximkirko.training_2017_android.model.User;
+import com.github.maximkirko.training_2017_android.read.FriendsJSONReader;
+import com.github.maximkirko.training_2017_android.read.Reader;
 import com.vk.sdk.api.VKApiConst;
 import com.vk.sdk.api.VKParameters;
 
@@ -14,25 +19,24 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
 
 /**
  * Created by MadMax on 11.01.2017.
  */
 
-public class FriendsAsyncLoader extends AsyncTaskLoader<String> {
-
-    private static final String BASE_URL = "https://api.vk.com/method/";
+public class FriendsAsyncLoader extends AsyncTaskLoader<List<User>> {
     private VKParameters params;
+    private Reader<User> reader;
 
     public FriendsAsyncLoader(@NonNull Context context, @NonNull VKParameters params) {
         super(context);
         this.params = params;
     }
 
-
     @Nullable
     @Override
-    public String loadInBackground() {
+    public List<User> loadInBackground() {
 
         String urlString = getUrlString();
 
@@ -41,13 +45,9 @@ public class FriendsAsyncLoader extends AsyncTaskLoader<String> {
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setDoInput(true);
             connection.connect();
-            BufferedReader br = new BufferedReader(new InputStreamReader((connection.getInputStream())));
-            StringBuilder sb = new StringBuilder();
-            String output;
-            while ((output = br.readLine()) != null) {
-                sb.append(output);
-            }
-            return sb.toString();
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader((connection.getInputStream())));
+            String jsonResponse = responseToString(bufferedReader);
+            return getFriendsListFromJson(jsonResponse);
         } catch (IOException e) {
             Log.e(IOException.class.getSimpleName(), e.getMessage());
         }
@@ -55,22 +55,42 @@ public class FriendsAsyncLoader extends AsyncTaskLoader<String> {
     }
 
     private String getUrlString() {
-//        method name
-        String urlString = BASE_URL + "friends.get?";
+        //  method name
+        String urlString = getContext().getString(R.string.base_vk_api_url) + "friends.get?";
 
-//        params
+        //  params
         for (VKParameters.Entry<String, Object> entry : params.entrySet()) {
             if (entry.getKey() != "access_token" && entry.getValue() != null) {
                 urlString += entry.getKey() + "=" + entry.getValue() + "&";
             }
         }
 
-//        access token
+        //  access token
         urlString += "access_token=" + params.get(VKApiConst.ACCESS_TOKEN);
-//        VK API version
+        //  VK API version
         urlString += "&v=5.8";
 
         urlString = urlString.replaceAll(" ", "%20");
         return urlString;
+    }
+
+    private String responseToString(@NonNull BufferedReader bufferedReader) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        String output;
+        while ((output = bufferedReader.readLine()) != null) {
+            sb.append(output);
+        }
+        return sb.toString();
+    }
+
+    @Nullable
+    private List<User> getFriendsListFromJson(String jsonResponse) {
+        try {
+            reader = new FriendsJSONReader(jsonResponse);
+            return reader.readToList();
+        } catch (IOException e) {
+            Log.e(IOException.class.getSimpleName(), e.getMessage());
+        }
+        return null;
     }
 }

@@ -10,7 +10,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.github.maximkirko.training_2017_android.R;
-import com.github.maximkirko.training_2017_android.memorymanage.BitmapMemoryManager;
+import com.github.maximkirko.training_2017_android.bitmapmemorymanager.BitmapMemoryManagerConfigurator;
+import com.github.maximkirko.training_2017_android.loader.ImageLoader;
 import com.github.maximkirko.training_2017_android.model.User;
 
 /**
@@ -25,7 +26,7 @@ public class UserDetailsActivity extends AppCompatActivity implements View.OnCli
     private Button openPageButton;
 
     private User user;
-    private BitmapMemoryManager bitmapMemoryManager;
+    private BitmapMemoryManagerConfigurator bitmapMemoryManagerConfigurator;
 
     private static final String USER_PAGE_BASE_URL = "https://vk.com/id";
 
@@ -41,11 +42,6 @@ public class UserDetailsActivity extends AppCompatActivity implements View.OnCli
 
     private void getIntentExtras() {
         user = this.getIntent().getParcelableExtra(FriendsListActivity.USER_EXTRA);
-        bitmapMemoryManager = this.getIntent().getParcelableExtra(FriendsListActivity.BMM_EXTRA);
-//        bitmapMemoryManager = BitmapMemoryManager.newBuilder()
-//                .setImageHeight(getResources().getDimensionPixelSize(R.dimen.size_user_details_photo))
-//                .setImageWidth(getResources().getDimensionPixelSize(R.dimen.size_user_details_photo))
-//                .build();
     }
 
     private void initViews() {
@@ -57,20 +53,23 @@ public class UserDetailsActivity extends AppCompatActivity implements View.OnCli
     }
 
     private void setViewsValues() {
-        tvTitle.setText(user.first_name + " " + user.last_name);
-        onlineStatusView.setText(user.online ? getResources().getString(R.string.all_online_status_true) : "");
-        if (bitmapMemoryManager != null) {
-            bitmapMemoryManager.setBitmap(user.photo_100, userPhotoView);
-        }
+        ImageLoader imageLoader = ImageLoader.newBuilder()
+                .setTargetView(userPhotoView)
+                .setPlaceHolder(R.drawable.all_default_user_image)
+                .setImageHeight(userPhotoView.getHeight())
+                .setImageWidth(userPhotoView.getWidth())
+                .build();
+        imageLoader.execute(new String[]{user.getPhoto_100()});
+
+        tvTitle.setText(user.getFirst_name() + " " + user.getLast_name());
+        onlineStatusView.setText(user.isOnline() ? getResources().getString(R.string.all_online_status_true) : "");
     }
 
     @Override
     public void onClick(View view) {
-        String url = USER_PAGE_BASE_URL + user.id;
+        String url = USER_PAGE_BASE_URL + user.getId();
         CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
         CustomTabsIntent customTabsIntent = builder.build();
         customTabsIntent.launchUrl(this, Uri.parse(url));
     }
-
-
 }

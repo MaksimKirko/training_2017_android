@@ -10,7 +10,6 @@ import com.github.maximkirko.training_2017_android.R;
 import com.github.maximkirko.training_2017_android.adapter.viewholder.HeaderViewHolder;
 import com.github.maximkirko.training_2017_android.adapter.viewholder.UserClickListener;
 import com.github.maximkirko.training_2017_android.adapter.viewholder.UserViewHolder;
-import com.github.maximkirko.training_2017_android.memorymanage.BitmapMemoryManager;
 import com.github.maximkirko.training_2017_android.model.User;
 import com.github.maximkirko.training_2017_android.util.UsersUtils;
 
@@ -27,7 +26,6 @@ public class FriendsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
 
     private List<User> friends;
     private UserClickListener songClickListener;
-    private BitmapMemoryManager bitmapMemoryManager;
 
     private static final int HEADER_POSITION = 0;
 
@@ -48,15 +46,16 @@ public class FriendsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
         return TYPE_ITEM;
     }
 
-    public FriendsRecyclerViewAdapter(List<User> friends, UserClickListener songClickListener, BitmapMemoryManager bitmapMemoryManager) {
+    public FriendsRecyclerViewAdapter(List<User> friends, UserClickListener songClickListener) {
         this.friends = friends;
         this.songClickListener = songClickListener;
-        this.bitmapMemoryManager = bitmapMemoryManager;
     }
 
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, @ItemType int viewType) {
         View itemView;
+
+        //ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(4, 4, 0, TimeUnit.MILLISECONDS, new LinkedBlockingDeque<Runnable>());
 
         if (viewType == TYPE_HEADER) {
             itemView = LayoutInflater.from(viewGroup.getContext())
@@ -66,7 +65,7 @@ public class FriendsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
         if (viewType == TYPE_ITEM) {
             itemView = LayoutInflater.from(viewGroup.getContext())
                     .inflate(R.layout.friendslist_recycler_view_item, viewGroup, false);
-            return new UserViewHolder(itemView, songClickListener, bitmapMemoryManager);
+            return new UserViewHolder(itemView, songClickListener);
         }
 
         return null;

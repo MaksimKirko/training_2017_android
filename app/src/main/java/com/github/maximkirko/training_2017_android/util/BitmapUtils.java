@@ -2,7 +2,6 @@ package com.github.maximkirko.training_2017_android.util;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.util.Log;
 
 import java.io.InputStream;
 
@@ -11,8 +10,6 @@ public class BitmapUtils {
     public static Bitmap decodeSampledBitmapFromUrl(InputStream inputStream, int reqHeight, int reqWidth) {
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
-        BitmapFactory.decodeStream(inputStream, null, options);
-
         options.inSampleSize = calculateInSampleSize(options, reqHeight, reqWidth);
         options.inJustDecodeBounds = false;
         options.inPreferredConfig = Bitmap.Config.RGB_565;
@@ -25,7 +22,6 @@ public class BitmapUtils {
         int inSampleSize = 1;
 
         if (height > reqHeight || width > reqWidth) {
-
             final int halfHeight = height / 2;
             final int halfWidth = width / 2;
 
@@ -36,5 +32,4 @@ public class BitmapUtils {
         }
         return inSampleSize;
     }
-
 }

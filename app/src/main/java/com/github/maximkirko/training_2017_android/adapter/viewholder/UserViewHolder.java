@@ -7,7 +7,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.github.maximkirko.training_2017_android.R;
-import com.github.maximkirko.training_2017_android.memorymanage.BitmapMemoryManager;
+import com.github.maximkirko.training_2017_android.loader.ImageLoader;
 import com.github.maximkirko.training_2017_android.model.User;
 import com.github.maximkirko.training_2017_android.util.ItemSizeUtils;
 
@@ -20,8 +20,6 @@ public class UserViewHolder extends RecyclerView.ViewHolder implements View.OnCl
     private ImageView userPhotoView;
 
     private int position;
-    private BitmapMemoryManager bitmapMemoryManager;
-
     private WeakReference<UserClickListener> userClickListenerWeakReference;
 
 
@@ -37,7 +35,7 @@ public class UserViewHolder extends RecyclerView.ViewHolder implements View.OnCl
         return position;
     }
 
-    public UserViewHolder(@NonNull View itemView, @NonNull UserClickListener userClickListener, @NonNull BitmapMemoryManager bitmapMemoryManager) {
+    public UserViewHolder(@NonNull View itemView, @NonNull UserClickListener userClickListener) {
         super(itemView);
 
         itemView.setLayoutParams(ItemSizeUtils.getLayoutParams(itemView.getContext()));
@@ -47,14 +45,20 @@ public class UserViewHolder extends RecyclerView.ViewHolder implements View.OnCl
         nameView = (TextView) itemView.findViewById(R.id.textview_friendslist_item_name);
         onlineStatusView = (TextView) itemView.findViewById(R.id.textview_friendslist_item_online_status);
         userPhotoView = (ImageView) itemView.findViewById(R.id.imageview_friendslist_item_photo);
-
-        this.bitmapMemoryManager = bitmapMemoryManager;
     }
 
     public void onBindData(@NonNull User user, @NonNull int position) {
-        bitmapMemoryManager.setBitmap(user.photo_100, userPhotoView);
-        nameView.setText(user.first_name + " " + user.last_name);
-        onlineStatusView.setText(user.online ? itemView.getResources().getString(R.string.all_online_status_true) : "");
+
+        ImageLoader imageLoader = ImageLoader.newBuilder()
+                .setTargetView(userPhotoView)
+                .setPlaceHolder(R.drawable.all_default_user_image)
+                .setImageHeight(userPhotoView.getHeight())
+                .setImageWidth(userPhotoView.getWidth())
+                .build();
+        imageLoader.execute(new String[]{user.getPhoto_100()});
+
+        nameView.setText(user.getFirst_name() + " " + user.getLast_name());
+        onlineStatusView.setText(user.isOnline() ? itemView.getResources().getString(R.string.all_online_status_true) : "");
         this.position = position;
     }
 }
