@@ -23,10 +23,6 @@ import com.vk.sdk.api.VKError;
 
 public class WelcomeActivity extends AppCompatActivity implements View.OnClickListener {
 
-//    8) Ref на WeakRef для ImageView
-//    9) В одно время может грузиться не больше 4-ех картинок.
-//    10) Должна быть возможность остановки загрузки картинок
-
     private Button loginButton;
 
     private SharedPreferences sharedPreferences;
@@ -52,7 +48,6 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void startFriendsListActivity() {
-//        TODO intent flags
         Intent intent = new Intent(this, FriendsListActivity.class);
         startActivity(intent);
         finish();

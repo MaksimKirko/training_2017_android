@@ -52,6 +52,14 @@ public class FriendsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
     }
 
     @Override
+    public void onViewDetachedFromWindow(RecyclerView.ViewHolder holder) {
+        super.onViewDetachedFromWindow(holder);
+        if (holder instanceof UserViewHolder) {
+            ((UserViewHolder) holder).cancelTask();
+        }
+    }
+
+    @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, @ItemType int viewType) {
         View itemView;
 

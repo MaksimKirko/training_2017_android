@@ -1,11 +1,12 @@
 package com.github.maximkirko.training_2017_android.loader;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import com.github.maximkirko.training_2017_android.application.VKSimpleChatApplication;
 import com.github.maximkirko.training_2017_android.bitmapmemorymanager.BitmapMemoryManagerConfigurator;
@@ -13,8 +14,10 @@ import com.github.maximkirko.training_2017_android.util.BitmapUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by MadMax on 18.01.2017.
@@ -24,7 +27,7 @@ public class ImageLoader extends AsyncTask<String, Void, Bitmap> {
 
     // region fields for builder
     private String url;
-    private ImageView targetView;
+    private WeakReference<ImageView> targetView;
     private int placeHolder;
     private int imageHeight;
     private int imageWidth;
@@ -32,6 +35,8 @@ public class ImageLoader extends AsyncTask<String, Void, Bitmap> {
 
     // link on configurator
     private BitmapMemoryManagerConfigurator bitmapMemoryManagerConfigurator = VKSimpleChatApplication.bitmapMemoryManagerConfigurator;
+
+    private ProgressBar progressBar;
 
     private ImageLoader() {
     }
@@ -46,7 +51,7 @@ public class ImageLoader extends AsyncTask<String, Void, Bitmap> {
         }
 
         public Builder setTargetView(ImageView targetView) {
-            ImageLoader.this.targetView = targetView;
+            ImageLoader.this.targetView = new WeakReference<>(targetView);
             return this;
         }
 
@@ -65,12 +70,18 @@ public class ImageLoader extends AsyncTask<String, Void, Bitmap> {
             return this;
         }
 
+        public Builder setProgressBar(ProgressBar progressBar) {
+            ImageLoader.this.progressBar = progressBar;
+            return this;
+        }
+
         public ImageLoader build() {
             ImageLoader imageLoader = new ImageLoader();
             imageLoader.targetView = ImageLoader.this.targetView;
             imageLoader.placeHolder = ImageLoader.this.placeHolder;
             imageLoader.imageHeight = ImageLoader.this.imageHeight;
             imageLoader.imageWidth = ImageLoader.this.imageWidth;
+            imageLoader.progressBar = ImageLoader.this.progressBar;
             return ImageLoader.this;
         }
     }
@@ -78,12 +89,18 @@ public class ImageLoader extends AsyncTask<String, Void, Bitmap> {
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        targetView.setImageResource(placeHolder);
+        targetView.get().setImageResource(placeHolder);
+        progressBar.setVisibility(View.VISIBLE);
     }
 
     @Override
     protected Bitmap doInBackground(String... strings) {
         url = strings[0];
+//        try {
+//            TimeUnit.SECONDS.sleep(2);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
         Bitmap bitmap = bitmapMemoryManagerConfigurator.getBitmapMemoryCacheManager().getBitmapFromCache(url);
         if (bitmap == null) {
             bitmap = bitmapMemoryManagerConfigurator.getBitmapDiskCacheManager().getBitmapFromCache(url);
@@ -102,9 +119,10 @@ public class ImageLoader extends AsyncTask<String, Void, Bitmap> {
     @Override
     protected void onPostExecute(Bitmap bitmap) {
         super.onPostExecute(bitmap);
-        targetView.setImageBitmap(bitmap);
+        targetView.get().setImageBitmap(bitmap);
         bitmapMemoryManagerConfigurator.getBitmapDiskCacheManager().addBitmapToCache(Uri.parse(url).getLastPathSegment(), bitmap);
         bitmapMemoryManagerConfigurator.getBitmapMemoryCacheManager().addBitmapToCache(url, bitmap);
+        progressBar.setVisibility(View.INVISIBLE);
     }
 
     private Bitmap getBitmapFromNetwork(String urlString) {
@@ -114,8 +132,7 @@ public class ImageLoader extends AsyncTask<String, Void, Bitmap> {
             connection.setDoInput(true);
             connection.connect();
             InputStream input = connection.getInputStream();
-            Bitmap bitmap = BitmapUtils.decodeSampledBitmapFromUrl(input, imageHeight, imageWidth);
-            return bitmap;//BitmapFactory.decodeStream(input);
+            return BitmapUtils.decodeSampledBitmapFromUrl(input, imageHeight, imageWidth);
         } catch (IOException e) {
             Log.e(IOException.class.getSimpleName(), e.getMessage());
         }

@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.github.maximkirko.training_2017_android.R;
@@ -12,6 +13,9 @@ import com.github.maximkirko.training_2017_android.model.User;
 import com.github.maximkirko.training_2017_android.util.ItemSizeUtils;
 
 import java.lang.ref.WeakReference;
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 public class UserViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
@@ -21,7 +25,7 @@ public class UserViewHolder extends RecyclerView.ViewHolder implements View.OnCl
 
     private int position;
     private WeakReference<UserClickListener> userClickListenerWeakReference;
-
+    private ImageLoader imageLoader;
 
     @Override
     public void onClick(View v) {
@@ -48,17 +52,22 @@ public class UserViewHolder extends RecyclerView.ViewHolder implements View.OnCl
     }
 
     public void onBindData(@NonNull User user, @NonNull int position) {
-
-        ImageLoader imageLoader = ImageLoader.newBuilder()
+        imageLoader = ImageLoader.newBuilder()
                 .setTargetView(userPhotoView)
                 .setPlaceHolder(R.drawable.all_default_user_image)
                 .setImageHeight(userPhotoView.getHeight())
                 .setImageWidth(userPhotoView.getWidth())
+                .setProgressBar((ProgressBar) itemView.findViewById(R.id.progressbar_friendslist_item))
                 .build();
-        imageLoader.execute(new String[]{user.getPhoto_100()});
+        imageLoader.executeOnExecutor(new ThreadPoolExecutor(4, 4, 0, TimeUnit.SECONDS, new LinkedBlockingDeque<Runnable>()), user.getPhoto_100());
+        //imageLoader.execute(new String[]{user.getPhoto_100()});
 
         nameView.setText(user.getFirst_name() + " " + user.getLast_name());
         onlineStatusView.setText(user.isOnline() ? itemView.getResources().getString(R.string.all_online_status_true) : "");
         this.position = position;
+    }
+
+    public void cancelTask() {
+        imageLoader.cancel(true);
     }
 }
