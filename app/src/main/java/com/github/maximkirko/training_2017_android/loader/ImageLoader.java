@@ -4,9 +4,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.view.View;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 
 import com.github.maximkirko.training_2017_android.application.VKSimpleChatApplication;
 import com.github.maximkirko.training_2017_android.bitmapmemorymanager.BitmapMemoryManagerConfigurator;
@@ -17,7 +15,6 @@ import java.io.InputStream;
 import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by MadMax on 18.01.2017.
@@ -35,8 +32,6 @@ public class ImageLoader extends AsyncTask<String, Void, Bitmap> {
 
     // link on configurator
     private BitmapMemoryManagerConfigurator bitmapMemoryManagerConfigurator = VKSimpleChatApplication.bitmapMemoryManagerConfigurator;
-
-    private ProgressBar progressBar;
 
     private ImageLoader() {
     }
@@ -70,18 +65,12 @@ public class ImageLoader extends AsyncTask<String, Void, Bitmap> {
             return this;
         }
 
-        public Builder setProgressBar(ProgressBar progressBar) {
-            ImageLoader.this.progressBar = progressBar;
-            return this;
-        }
-
         public ImageLoader build() {
             ImageLoader imageLoader = new ImageLoader();
             imageLoader.targetView = ImageLoader.this.targetView;
             imageLoader.placeHolder = ImageLoader.this.placeHolder;
             imageLoader.imageHeight = ImageLoader.this.imageHeight;
             imageLoader.imageWidth = ImageLoader.this.imageWidth;
-            imageLoader.progressBar = ImageLoader.this.progressBar;
             return ImageLoader.this;
         }
     }
@@ -90,7 +79,6 @@ public class ImageLoader extends AsyncTask<String, Void, Bitmap> {
     protected void onPreExecute() {
         super.onPreExecute();
         targetView.get().setImageResource(placeHolder);
-        progressBar.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -122,7 +110,6 @@ public class ImageLoader extends AsyncTask<String, Void, Bitmap> {
         targetView.get().setImageBitmap(bitmap);
         bitmapMemoryManagerConfigurator.getBitmapDiskCacheManager().addBitmapToCache(Uri.parse(url).getLastPathSegment(), bitmap);
         bitmapMemoryManagerConfigurator.getBitmapMemoryCacheManager().addBitmapToCache(url, bitmap);
-        progressBar.setVisibility(View.INVISIBLE);
     }
 
     private Bitmap getBitmapFromNetwork(String urlString) {

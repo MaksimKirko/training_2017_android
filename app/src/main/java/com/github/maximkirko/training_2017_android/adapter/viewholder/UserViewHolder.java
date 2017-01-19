@@ -57,7 +57,6 @@ public class UserViewHolder extends RecyclerView.ViewHolder implements View.OnCl
                 .setPlaceHolder(R.drawable.all_default_user_image)
                 .setImageHeight(userPhotoView.getHeight())
                 .setImageWidth(userPhotoView.getWidth())
-                .setProgressBar((ProgressBar) itemView.findViewById(R.id.progressbar_friendslist_item))
                 .build();
         imageLoader.executeOnExecutor(new ThreadPoolExecutor(4, 4, 0, TimeUnit.SECONDS, new LinkedBlockingDeque<Runnable>()), user.getPhoto_100());
         //imageLoader.execute(new String[]{user.getPhoto_100()});
