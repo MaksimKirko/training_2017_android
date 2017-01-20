@@ -53,13 +53,12 @@ public class UserDetailsActivity extends AppCompatActivity implements View.OnCli
     }
 
     private void setViewsValues() {
-        ImageLoader imageLoader = ImageLoader.newBuilder()
+        ImageLoader.newLoader()
                 .setTargetView(userPhotoView)
                 .setPlaceHolder(R.drawable.all_default_user_image)
                 .setImageHeight(userPhotoView.getHeight())
                 .setImageWidth(userPhotoView.getWidth())
-                .build();
-        imageLoader.execute(new String[]{user.getPhoto_100()});
+                .load(user.getPhoto_100());
 
         tvTitle.setText(user.getFirst_name() + " " + user.getLast_name());
         onlineStatusView.setText(user.isOnline() ? getResources().getString(R.string.all_online_status_true) : "");

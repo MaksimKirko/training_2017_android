@@ -15,6 +15,8 @@ import com.github.maximkirko.training_2017_android.util.UsersUtils;
 
 import java.lang.annotation.Retention;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import static java.lang.annotation.RetentionPolicy.SOURCE;
 
@@ -26,6 +28,7 @@ public class FriendsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
 
     private List<User> friends;
     private UserClickListener songClickListener;
+    private ExecutorService executorService;
 
     private static final int HEADER_POSITION = 0;
 
@@ -49,6 +52,7 @@ public class FriendsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
     public FriendsRecyclerViewAdapter(List<User> friends, UserClickListener songClickListener) {
         this.friends = friends;
         this.songClickListener = songClickListener;
+        executorService = Executors.newFixedThreadPool(2);
     }
 
     @Override
@@ -63,8 +67,6 @@ public class FriendsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, @ItemType int viewType) {
         View itemView;
 
-        //ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(4, 4, 0, TimeUnit.MILLISECONDS, new LinkedBlockingDeque<Runnable>());
-
         if (viewType == TYPE_HEADER) {
             itemView = LayoutInflater.from(viewGroup.getContext())
                     .inflate(R.layout.friendslist_recycler_view_header, viewGroup, false);
@@ -73,9 +75,8 @@ public class FriendsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
         if (viewType == TYPE_ITEM) {
             itemView = LayoutInflater.from(viewGroup.getContext())
                     .inflate(R.layout.friendslist_recycler_view_item, viewGroup, false);
-            return new UserViewHolder(itemView, songClickListener);
+            return new UserViewHolder(itemView, songClickListener, executorService);
         }
-
         return null;
     }
 

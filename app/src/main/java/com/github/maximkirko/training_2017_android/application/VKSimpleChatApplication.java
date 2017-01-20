@@ -24,10 +24,6 @@ public class VKSimpleChatApplication extends Application {
         super.onCreate();
         VKSdk.initialize(this.getApplicationContext());
         initBitmapMemoryManager();
-
-        CacheManager cacheManager = bitmapMemoryManagerConfigurator.getBitmapMemoryCacheManager();
-
-        Log.i("", "");
     }
 
     private void initBitmapMemoryManager() {

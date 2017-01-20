@@ -10,11 +10,9 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        resValue 'string', 'base_vk_api_url', 'https://api.vk.com/method/'
     }
     buildTypes {
-        debug {
-            resValue 'string', 'base_vk_api_url', 'https://api.vk.com/method/'
-        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
