@@ -12,7 +12,6 @@ import com.github.maximkirko.training_2017_android.model.User;
 import com.github.maximkirko.training_2017_android.util.ItemSizeUtils;
 
 import java.lang.ref.WeakReference;
-import java.util.concurrent.ExecutorService;
 
 public class UserViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
@@ -23,7 +22,6 @@ public class UserViewHolder extends RecyclerView.ViewHolder implements View.OnCl
     private int position;
     private WeakReference<UserClickListener> userClickListenerWeakReference;
     private ImageLoader imageLoader;
-    private ExecutorService executorService;
 
     @Override
     public void onClick(View v) {
@@ -37,13 +35,12 @@ public class UserViewHolder extends RecyclerView.ViewHolder implements View.OnCl
         return position;
     }
 
-    public UserViewHolder(@NonNull View itemView, @NonNull UserClickListener userClickListener, @NonNull ExecutorService executorService) {
+    public UserViewHolder(@NonNull View itemView, @NonNull UserClickListener userClickListener) {
         super(itemView);
 
         itemView.setLayoutParams(ItemSizeUtils.getLayoutParams(itemView.getContext()));
         userClickListenerWeakReference = new WeakReference<>(userClickListener);
         itemView.setOnClickListener(this);
-        this.executorService = executorService;
 
         nameView = (TextView) itemView.findViewById(R.id.textview_friendslist_item_name);
         onlineStatusView = (TextView) itemView.findViewById(R.id.textview_friendslist_item_online_status);
@@ -53,7 +50,6 @@ public class UserViewHolder extends RecyclerView.ViewHolder implements View.OnCl
     public void onBindData(@NonNull User user, @NonNull int position) {
         imageLoader = ImageLoader.newLoader()
                 .setTargetView(userPhotoView)
-                .setExecutorService(executorService)
                 .setPlaceHolder(R.drawable.all_default_user_image)
                 .setImageHeight(itemView.getResources().getDimensionPixelSize(R.dimen.size_friendslist_item_image))
                 .setImageWidth(itemView.getResources().getDimensionPixelSize(R.dimen.size_friendslist_item_image))

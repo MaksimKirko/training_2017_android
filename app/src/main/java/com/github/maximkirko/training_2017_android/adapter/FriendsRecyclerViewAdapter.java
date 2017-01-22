@@ -28,7 +28,6 @@ public class FriendsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
 
     private List<User> friends;
     private UserClickListener songClickListener;
-    private ExecutorService executorService;
 
     private static final int HEADER_POSITION = 0;
 
@@ -52,7 +51,6 @@ public class FriendsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
     public FriendsRecyclerViewAdapter(List<User> friends, UserClickListener songClickListener) {
         this.friends = friends;
         this.songClickListener = songClickListener;
-        executorService = Executors.newFixedThreadPool(2);
     }
 
     @Override
@@ -75,7 +73,7 @@ public class FriendsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
         if (viewType == TYPE_ITEM) {
             itemView = LayoutInflater.from(viewGroup.getContext())
                     .inflate(R.layout.friendslist_recycler_view_item, viewGroup, false);
-            return new UserViewHolder(itemView, songClickListener, executorService);
+            return new UserViewHolder(itemView, songClickListener);
         }
         return null;
     }

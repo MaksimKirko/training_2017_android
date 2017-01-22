@@ -17,6 +17,7 @@ import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Created by MadMax on 18.01.2017.
@@ -27,14 +28,15 @@ public class ImageLoader extends AsyncTask<String, Void, Bitmap> {
     // region fields for builder
     private String url;
     private WeakReference<ImageView> targetView;
-    private ExecutorService executorService;
     private int placeHolder;
     private int imageHeight;
     private int imageWidth;
     // endregion
 
+    private static ExecutorService executorService = Executors.newFixedThreadPool(4);
+
     // link on configurator
-    private BitmapMemoryManagerConfigurator bitmapMemoryManagerConfigurator = VKSimpleChatApplication.bitmapMemoryManagerConfigurator;
+    private BitmapMemoryManagerConfigurator bitmapMemoryManagerConfigurator = VKSimpleChatApplication.getBitmapManagerConfigurator();
 
     private ImageLoader() {
     }
@@ -50,11 +52,6 @@ public class ImageLoader extends AsyncTask<String, Void, Bitmap> {
 
         public Loader setTargetView(ImageView targetView) {
             ImageLoader.this.targetView = new WeakReference<>(targetView);
-            return this;
-        }
-
-        public Loader setExecutorService(ExecutorService executorService) {
-            ImageLoader.this.executorService = executorService;
             return this;
         }
 
@@ -77,16 +74,11 @@ public class ImageLoader extends AsyncTask<String, Void, Bitmap> {
             ImageLoader imageLoader = new ImageLoader();
             imageLoader.url = url;
             imageLoader.targetView = ImageLoader.this.targetView;
-            imageLoader.executorService = ImageLoader.this.executorService;
             imageLoader.placeHolder = ImageLoader.this.placeHolder;
             imageLoader.imageHeight = ImageLoader.this.imageHeight;
             imageLoader.imageWidth = ImageLoader.this.imageWidth;
 
-            if (imageLoader.executorService != null) {
-                imageLoader.executeOnExecutor(imageLoader.executorService);
-            } else {
-                imageLoader.execute();
-            }
+            imageLoader.executeOnExecutor(executorService);
             return imageLoader;
         }
     }

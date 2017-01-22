@@ -14,7 +14,11 @@ import com.vk.sdk.VKSdk;
 
 public class VKSimpleChatApplication extends Application {
 
-    public static BitmapMemoryManagerConfigurator bitmapMemoryManagerConfigurator;
+    private static BitmapMemoryManagerConfigurator bitmapMemoryManagerConfigurator;
+
+    public static BitmapMemoryManagerConfigurator getBitmapManagerConfigurator() {
+        return bitmapMemoryManagerConfigurator;
+    }
 
     private static final int MEMORY_CACHE_SIZE = 4194304; //4mb
     private static final int DISK_CACHE_SIZE = 4194304;
