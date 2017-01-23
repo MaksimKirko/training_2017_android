@@ -6,6 +6,7 @@ import android.util.Log;
 import com.github.maximkirko.training_2017_android.R;
 import com.github.maximkirko.training_2017_android.bitmapmemorymanager.BitmapMemoryManagerConfigurator;
 import com.github.maximkirko.training_2017_android.bitmapmemorymanager.CacheManager;
+import com.github.maximkirko.training_2017_android.db.DBHelper;
 import com.vk.sdk.VKSdk;
 
 /**

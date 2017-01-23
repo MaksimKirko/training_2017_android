@@ -34,6 +34,9 @@
             android:name="com.vk.sdk.VKServiceActivity"
             android:label="ServiceActivity"
             android:theme="@style/VK.Transparent" />
+        <provider
+            android:authorities="com.github.maximkirko.providers.friends"
+            android:name=".contentprovider.FriendsContentProvider" />
     </application>
 
 </manifest>

@@ -15,8 +15,6 @@ import com.github.maximkirko.training_2017_android.util.UsersUtils;
 
 import java.lang.annotation.Retention;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import static java.lang.annotation.RetentionPolicy.SOURCE;
 
@@ -24,15 +22,15 @@ import static java.lang.annotation.RetentionPolicy.SOURCE;
  * Created by MadMax on 25.12.2016.
  */
 
-public class FriendsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class FriendsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private List<User> friends;
     private UserClickListener songClickListener;
 
-    private static final int HEADER_POSITION = 0;
+    public static final int HEADER_POSITION = 0;
 
-    private static final int TYPE_HEADER = 0;
-    private static final int TYPE_ITEM = 1;
+    public static final int TYPE_HEADER = 0;
+    public static final int TYPE_ITEM = 1;
 
     @Retention(SOURCE)
     @IntDef({TYPE_HEADER, TYPE_ITEM})
@@ -48,7 +46,7 @@ public class FriendsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
         return TYPE_ITEM;
     }
 
-    public FriendsRecyclerViewAdapter(List<User> friends, UserClickListener songClickListener) {
+    public FriendsAdapter(List<User> friends, UserClickListener songClickListener) {
         this.friends = friends;
         this.songClickListener = songClickListener;
     }
@@ -86,11 +84,6 @@ public class FriendsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
             User user = friends.get(position - 1);
             ((UserViewHolder) viewHolder).onBindData(user, position - 1);
         }
-    }
-
-    @Override
-    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
-        super.onAttachedToRecyclerView(recyclerView);
     }
 
     @Override
