@@ -56,18 +56,19 @@ public class FrindsDBAdapter extends CursorRecyclerAdapter<RecyclerView.ViewHold
         View itemView;
         RecyclerView.ViewHolder viewHolder = null;
         if (viewType == TYPE_HEADER) {
+            Log.d("CURSOR ROWS COUNT", cursor.getCount() + "");
+            Log.d("CURSOR POSITION", cursor.getPosition() + "");
             itemView = LayoutInflater.from(viewGroup.getContext())
                     .inflate(R.layout.friendslist_recycler_view_header, viewGroup, false);
             viewHolder = new HeaderViewHolder(itemView);
-            Log.d("CURSOR ROWS COUNT", mCursor.getCount() + "");
-            Log.d("CURSOR POSITION", mCursor.getPosition() + "");
-            mCursor.moveToNext();
         }
         if (viewType == TYPE_ITEM) {
+            Log.d("CURSOR ROWS COUNT", cursor.getCount() + "");
+            Log.d("CURSOR POSITION", cursor.getPosition() + "");
             itemView = LayoutInflater.from(viewGroup.getContext())
                     .inflate(R.layout.friendslist_recycler_view_item, viewGroup, false);
             viewHolder = new UserViewHolder(itemView, songClickListener);
-            mCursor.moveToNext();
+            if(cursor.moveToNext());
         }
         return viewHolder;
     }
@@ -80,10 +81,5 @@ public class FrindsDBAdapter extends CursorRecyclerAdapter<RecyclerView.ViewHold
             User user = UserMapper.convert(cursor);
             ((UserViewHolder) viewHolder).onBindData(user, friends.indexOf(user));
         }
-    }
-
-    @Override
-    public int getItemCount() {
-        return friends.size() + 1;
     }
 }

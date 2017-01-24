@@ -1,6 +1,7 @@
 package com.github.maximkirko.training_2017_android.mapper;
 
 import android.database.Cursor;
+import android.util.Log;
 
 import com.github.maximkirko.training_2017_android.db.DBHelper;
 import com.github.maximkirko.training_2017_android.model.User;
