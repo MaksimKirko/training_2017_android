@@ -2,6 +2,7 @@ package com.github.maximkirko.training_2017_android.db;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
@@ -37,6 +38,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(CREATE_TABLE);
         fillData(db);
+        getDBRows(db);
     }
 
     @Override
@@ -62,5 +64,33 @@ public class DBHelper extends SQLiteOpenHelper {
         } else {
             Log.d("DB", "null");
         }
+    }
+
+    private void getDBRows(SQLiteDatabase db) {
+        Log.d("DB", "--- Rows in mytable: ---");
+        // делаем запрос всех данных из таблицы mytable, получаем Cursor
+        Cursor c = db.query("user", null, null, null, null, null, null);
+
+        // ставим позицию курсора на первую строку выборки
+        // если в выборке нет строк, вернется false
+        if (c.moveToFirst()) {
+
+            // определяем номера столбцов по имени в выборке
+            int idColIndex = c.getColumnIndex("id");
+            int firstNameColIndex = c.getColumnIndex("first_name");
+            int lastNameColIndex = c.getColumnIndex("last_name");
+
+            do {
+                // получаем значения по номерам столбцов и пишем все в лог
+                Log.d("DB",
+                        "ID = " + c.getInt(idColIndex) +
+                                ", first_name = " + c.getString(firstNameColIndex) +
+                                ", last_name = " + c.getString(lastNameColIndex));
+                // переход на следующую строку
+                // а если следующей нет (текущая - последняя), то false - выходим из цикла
+            } while (c.moveToNext());
+        } else
+            Log.d("DB", "0 rows");
+        c.close();
     }
 }

@@ -2,6 +2,8 @@ package com.github.maximkirko.training_2017_android.adapter;
 
 import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.ViewGroup;
 
 public abstract class CursorRecyclerAdapter<VH extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<VH> {
 
@@ -25,8 +27,8 @@ public abstract class CursorRecyclerAdapter<VH extends RecyclerView.ViewHolder> 
         if (!mCursor.moveToPosition(position)) {
             throw new IllegalStateException("couldn't move cursor to position " + position);
         }
-
         onBindViewHolder(holder, mCursor);
+        Log.d("CURSOR", mCursor.toString());
     }
 
     public abstract void onBindViewHolder(VH holder, Cursor cursor);
@@ -71,7 +73,7 @@ public abstract class CursorRecyclerAdapter<VH extends RecyclerView.ViewHolder> 
         Cursor oldCursor = mCursor;
         mCursor = newCursor;
         if (newCursor != null) {
-            mRowIDColumn = newCursor.getColumnIndexOrThrow("_id");
+            mRowIDColumn = newCursor.getColumnIndexOrThrow("id");
             mDataValid = true;
             // notify the observers about the new cursor
             notifyDataSetChanged();

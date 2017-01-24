@@ -1,7 +1,8 @@
 package com.github.maximkirko.training_2017_android.mapper;
 
-import android.content.ContentValues;
+import android.database.Cursor;
 
+import com.github.maximkirko.training_2017_android.db.DBHelper;
 import com.github.maximkirko.training_2017_android.model.User;
 
 /**
@@ -10,15 +11,13 @@ import com.github.maximkirko.training_2017_android.model.User;
 
 public class UserMapper {
 
-    public static ContentValues convert(User user) {
-        ContentValues values = new ContentValues();
-
-        values.put("id", user.getId());
-        values.put("first_name", user.getFirst_name());
-        values.put("last_name", user.getLast_name());
-        values.put("photo_100", user.getPhoto_100());
-        values.put("online", user.isOnline());
-
-        return values;
+    public static User convert(Cursor cursor) {
+        User user = new User();
+        user.setId(cursor.getInt(cursor.getColumnIndex(DBHelper.DB_FIELD_USER_ID)));
+        user.setFirst_name(cursor.getString(cursor.getColumnIndex(DBHelper.DB_FIELD_FIRST_NAME)));
+        user.setLast_name(cursor.getString(cursor.getColumnIndex(DBHelper.DB_FIELD_LAST_NAME)));
+        user.setPhoto_100(cursor.getString(cursor.getColumnIndex(DBHelper.DB_FIELD_PHOTO_100)));
+        user.setOnline(cursor.getInt(cursor.getColumnIndex(DBHelper.DB_FIELD_ONLINE)) > 0);
+        return user;
     }
 }

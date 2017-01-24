@@ -16,6 +16,9 @@ import com.vk.sdk.VKCallback;
 import com.vk.sdk.VKScope;
 import com.vk.sdk.VKSdk;
 import com.vk.sdk.api.VKError;
+import com.vk.sdk.util.VKUtil;
+
+import java.util.Arrays;
 
 /**
  * Created by MadMax on 14.01.2017.
@@ -33,6 +36,9 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.welcome_activity);
+
+        String[] fingerprints = VKUtil.getCertificateFingerprint(this, this.getPackageName());
+        Log.d("fingerprint", Arrays.toString(fingerprints));
 
         initViews();
         initSharedPreferences();

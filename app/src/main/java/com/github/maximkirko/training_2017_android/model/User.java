@@ -1,11 +1,7 @@
 package com.github.maximkirko.training_2017_android.model;
 
-import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
-
-import com.vk.sdk.api.model.VKApiUser;
-import com.vk.sdk.api.model.VKApiUserFull;
 
 /**
  * Created by MadMax on 10.01.2017.
@@ -94,7 +90,6 @@ public class User implements Parcelable {
     };
 
     public User() {
-
     }
 
     public User(int id, String first_name, String last_name, String photo_100, boolean online) {
