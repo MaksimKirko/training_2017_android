@@ -1,13 +1,18 @@
 package com.github.maximkirko.training_2017_android.activity;
 
+import android.app.Activity;
 import android.app.LoaderManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 
 import com.github.maximkirko.training_2017_android.R;
 import com.github.maximkirko.training_2017_android.adapter.FriendsAdapter;
@@ -19,6 +24,7 @@ import com.github.maximkirko.training_2017_android.itemanimator.LandingAnimator;
 import com.github.maximkirko.training_2017_android.itemdecorator.DefaultItemDecoration;
 import com.github.maximkirko.training_2017_android.loader.FriendsAsyncLoader;
 import com.github.maximkirko.training_2017_android.model.User;
+import com.github.maximkirko.training_2017_android.service.DownloadService;
 import com.github.maximkirko.training_2017_android.service.VKService;
 import com.vk.sdk.api.VKParameters;
 
@@ -40,21 +46,32 @@ public class FriendsListActivity extends AppCompatActivity
 
     private List<User> friends;
     private VKParameters vkParameters;
+    private Intent serviceIntent;
 
     private static final int LOADER_FRIENDS_ID = 1;
-
     public static final String USER_EXTRA = "USER";
 
-    @Override
-    public void onItemClick(int position) {
-        startUserDetailsActivity(friends.get(position));
-    }
+    private static final String LOG_TAG_DOWNLOAD_SERVICE_RESULT = "DOWNLOAD_SERVICE RESULT";
 
-    private void startUserDetailsActivity(User user) {
-        Intent intent = new Intent(FriendsListActivity.this, UserDetailsActivity.class);
-        intent.putExtra(USER_EXTRA, user);
-        startActivity(intent);
-    }
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            int result = intent.getIntExtra(DownloadService.RESULT_EXTRA, Activity.RESULT_CANCELED);
+            if (result == Activity.RESULT_OK) {
+                friends = intent.getParcelableArrayListExtra(DownloadService.FRIENDS_EXTRA);
+                Log.i(LOG_TAG_DOWNLOAD_SERVICE_RESULT, "OK");
+                initDBHelper();
+                initContentProvider();
+                initAdapter();
+                initItemDecoration();
+                initItemAnimator();
+                initRecyclerView();
+            } else {
+                friends = null;
+                Log.i(LOG_TAG_DOWNLOAD_SERVICE_RESULT, "OK");
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,8 +79,28 @@ public class FriendsListActivity extends AppCompatActivity
         setContentView(R.layout.friendslist_activity);
 
         vkParameters = VKService.initVKParameters();
-        getLoaderManager().initLoader(LOADER_FRIENDS_ID, null, this);
-        startFriendsLoader();
+        initServiceIntent();
+        // getLoaderManager().initLoader(LOADER_FRIENDS_ID, null, this);
+        // startFriendsLoader();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerReceiver(broadcastReceiver, new IntentFilter(
+                DownloadService.NOTIFICATION));
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(broadcastReceiver);
+    }
+
+    private void initServiceIntent() {
+        serviceIntent = new Intent(this, DownloadService.class);
+        serviceIntent.putExtra(DownloadService.VK_PARAMS_EXTRA, vkParameters);
+        startService(serviceIntent);
     }
 
     public void startFriendsLoader() {
@@ -128,5 +165,16 @@ public class FriendsListActivity extends AppCompatActivity
         friendsRecyclerView.addItemDecoration(itemDecoration);
         friendsRecyclerView.setItemAnimator(itemAnimator);
         friendsRecyclerView.setAdapter(recyclerViewAdapter);
+    }
+
+    @Override
+    public void onItemClick(int position) {
+        startUserDetailsActivity(friends.get(position));
+    }
+
+    private void startUserDetailsActivity(User user) {
+        Intent intent = new Intent(this, UserDetailsActivity.class);
+        intent.putExtra(USER_EXTRA, user);
+        startActivity(intent);
     }
 }
