@@ -1,14 +1,15 @@
 package com.github.maximkirko.training_2017_android.activity;
 
 import android.app.Activity;
-import android.app.LoaderManager;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -24,7 +25,6 @@ import com.github.maximkirko.training_2017_android.contentprovider.FriendsConten
 import com.github.maximkirko.training_2017_android.db.DBHelper;
 import com.github.maximkirko.training_2017_android.itemanimator.LandingAnimator;
 import com.github.maximkirko.training_2017_android.itemdecorator.DefaultItemDecoration;
-import com.github.maximkirko.training_2017_android.loader.FriendsAsyncLoader;
 import com.github.maximkirko.training_2017_android.model.User;
 import com.github.maximkirko.training_2017_android.service.DownloadService;
 import com.github.maximkirko.training_2017_android.service.VKService;
@@ -33,7 +33,7 @@ import com.vk.sdk.api.VKParameters;
 import java.util.List;
 
 public class FriendsListActivity extends AppCompatActivity
-        implements UserClickListener, LoaderManager.LoaderCallbacks<List<User>> {
+        implements UserClickListener {
 
     private ProgressBar progressBar;
 
@@ -51,11 +51,11 @@ public class FriendsListActivity extends AppCompatActivity
     private List<User> friends;
     private VKParameters vkParameters;
     private String urlFriendsRequest;
+    private PendingIntent pendingIntent;
     private Intent serviceIntent;
+    private AlarmManager alarmManager;
 
-    private static final int LOADER_FRIENDS_ID = 1;
     public static final String USER_EXTRA = "USER";
-
     private static final String LOG_TAG_DOWNLOAD_SERVICE_RESULT = "DOWNLOAD_SERVICE RESULT";
 
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
@@ -88,8 +88,8 @@ public class FriendsListActivity extends AppCompatActivity
         vkParameters = VKService.initVKParameters();
         urlFriendsRequest = VKService.getUrlString(vkParameters);
         initServiceIntent();
-        // getLoaderManager().initLoader(LOADER_FRIENDS_ID, null, this);
-        // startFriendsLoader();
+        initPendingIntent();
+        initAlarmManager();
     }
 
     @Override
@@ -105,6 +105,17 @@ public class FriendsListActivity extends AppCompatActivity
         unregisterReceiver(broadcastReceiver);
     }
 
+    private void initPendingIntent() {
+        pendingIntent = PendingIntent.getService(this, 0, serviceIntent, 0);
+    }
+
+    private void initAlarmManager() {
+        alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        alarmManager.set(AlarmManager.RTC, System.currentTimeMillis(), pendingIntent);
+        alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME,
+                SystemClock.elapsedRealtime() + 3000, 10 * 60000, pendingIntent);
+    }
+
     private void initProgressBar() {
         progressBar = (ProgressBar) findViewById(R.id.friends_activity_progressbar);
     }
@@ -113,36 +124,6 @@ public class FriendsListActivity extends AppCompatActivity
         progressBar.setVisibility(View.VISIBLE);
         serviceIntent = new Intent(this, DownloadService.class);
         serviceIntent.putExtra(DownloadService.URL_EXTRA, urlFriendsRequest);
-        startService(serviceIntent);
-    }
-
-    public void startFriendsLoader() {
-        Loader<String> loader = getLoaderManager().getLoader(LOADER_FRIENDS_ID);
-        loader.forceLoad();
-    }
-
-    @Override
-    public Loader<List<User>> onCreateLoader(int id, Bundle bundle) {
-        if (id == LOADER_FRIENDS_ID) {
-            return new FriendsAsyncLoader(getApplicationContext(), vkParameters);
-        }
-        return null;
-    }
-
-    @Override
-    public void onLoaderReset(Loader<List<User>> loader) {
-
-    }
-
-    @Override
-    public void onLoadFinished(Loader<List<User>> loader, List<User> friends) {
-        this.friends = friends;
-        initDBHelper();
-        initContentProvider();
-        initAdapter();
-        initItemDecoration();
-        initItemAnimator();
-        initRecyclerView();
     }
 
     private void initDBHelper() {
