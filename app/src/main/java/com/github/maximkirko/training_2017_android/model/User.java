@@ -99,4 +99,15 @@ public class User implements Parcelable {
         this.photo_100 = photo_100;
         this.online = online;
     }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", first_name='" + first_name + '\'' +
+                ", last_name='" + last_name + '\'' +
+                ", photo_100='" + photo_100 + '\'' +
+                ", online=" + online +
+                '}';
+    }
 }

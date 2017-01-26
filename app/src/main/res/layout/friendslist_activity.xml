@@ -16,11 +16,19 @@
         tools:context="com.github.maximkirko.training_2017_android.activity.FriendsListActivity">
 
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/friends_recycler_view"
+            android:id="@+id/recycler_view_friends_activity"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scrollbars="vertical" />
 
     </LinearLayout>
+
+    <ProgressBar
+        style="@style/Widget.AppCompat.ProgressBar"
+        android:id="@+id/friends_activity_progressbar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="invisible"/>
 
 </android.support.design.widget.CoordinatorLayout>

@@ -13,10 +13,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import com.github.maximkirko.training_2017_android.R;
 import com.github.maximkirko.training_2017_android.adapter.FriendsAdapter;
-import com.github.maximkirko.training_2017_android.adapter.FrindsDBAdapter;
+import com.github.maximkirko.training_2017_android.adapter.FriendsDBAdapter;
 import com.github.maximkirko.training_2017_android.adapter.viewholder.UserClickListener;
 import com.github.maximkirko.training_2017_android.contentprovider.FriendsContentProvider;
 import com.github.maximkirko.training_2017_android.db.DBHelper;
@@ -33,6 +35,8 @@ import java.util.List;
 public class FriendsListActivity extends AppCompatActivity
         implements UserClickListener, LoaderManager.LoaderCallbacks<List<User>> {
 
+    private ProgressBar progressBar;
+
     //    region Music RecyclerView settings
     private RecyclerView friendsRecyclerView;
     private RecyclerView.Adapter recyclerViewAdapter;
@@ -46,6 +50,7 @@ public class FriendsListActivity extends AppCompatActivity
 
     private List<User> friends;
     private VKParameters vkParameters;
+    private String urlFriendsRequest;
     private Intent serviceIntent;
 
     private static final int LOADER_FRIENDS_ID = 1;
@@ -58,6 +63,7 @@ public class FriendsListActivity extends AppCompatActivity
         public void onReceive(Context context, Intent intent) {
             int result = intent.getIntExtra(DownloadService.RESULT_EXTRA, Activity.RESULT_CANCELED);
             if (result == Activity.RESULT_OK) {
+                progressBar.setVisibility(View.INVISIBLE);
                 friends = intent.getParcelableArrayListExtra(DownloadService.FRIENDS_EXTRA);
                 Log.i(LOG_TAG_DOWNLOAD_SERVICE_RESULT, "OK");
                 initDBHelper();
@@ -78,7 +84,9 @@ public class FriendsListActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.friendslist_activity);
 
+        initProgressBar();
         vkParameters = VKService.initVKParameters();
+        urlFriendsRequest = VKService.getUrlString(vkParameters);
         initServiceIntent();
         // getLoaderManager().initLoader(LOADER_FRIENDS_ID, null, this);
         // startFriendsLoader();
@@ -97,9 +105,14 @@ public class FriendsListActivity extends AppCompatActivity
         unregisterReceiver(broadcastReceiver);
     }
 
+    private void initProgressBar() {
+        progressBar = (ProgressBar) findViewById(R.id.friends_activity_progressbar);
+    }
+
     private void initServiceIntent() {
+        progressBar.setVisibility(View.VISIBLE);
         serviceIntent = new Intent(this, DownloadService.class);
-        serviceIntent.putExtra(DownloadService.VK_PARAMS_EXTRA, vkParameters);
+        serviceIntent.putExtra(DownloadService.URL_EXTRA, urlFriendsRequest);
         startService(serviceIntent);
     }
 
@@ -143,7 +156,7 @@ public class FriendsListActivity extends AppCompatActivity
     private void initAdapter() {
         if (friendsContentProvider != null) {
             Cursor cursor = getContentResolver().query(FriendsContentProvider.FRIENDS_CONTENT_URI, null, null, null, null);
-            recyclerViewAdapter = new FrindsDBAdapter(cursor, friends, this);
+            recyclerViewAdapter = new FriendsDBAdapter(cursor, friends, this);
         } else {
             recyclerViewAdapter = new FriendsAdapter(friends, this);
         }
@@ -160,7 +173,7 @@ public class FriendsListActivity extends AppCompatActivity
 
     private void initRecyclerView() {
         layoutManager = new LinearLayoutManager(this);
-        friendsRecyclerView = (RecyclerView) findViewById(R.id.friends_recycler_view);
+        friendsRecyclerView = (RecyclerView) findViewById(R.id.recycler_view_friends_activity);
         friendsRecyclerView.setLayoutManager(layoutManager);
         friendsRecyclerView.addItemDecoration(itemDecoration);
         friendsRecyclerView.setItemAnimator(itemAnimator);
@@ -168,13 +181,13 @@ public class FriendsListActivity extends AppCompatActivity
     }
 
     @Override
-    public void onItemClick(int position) {
-        startUserDetailsActivity(friends.get(position));
+    public void onItemClick(int id) {
+        startUserDetailsActivity(id);
     }
 
-    private void startUserDetailsActivity(User user) {
+    private void startUserDetailsActivity(int id) {
         Intent intent = new Intent(this, UserDetailsActivity.class);
-        intent.putExtra(USER_EXTRA, user);
+        intent.putExtra(USER_EXTRA, id);
         startActivity(intent);
     }
 }

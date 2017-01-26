@@ -13,6 +13,7 @@ import android.util.Log;
 
 import com.github.maximkirko.training_2017_android.activity.FriendsListActivity;
 import com.github.maximkirko.training_2017_android.db.DBHelper;
+import com.github.maximkirko.training_2017_android.mapper.UserMapper;
 import com.github.maximkirko.training_2017_android.model.User;
 
 import java.util.List;

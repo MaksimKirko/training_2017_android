@@ -14,7 +14,7 @@ import com.github.maximkirko.training_2017_android.adapter.viewholder.UserClickL
 import com.github.maximkirko.training_2017_android.adapter.viewholder.UserViewHolder;
 import com.github.maximkirko.training_2017_android.mapper.UserMapper;
 import com.github.maximkirko.training_2017_android.model.User;
-import com.github.maximkirko.training_2017_android.util.UsersUtils;
+import com.github.maximkirko.training_2017_android.util.UserUtils;
 
 import java.util.List;
 
@@ -22,17 +22,18 @@ import static com.github.maximkirko.training_2017_android.adapter.FriendsAdapter
 import static com.github.maximkirko.training_2017_android.adapter.FriendsAdapter.TYPE_HEADER;
 import static com.github.maximkirko.training_2017_android.adapter.FriendsAdapter.TYPE_ITEM;
 
-public class FrindsDBAdapter extends CursorRecyclerAdapter<RecyclerView.ViewHolder> {
+public class FriendsDBAdapter extends CursorRecyclerAdapter<RecyclerView.ViewHolder> {
 
     private List<User> friends;
     private UserClickListener songClickListener;
 
-    public FrindsDBAdapter(Cursor c, List<User> friends, UserClickListener songClickListener) {
+    public FriendsDBAdapter(Cursor c, List<User> friends, UserClickListener songClickListener) {
         super(c);
         this.friends = friends;
         this.songClickListener = songClickListener;
     }
 
+    //    ???
     @Override
     @FriendsAdapter.ItemType
     public int getItemViewType(int position) {
@@ -56,19 +57,15 @@ public class FrindsDBAdapter extends CursorRecyclerAdapter<RecyclerView.ViewHold
         View itemView;
         RecyclerView.ViewHolder viewHolder = null;
         if (viewType == TYPE_HEADER) {
-            Log.d("CURSOR ROWS COUNT", cursor.getCount() + "");
-            Log.d("CURSOR POSITION", cursor.getPosition() + "");
             itemView = LayoutInflater.from(viewGroup.getContext())
                     .inflate(R.layout.friendslist_recycler_view_header, viewGroup, false);
             viewHolder = new HeaderViewHolder(itemView);
         }
         if (viewType == TYPE_ITEM) {
-            Log.d("CURSOR ROWS COUNT", cursor.getCount() + "");
-            Log.d("CURSOR POSITION", cursor.getPosition() + "");
             itemView = LayoutInflater.from(viewGroup.getContext())
                     .inflate(R.layout.friendslist_recycler_view_item, viewGroup, false);
             viewHolder = new UserViewHolder(itemView, songClickListener);
-            if(cursor.moveToNext());
+            if (cursor.moveToNext()) ;
         }
         return viewHolder;
     }
@@ -76,10 +73,10 @@ public class FrindsDBAdapter extends CursorRecyclerAdapter<RecyclerView.ViewHold
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, Cursor cursor) {
         if (viewHolder instanceof HeaderViewHolder) {
-            ((HeaderViewHolder) viewHolder).onBindData(friends.size(), UsersUtils.getOnlineCount(friends));
+            ((HeaderViewHolder) viewHolder).onBindData(friends.size(), UserUtils.getOnlineCount(friends));
         } else if (viewHolder instanceof UserViewHolder) {
             User user = UserMapper.convert(cursor);
-            ((UserViewHolder) viewHolder).onBindData(user, friends.indexOf(user));
+            ((UserViewHolder) viewHolder).onBindData(user);
         }
     }
 }

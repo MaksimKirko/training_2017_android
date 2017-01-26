@@ -19,7 +19,7 @@ public class UserViewHolder extends RecyclerView.ViewHolder implements View.OnCl
     private TextView onlineStatusView;
     private ImageView userPhotoView;
 
-    private int position;
+    private int userId;
     private WeakReference<UserClickListener> userClickListenerWeakReference;
     private ImageLoader imageLoader;
 
@@ -27,12 +27,8 @@ public class UserViewHolder extends RecyclerView.ViewHolder implements View.OnCl
     public void onClick(View v) {
         UserClickListener userClickListener = this.userClickListenerWeakReference.get();
         if (userClickListener != null) {
-            userClickListener.onItemClick(getUserPositionByClick());
+            userClickListener.onItemClick(userId);
         }
-    }
-
-    private int getUserPositionByClick() {
-        return position;
     }
 
     public UserViewHolder(@NonNull View itemView, @NonNull UserClickListener userClickListener) {
@@ -47,7 +43,7 @@ public class UserViewHolder extends RecyclerView.ViewHolder implements View.OnCl
         userPhotoView = (ImageView) itemView.findViewById(R.id.imageview_friendslist_item_photo);
     }
 
-    public void onBindData(@NonNull User user, @NonNull int position) {
+    public void onBindData(@NonNull User user) {
         imageLoader = ImageLoader.newLoader()
                 .setTargetView(userPhotoView)
                 .setPlaceHolder(R.drawable.all_default_user_image)
@@ -57,7 +53,7 @@ public class UserViewHolder extends RecyclerView.ViewHolder implements View.OnCl
 
         nameView.setText(user.getFirst_name() + " " + user.getLast_name());
         onlineStatusView.setText(user.isOnline() ? itemView.getResources().getString(R.string.all_online_status_true) : "");
-        this.position = position;
+        this.userId = user.getId();
     }
 
     public void cancelTask() {

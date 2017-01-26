@@ -11,7 +11,7 @@ import com.github.maximkirko.training_2017_android.adapter.viewholder.HeaderView
 import com.github.maximkirko.training_2017_android.adapter.viewholder.UserClickListener;
 import com.github.maximkirko.training_2017_android.adapter.viewholder.UserViewHolder;
 import com.github.maximkirko.training_2017_android.model.User;
-import com.github.maximkirko.training_2017_android.util.UsersUtils;
+import com.github.maximkirko.training_2017_android.util.UserUtils;
 
 import java.lang.annotation.Retention;
 import java.util.List;
@@ -78,10 +78,10 @@ public class FriendsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
         if (viewHolder instanceof HeaderViewHolder) {
-            ((HeaderViewHolder) viewHolder).onBindData(friends.size(), UsersUtils.getOnlineCount(friends));
+            ((HeaderViewHolder) viewHolder).onBindData(friends.size(), UserUtils.getOnlineCount(friends));
         } else if (viewHolder instanceof UserViewHolder) {
             User user = friends.get(position - 1);
-            ((UserViewHolder) viewHolder).onBindData(user, position - 1);
+            ((UserViewHolder) viewHolder).onBindData(user);
         }
     }
 

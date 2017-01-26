@@ -1,5 +1,7 @@
 package com.github.maximkirko.training_2017_android.activity;
 
+import android.content.ContentUris;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.customtabs.CustomTabsIntent;
@@ -11,8 +13,11 @@ import android.widget.TextView;
 
 import com.github.maximkirko.training_2017_android.R;
 import com.github.maximkirko.training_2017_android.bitmapmemorymanager.BitmapMemoryManagerConfigurator;
+import com.github.maximkirko.training_2017_android.contentprovider.FriendsContentProvider;
 import com.github.maximkirko.training_2017_android.loader.ImageLoader;
+import com.github.maximkirko.training_2017_android.mapper.UserMapper;
 import com.github.maximkirko.training_2017_android.model.User;
+import com.github.maximkirko.training_2017_android.util.UserUtils;
 
 /**
  * Created by MadMax on 25.12.2016.
@@ -41,7 +46,16 @@ public class UserDetailsActivity extends AppCompatActivity implements View.OnCli
     }
 
     private void getIntentExtras() {
-        user = this.getIntent().getParcelableExtra(FriendsListActivity.USER_EXTRA);
+        int id = this.getIntent().getIntExtra(FriendsListActivity.USER_EXTRA, -1);
+        initUser(id);
+    }
+
+    private void initUser(int id) {
+        Uri uri = ContentUris.withAppendedId(FriendsContentProvider.FRIENDS_CONTENT_URI, id);
+        Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+        if(cursor.moveToNext()) {
+            user = UserMapper.convert(cursor);
+        }
     }
 
     private void initViews() {
