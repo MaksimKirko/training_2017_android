@@ -24,16 +24,14 @@ import static com.github.maximkirko.training_2017_android.adapter.FriendsAdapter
 
 public class FriendsDBAdapter extends CursorRecyclerAdapter<RecyclerView.ViewHolder> {
 
-    private List<User> friends;
     private UserClickListener songClickListener;
 
-    public FriendsDBAdapter(Cursor c, List<User> friends, UserClickListener songClickListener) {
+    public FriendsDBAdapter(Cursor c, UserClickListener songClickListener) {
         super(c);
-        this.friends = friends;
         this.songClickListener = songClickListener;
     }
 
-    //    ???
+    //    TODO move to class
     @Override
     @FriendsAdapter.ItemType
     public int getItemViewType(int position) {
@@ -73,7 +71,7 @@ public class FriendsDBAdapter extends CursorRecyclerAdapter<RecyclerView.ViewHol
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, Cursor cursor) {
         if (viewHolder instanceof HeaderViewHolder) {
-            ((HeaderViewHolder) viewHolder).onBindData(friends.size(), UserUtils.getOnlineCount(friends));
+            ((HeaderViewHolder) viewHolder).onBindData(cursor.getCount() - 1, UserUtils.getOnlineCount(cursor));
         } else if (viewHolder instanceof UserViewHolder) {
             User user = UserMapper.convert(cursor);
             ((UserViewHolder) viewHolder).onBindData(user);

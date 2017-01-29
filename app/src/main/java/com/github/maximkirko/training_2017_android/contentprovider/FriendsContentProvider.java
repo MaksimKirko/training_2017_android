@@ -3,7 +3,6 @@ package com.github.maximkirko.training_2017_android.contentprovider;
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -11,12 +10,8 @@ import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.github.maximkirko.training_2017_android.activity.FriendsListActivity;
+import com.github.maximkirko.training_2017_android.application.VKSimpleChatApplication;
 import com.github.maximkirko.training_2017_android.db.DBHelper;
-import com.github.maximkirko.training_2017_android.mapper.UserMapper;
-import com.github.maximkirko.training_2017_android.model.User;
-
-import java.util.List;
 
 public class FriendsContentProvider extends ContentProvider {
 
@@ -66,11 +61,13 @@ public class FriendsContentProvider extends ContentProvider {
             default:
                 throw new IllegalArgumentException("Wrong URI: " + uri);
         }
-        db = FriendsListActivity.dbHelper.getWritableDatabase();
+        db = VKSimpleChatApplication.getDbHelper().getWritableDatabase();
         Cursor cursor = db.query(DBHelper.TABLE_NAME, projection, selection,
                 selectionArgs, null, null, sortOrder);
-        cursor.setNotificationUri(getContext().getContentResolver(),
-                FRIENDS_CONTENT_URI);
+        if (getContext() != null) {
+            cursor.setNotificationUri(getContext().getContentResolver(),
+                    FRIENDS_CONTENT_URI);
+        }
         return cursor;
     }
 
@@ -78,10 +75,12 @@ public class FriendsContentProvider extends ContentProvider {
         if (uriMatcher.match(uri) != URI_FRIENDS)
             throw new IllegalArgumentException("Wrong URI: " + uri);
 
-        db = FriendsListActivity.dbHelper.getWritableDatabase();
+        db = VKSimpleChatApplication.getDbHelper().getWritableDatabase();
         long rowID = db.insert(DBHelper.TABLE_NAME, null, values);
         Uri resultUri = ContentUris.withAppendedId(FRIENDS_CONTENT_URI, rowID);
-        getContext().getContentResolver().notifyChange(resultUri, null);
+        if (getContext() != null) {
+            getContext().getContentResolver().notifyChange(resultUri, null);
+        }
         return resultUri;
     }
 
@@ -100,9 +99,11 @@ public class FriendsContentProvider extends ContentProvider {
             default:
                 throw new IllegalArgumentException("Wrong URI: " + uri);
         }
-        db = FriendsListActivity.dbHelper.getWritableDatabase();
+        db = VKSimpleChatApplication.getDbHelper().getWritableDatabase();
         int cnt = db.delete(DBHelper.TABLE_NAME, selection, selectionArgs);
-        getContext().getContentResolver().notifyChange(uri, null);
+        if (getContext() != null) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
         return cnt;
     }
 
@@ -122,9 +123,11 @@ public class FriendsContentProvider extends ContentProvider {
             default:
                 throw new IllegalArgumentException("Wrong URI: " + uri);
         }
-        db = FriendsListActivity.dbHelper.getWritableDatabase();
+        db = VKSimpleChatApplication.getDbHelper().getWritableDatabase();
         int cnt = db.update(DBHelper.TABLE_NAME, values, selection, selectionArgs);
-        getContext().getContentResolver().notifyChange(uri, null);
+        if (getContext() != null) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
         return cnt;
     }
 

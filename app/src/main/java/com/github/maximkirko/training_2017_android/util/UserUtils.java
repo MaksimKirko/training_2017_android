@@ -1,8 +1,10 @@
 package com.github.maximkirko.training_2017_android.util;
 
+import android.database.Cursor;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.github.maximkirko.training_2017_android.mapper.UserMapper;
 import com.github.maximkirko.training_2017_android.model.User;
 
 import java.util.ArrayList;
@@ -36,6 +38,17 @@ public class UserUtils {
     public static int getOnlineCount(@NonNull List<User> users) {
         int i = 0;
         for (User user : users) {
+            if (user.isOnline()) {
+                i++;
+            }
+        }
+        return i;
+    }
+
+    public static int getOnlineCount(@NonNull Cursor cursor) {
+        int i = 0;
+        while(cursor.moveToNext()) {
+            User user = UserMapper.convert(cursor);
             if (user.isOnline()) {
                 i++;
             }

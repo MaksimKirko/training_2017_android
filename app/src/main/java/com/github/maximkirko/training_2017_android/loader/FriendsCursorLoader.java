@@ -14,9 +14,9 @@ public class FriendsCursorLoader extends CursorLoader {
 
     private FriendsContentProvider friendsContentProvider;
 
-    public FriendsCursorLoader(Context context, FriendsContentProvider friendsContentProvider) {
+    public FriendsCursorLoader(Context context) {
         super(context);
-        this.friendsContentProvider = friendsContentProvider;
+        this.friendsContentProvider = new FriendsContentProvider();
     }
 
     @Override

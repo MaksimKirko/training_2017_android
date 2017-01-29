@@ -1,11 +1,8 @@
 package com.github.maximkirko.training_2017_android.application;
 
 import android.app.Application;
-import android.util.Log;
 
-import com.github.maximkirko.training_2017_android.R;
 import com.github.maximkirko.training_2017_android.bitmapmemorymanager.BitmapMemoryManagerConfigurator;
-import com.github.maximkirko.training_2017_android.bitmapmemorymanager.CacheManager;
 import com.github.maximkirko.training_2017_android.db.DBHelper;
 import com.vk.sdk.VKSdk;
 
@@ -15,10 +12,19 @@ import com.vk.sdk.VKSdk;
 
 public class VKSimpleChatApplication extends Application {
 
+//    2) переделать alarmManager
+//    4) notify adapter
+//    6) batch
+
     private static BitmapMemoryManagerConfigurator bitmapMemoryManagerConfigurator;
+    private static DBHelper dbHelper;
 
     public static BitmapMemoryManagerConfigurator getBitmapManagerConfigurator() {
         return bitmapMemoryManagerConfigurator;
+    }
+
+    public static DBHelper getDbHelper() {
+        return dbHelper;
     }
 
     private static final int MEMORY_CACHE_SIZE = 4194304; //4mb
@@ -29,6 +35,7 @@ public class VKSimpleChatApplication extends Application {
         super.onCreate();
         VKSdk.initialize(this.getApplicationContext());
         initBitmapMemoryManager();
+        initDBHelper();
     }
 
     private void initBitmapMemoryManager() {
@@ -36,5 +43,9 @@ public class VKSimpleChatApplication extends Application {
                 .setMemCacheSize(MEMORY_CACHE_SIZE)
                 .setDiskCacheSize(DISK_CACHE_SIZE)
                 .build();
+    }
+
+    private void initDBHelper() {
+        dbHelper = new DBHelper(getApplicationContext());
     }
 }
