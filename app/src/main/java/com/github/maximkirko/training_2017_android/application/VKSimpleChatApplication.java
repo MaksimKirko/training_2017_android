@@ -12,10 +12,6 @@ import com.vk.sdk.VKSdk;
 
 public class VKSimpleChatApplication extends Application {
 
-//    2) переделать alarmManager
-//    4) notify adapter
-//    6) batch
-
     private static BitmapMemoryManagerConfigurator bitmapMemoryManagerConfigurator;
     private static DBHelper dbHelper;
 

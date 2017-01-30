@@ -95,14 +95,14 @@ public class ImageLoader extends AsyncTask<String, Void, Bitmap> {
         if (bitmap == null) {
             bitmap = bitmapMemoryManagerConfigurator.getBitmapDiskCacheManager().getBitmapFromCache(url);
             if (bitmap == null) {
-                Log.i("IMAGE LOADING", "FROM NETWORK");
+//                Log.i("IMAGE LOADING", "FROM NETWORK");
                 return getBitmapFromNetwork(url);
             }
-            Log.i("IMAGE LOADING", "FROM DISK");
+//            Log.i("IMAGE LOADING", "FROM DISK");
             bitmapMemoryManagerConfigurator.getBitmapMemoryCacheManager().addBitmapToCache(url, bitmap);
             return bitmap;
         }
-        Log.i("IMAGE LOADING", "FROM CACHE");
+//        Log.i("IMAGE LOADING", "FROM CACHE");
         return bitmap;
     }
 

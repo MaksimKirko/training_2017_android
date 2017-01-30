@@ -15,9 +15,12 @@ public class DefaultItemDecoration extends RecyclerView.ItemDecoration {
     @Override
     public void getItemOffsets(Rect outRect, View view,
                                RecyclerView parent, RecyclerView.State state) {
-        outRect.left = space;
+        final int position = parent.getChildLayoutPosition(view);
+        if (position <= 1) {
+            outRect.top = space;
+        }
         outRect.right = space;
+        outRect.left = space;
         outRect.bottom = space;
-        outRect.top = space;
     }
 }

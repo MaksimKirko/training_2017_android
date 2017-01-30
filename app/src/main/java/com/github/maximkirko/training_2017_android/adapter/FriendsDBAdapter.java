@@ -41,14 +41,6 @@ public class FriendsDBAdapter extends CursorRecyclerAdapter<RecyclerView.ViewHol
         return TYPE_ITEM;
     }
 
-    @Override
-    public void onViewDetachedFromWindow(RecyclerView.ViewHolder holder) {
-        super.onViewDetachedFromWindow(holder);
-        if (holder instanceof UserViewHolder) {
-            ((UserViewHolder) holder).cancelTask();
-        }
-    }
-
     @Nullable
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, @FriendsAdapter.ItemType int viewType) {
@@ -75,6 +67,15 @@ public class FriendsDBAdapter extends CursorRecyclerAdapter<RecyclerView.ViewHol
         } else if (viewHolder instanceof UserViewHolder) {
             User user = UserMapper.convert(cursor);
             ((UserViewHolder) viewHolder).onBindData(user);
+        }
+    }
+
+
+    @Override
+    public void onViewDetachedFromWindow(RecyclerView.ViewHolder holder) {
+        super.onViewDetachedFromWindow(holder);
+        if (holder instanceof UserViewHolder) {
+            ((UserViewHolder) holder).cancelTask();
         }
     }
 }

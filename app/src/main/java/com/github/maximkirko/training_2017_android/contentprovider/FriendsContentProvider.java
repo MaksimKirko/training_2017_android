@@ -15,7 +15,7 @@ import com.github.maximkirko.training_2017_android.db.DBHelper;
 
 public class FriendsContentProvider extends ContentProvider {
 
-    private static final String AUTHORITY = "com.github.maximkirko.providers.friends";
+    public static final String AUTHORITY = "com.github.maximkirko.providers.friends";
     private static final String PATH = "friends";
 
     public static final Uri FRIENDS_CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + PATH);

@@ -1,20 +1,25 @@
 package com.github.maximkirko.training_2017_android.db;
 
-import android.content.ContentValues;
+import android.content.ContentProviderOperation;
 import android.content.Context;
+import android.content.OperationApplicationException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.RemoteException;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
+import com.github.maximkirko.training_2017_android.contentprovider.FriendsContentProvider;
 import com.github.maximkirko.training_2017_android.model.User;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class DBHelper extends SQLiteOpenHelper {
 
     private final static int DB_VER = 1;
     private static final String DB_NAME = "vk-simple_chat.db";
-    public static final String TABLE_NAME = "user";
+    public static String TABLE_NAME = "user";
     private final String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + " (id integer PRIMARY KEY, first_name text, last_name text, photo_100 text, online boolean);";
     private final String DROP_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME;
 
@@ -39,28 +44,31 @@ public class DBHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(CREATE_TABLE);
-        fillData(db);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL(DROP_TABLE);
+        TABLE_NAME += "_" + newVersion;
         onCreate(db);
     }
 
-    private void fillData(@NonNull SQLiteDatabase db) {
+    public void insertFriendsBatch(@NonNull SQLiteDatabase db, @NonNull Context context) {
         if (friends != null) {
-            ContentValues values;
+            ArrayList<ContentProviderOperation> ops = new ArrayList<>();
             for (User user : friends) {
-                values = new ContentValues();
-
-                values.put(DB_FIELD_USER_ID, user.getId());
-                values.put(DB_FIELD_FIRST_NAME, user.getFirst_name());
-                values.put(DB_FIELD_LAST_NAME, user.getLast_name());
-                values.put(DB_FIELD_PHOTO_100, user.getPhoto_100());
-                values.put(DB_FIELD_ONLINE, user.isOnline());
-
-                db.insert(TABLE_NAME, null, values);
+                ops.add(
+                        ContentProviderOperation.newInsert(FriendsContentProvider.FRIENDS_CONTENT_URI)
+                                .withValue(DB_FIELD_USER_ID, user.getId())
+                                .withValue(DB_FIELD_FIRST_NAME, user.getFirst_name())
+                                .withValue(DB_FIELD_LAST_NAME, user.getLast_name())
+                                .withValue(DB_FIELD_PHOTO_100, user.getPhoto_100())
+                                .withValue(DB_FIELD_ONLINE, user.isOnline())
+                                .build());
+            }
+            try {
+                context.getContentResolver().applyBatch(FriendsContentProvider.AUTHORITY, ops);
+            } catch (RemoteException | OperationApplicationException e) {
+                Log.e(e.getClass().getSimpleName(), e.getMessage());
             }
         }
     }

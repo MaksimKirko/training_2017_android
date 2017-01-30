@@ -30,6 +30,7 @@ public class DownloadService extends IntentService {
     public static final String FRIENDS_EXTRA = "FRIENDS";
     public static final String URL_EXTRA = "URL";
     public static final String NOTIFICATION = "com.github.maximkirko.training_2017_android.service.receiver";
+    public static final String LOG_TAG_DOWNLOAD_SERVICE_RESULT = "DOWNLOAD_SERVICE RESULT";
 
     public DownloadService() {
         super(NAME);
