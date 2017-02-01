@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.github.maximkirko.training_2017_android.application.VKSimpleChatApplication;
 import com.github.maximkirko.training_2017_android.model.User;
 import com.github.maximkirko.training_2017_android.read.FriendsJSONReader;
 import com.github.maximkirko.training_2017_android.read.Reader;
@@ -39,6 +40,13 @@ public class DownloadService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         String urlString = intent.getStringExtra(URL_EXTRA);
+        List<User> friends = getFriendsFromNetwork(urlString);
+        publishResults(friends);
+        saveFriendsToDB(friends);
+    }
+
+    @Nullable
+    private List<User> getFriendsFromNetwork(@NonNull String urlString) {
         try {
             URL url = new URL(urlString);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -47,10 +55,11 @@ public class DownloadService extends IntentService {
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader((connection.getInputStream())));
             String jsonResponse = responseToString(bufferedReader);
             result = Activity.RESULT_OK;
-            publishResults(getFriendsListFromJson(jsonResponse));
+            return getFriendsListFromJson(jsonResponse);
         } catch (IOException e) {
             Log.e(IOException.class.getSimpleName(), e.getMessage());
         }
+        return null;
     }
 
     private String responseToString(@NonNull BufferedReader bufferedReader) throws IOException {
@@ -63,7 +72,7 @@ public class DownloadService extends IntentService {
     }
 
     @Nullable
-    private List<User> getFriendsListFromJson(String jsonResponse) {
+    private List<User> getFriendsListFromJson(@NonNull String jsonResponse) {
         try {
             reader = new FriendsJSONReader(jsonResponse);
             return reader.readToList();
@@ -73,10 +82,15 @@ public class DownloadService extends IntentService {
         return null;
     }
 
-    private void publishResults(List<User> friends) {
+    private void publishResults(@NonNull List<User> friends) {
         Intent intent = new Intent(NOTIFICATION);
         intent.putExtra(RESULT_EXTRA, result);
         intent.putParcelableArrayListExtra(FRIENDS_EXTRA, (ArrayList<? extends Parcelable>) friends);
         sendBroadcast(intent);
+    }
+
+    private void saveFriendsToDB(@NonNull List<User> friends) {
+        VKSimpleChatApplication.getDbHelper().setFriends(friends);
+        VKSimpleChatApplication.getDbHelper().insertFriendsBatch(VKSimpleChatApplication.getDbHelper().getWritableDatabase(), getApplicationContext());
     }
 }

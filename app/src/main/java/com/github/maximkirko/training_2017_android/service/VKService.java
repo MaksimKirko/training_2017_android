@@ -26,7 +26,6 @@ public final class VKService {
 
     public static VKParameters initVKParameters() {
         VKParameters vkParameters = new VKParameters();
-        vkParameters = new VKParameters();
         vkParameters.put(VKApiConst.ACCESS_TOKEN, VKSdk.getAccessToken().accessToken);
         vkParameters.put(VKApiConst.COUNT, 50);
         vkParameters.put(VKApiConst.FIELDS, "nickname, online, last_seen, photo_100");

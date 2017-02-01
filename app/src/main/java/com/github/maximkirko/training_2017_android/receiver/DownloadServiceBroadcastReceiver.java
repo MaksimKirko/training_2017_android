@@ -38,8 +38,6 @@ public class DownloadServiceBroadcastReceiver extends BroadcastReceiver {
         if (result == Activity.RESULT_OK) {
             friends = intent.getParcelableArrayListExtra(DownloadService.FRIENDS_EXTRA);
             Log.i(DownloadService.LOG_TAG_DOWNLOAD_SERVICE_RESULT, "OK");
-            VKSimpleChatApplication.getDbHelper().setFriends(friends);
-            VKSimpleChatApplication.getDbHelper().insertFriendsBatch(VKSimpleChatApplication.getDbHelper().getWritableDatabase(), context);
         } else {
             friends = null;
             Log.i(DownloadService.LOG_TAG_DOWNLOAD_SERVICE_RESULT, "OK");

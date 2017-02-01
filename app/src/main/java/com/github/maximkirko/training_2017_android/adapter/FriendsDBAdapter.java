@@ -70,7 +70,6 @@ public class FriendsDBAdapter extends CursorRecyclerAdapter<RecyclerView.ViewHol
         }
     }
 
-
     @Override
     public void onViewDetachedFromWindow(RecyclerView.ViewHolder holder) {
         super.onViewDetachedFromWindow(holder);
