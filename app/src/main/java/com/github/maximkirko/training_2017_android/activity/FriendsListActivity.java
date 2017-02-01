@@ -7,17 +7,21 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.Loader;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 
 import com.github.maximkirko.training_2017_android.R;
 import com.github.maximkirko.training_2017_android.adapter.FriendsDBAdapter;
 import com.github.maximkirko.training_2017_android.adapter.viewholder.UserClickListener;
+import com.github.maximkirko.training_2017_android.contentobserver.FriendsContentObserver;
 import com.github.maximkirko.training_2017_android.itemanimator.LandingAnimator;
 import com.github.maximkirko.training_2017_android.itemdecorator.DefaultItemDecoration;
 import com.github.maximkirko.training_2017_android.loader.FriendsCursorLoader;
@@ -26,6 +30,8 @@ import com.github.maximkirko.training_2017_android.receiver.BroadcastReceiverCal
 import com.github.maximkirko.training_2017_android.receiver.DownloadServiceBroadcastReceiver;
 import com.github.maximkirko.training_2017_android.service.DownloadService;
 import com.github.maximkirko.training_2017_android.service.VKService;
+import com.vk.sdk.VKSdk;
+import com.vk.sdk.api.VKApiConst;
 import com.vk.sdk.api.VKParameters;
 
 import java.util.List;
@@ -43,6 +49,7 @@ public class FriendsListActivity extends AppCompatActivity
     private RecyclerView.ItemAnimator itemAnimator;
     //    endregion
 
+    private Cursor cursor;
     private List<User> friends;
     private VKParameters vkParameters;
     private String urlFriendsRequest;
@@ -50,6 +57,7 @@ public class FriendsListActivity extends AppCompatActivity
     private Intent serviceIntent;
     private AlarmManager alarmManager;
     private DownloadServiceBroadcastReceiver broadcastReceiver;
+    private FriendsContentObserver friendsContentObserver;
 
     public static final String USER_EXTRA = "USER";
     private static final int LOADER_FRIENDS_ID = 1;
@@ -66,6 +74,16 @@ public class FriendsListActivity extends AppCompatActivity
         initServiceIntent();
         initPendingIntent();
         initAlarmManager();
+
+//        vkParameters = new VKParameters();
+//        vkParameters.put(VKApiConst.ACCESS_TOKEN, VKSdk.getAccessToken().accessToken);
+//        vkParameters.put(VKApiConst.COUNT, 20);
+//        vkParameters.put(VKApiConst.FIELDS, "nickname, online, last_seen, photo_100");
+//        urlFriendsRequest = VKService.getUrlString(vkParameters);
+//        initBroadcastReceiver();
+//        initServiceIntent();
+//        initPendingIntent();
+//        initAlarmManager();
     }
 
     private void initProgressBar() {
@@ -90,14 +108,13 @@ public class FriendsListActivity extends AppCompatActivity
         alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
         alarmManager.set(AlarmManager.RTC, System.currentTimeMillis(), pendingIntent);
         alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME,
-                SystemClock.elapsedRealtime(), 1000 * 60 * 10, pendingIntent);
+                SystemClock.elapsedRealtime(), 1000 * 30 * 1, pendingIntent);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        registerReceiver(broadcastReceiver, new IntentFilter(
-                DownloadService.NOTIFICATION));
+        registerReceiver(broadcastReceiver, new IntentFilter(DownloadService.NOTIFICATION));
     }
 
     @Override
@@ -144,10 +161,18 @@ public class FriendsListActivity extends AppCompatActivity
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+        this.cursor = cursor;
+        initContentObserver();
         initAdapter(cursor);
         initItemDecoration();
         initItemAnimator();
         initRecyclerView();
+    }
+
+    private void initContentObserver() {
+        friendsContentObserver = new FriendsContentObserver(new Handler());
+        friendsContentObserver.setAdapter(recyclerViewAdapter);
+        cursor.registerContentObserver(friendsContentObserver);
     }
 
     private void initAdapter(Cursor cursor) {

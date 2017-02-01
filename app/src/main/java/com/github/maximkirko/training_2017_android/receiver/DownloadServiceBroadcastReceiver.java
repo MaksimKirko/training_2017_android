@@ -8,10 +8,10 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.github.maximkirko.training_2017_android.application.VKSimpleChatApplication;
 import com.github.maximkirko.training_2017_android.model.User;
 import com.github.maximkirko.training_2017_android.service.DownloadService;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
 
 /**
@@ -22,14 +22,14 @@ public class DownloadServiceBroadcastReceiver extends BroadcastReceiver {
 
     private List<User> friends;
 
-    private BroadcastReceiverCallback callback;
+    private WeakReference<BroadcastReceiverCallback> callback;
 
     public DownloadServiceBroadcastReceiver() {
     }
 
     public DownloadServiceBroadcastReceiver(@Nullable List<User> friends, @NonNull BroadcastReceiverCallback callback) {
         this.friends = friends;
-        this.callback = callback;
+        this.callback = new WeakReference<BroadcastReceiverCallback>(callback);
     }
 
     @Override
@@ -42,6 +42,6 @@ public class DownloadServiceBroadcastReceiver extends BroadcastReceiver {
             friends = null;
             Log.i(DownloadService.LOG_TAG_DOWNLOAD_SERVICE_RESULT, "OK");
         }
-        callback.onReceived();
+        callback.get().onReceived();
     }
 }

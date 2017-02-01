@@ -47,7 +47,7 @@ public class UserUtils {
 
     public static int getOnlineCount(@NonNull Cursor cursor) {
         int i = 0;
-        while(cursor.moveToNext()) {
+        while (cursor.moveToNext()) {
             User user = UserMapper.convert(cursor);
             if (user.isOnline()) {
                 i++;
@@ -65,5 +65,14 @@ public class UserUtils {
             }
         }
         return onlineUsers;
+    }
+
+    @NonNull
+    public static List<User> getUserListFromCursor(@NonNull Cursor cursor) {
+        List<User> users = new ArrayList<>();
+        while (cursor.moveToNext()) {
+            users.add(UserMapper.convert(cursor));
+        }
+        return users;
     }
 }

@@ -26,7 +26,7 @@ public class DownloadService extends IntentService {
     private Reader<User> reader;
 
     private int result = Activity.RESULT_CANCELED;
-    private static final String NAME = "DownloadService";
+    public static final String DOWNLOAD_SERVICE_URI = "DownloadService";
     public static final String RESULT_EXTRA = "RESULT";
     public static final String FRIENDS_EXTRA = "FRIENDS";
     public static final String URL_EXTRA = "URL";
@@ -34,7 +34,7 @@ public class DownloadService extends IntentService {
     public static final String LOG_TAG_DOWNLOAD_SERVICE_RESULT = "DOWNLOAD_SERVICE RESULT";
 
     public DownloadService() {
-        super(NAME);
+        super(DOWNLOAD_SERVICE_URI);
     }
 
     @Override
