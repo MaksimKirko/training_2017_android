@@ -7,14 +7,12 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.Loader;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 
@@ -25,16 +23,9 @@ import com.github.maximkirko.training_2017_android.contentobserver.FriendsConten
 import com.github.maximkirko.training_2017_android.itemanimator.LandingAnimator;
 import com.github.maximkirko.training_2017_android.itemdecorator.DefaultItemDecoration;
 import com.github.maximkirko.training_2017_android.loader.FriendsCursorLoader;
-import com.github.maximkirko.training_2017_android.model.User;
 import com.github.maximkirko.training_2017_android.receiver.BroadcastReceiverCallback;
 import com.github.maximkirko.training_2017_android.receiver.DownloadServiceBroadcastReceiver;
 import com.github.maximkirko.training_2017_android.service.DownloadService;
-import com.github.maximkirko.training_2017_android.service.VKService;
-import com.vk.sdk.VKSdk;
-import com.vk.sdk.api.VKApiConst;
-import com.vk.sdk.api.VKParameters;
-
-import java.util.List;
 
 public class FriendsListActivity extends AppCompatActivity
         implements UserClickListener, BroadcastReceiverCallback, LoaderManager.LoaderCallbacks<Cursor> {
@@ -50,9 +41,6 @@ public class FriendsListActivity extends AppCompatActivity
     //    endregion
 
     private Cursor cursor;
-    private List<User> friends;
-    private VKParameters vkParameters;
-    private String urlFriendsRequest;
     private PendingIntent pendingIntent;
     private Intent serviceIntent;
     private AlarmManager alarmManager;
@@ -67,37 +55,75 @@ public class FriendsListActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.friendslist_activity);
 
+        // initialize and show ProgressBar
         initProgressBar();
-        vkParameters = VKService.initVKParameters();
-        urlFriendsRequest = VKService.getUrlString(vkParameters);
+        enableProgressBar();
+
+        // initialize cursor and adapter
+        initContentObserver();
+        initAdapter(cursor);
+        initRecyclerView();
+
+        // initialize download service
         initBroadcastReceiver();
         initServiceIntent();
+        startServiceIntent();
         initPendingIntent();
         initAlarmManager();
-
-//        vkParameters = new VKParameters();
-//        vkParameters.put(VKApiConst.ACCESS_TOKEN, VKSdk.getAccessToken().accessToken);
-//        vkParameters.put(VKApiConst.COUNT, 20);
-//        vkParameters.put(VKApiConst.FIELDS, "nickname, online, last_seen, photo_100");
-//        urlFriendsRequest = VKService.getUrlString(vkParameters);
-//        initBroadcastReceiver();
-//        initServiceIntent();
-//        initPendingIntent();
-//        initAlarmManager();
     }
 
     private void initProgressBar() {
         progressBar = (ProgressBar) findViewById(R.id.friends_activity_progressbar);
     }
 
+    private void enableProgressBar() {
+        progressBar.setVisibility(View.VISIBLE);
+    }
+
+    private void disableProgressBar() {
+        progressBar.setVisibility(View.INVISIBLE);
+    }
+
+    private void initContentObserver() {
+        friendsContentObserver = new FriendsContentObserver(new Handler());
+        friendsContentObserver.setAdapter(recyclerViewAdapter);
+        cursor.registerContentObserver(friendsContentObserver);
+    }
+
+    private void initAdapter(Cursor cursor) {
+        recyclerViewAdapter = new FriendsDBAdapter(cursor, this);
+        initItemDecoration();
+        initItemAnimator();
+    }
+
+    private void initItemDecoration() {
+        int offset = this.getResources().getDimensionPixelSize(R.dimen.margin_friendslist_item_card);
+        itemDecoration = new DefaultItemDecoration(offset);
+    }
+
+    private void initItemAnimator() {
+        itemAnimator = new LandingAnimator();
+    }
+
+    private void initRecyclerView() {
+        layoutManager = new LinearLayoutManager(this);
+        friendsRecyclerView = (RecyclerView) findViewById(R.id.recycler_view_friends_activity);
+        friendsRecyclerView.setLayoutManager(layoutManager);
+        friendsRecyclerView.addItemDecoration(itemDecoration);
+        friendsRecyclerView.setItemAnimator(itemAnimator);
+        friendsRecyclerView.setAdapter(recyclerViewAdapter);
+    }
+
     private void initBroadcastReceiver() {
-        broadcastReceiver = new DownloadServiceBroadcastReceiver(friends, this);
+        broadcastReceiver = new DownloadServiceBroadcastReceiver(this);
     }
 
     private void initServiceIntent() {
-        progressBar.setVisibility(View.VISIBLE);
         serviceIntent = new Intent(this, DownloadService.class);
-        serviceIntent.putExtra(DownloadService.URL_EXTRA, urlFriendsRequest);
+    }
+
+    private void startServiceIntent() {
+        startService(serviceIntent);
     }
 
     private void initPendingIntent() {
@@ -136,7 +162,6 @@ public class FriendsListActivity extends AppCompatActivity
 
     @Override
     public void onReceived() {
-        progressBar.setVisibility(View.INVISIBLE);
         startFriendsLoader();
     }
 
@@ -156,44 +181,11 @@ public class FriendsListActivity extends AppCompatActivity
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+        disableProgressBar();
         this.cursor = cursor;
-        initContentObserver();
-        initAdapter(cursor);
-        initItemDecoration();
-        initItemAnimator();
-        initRecyclerView();
-    }
-
-    private void initContentObserver() {
-        friendsContentObserver = new FriendsContentObserver(new Handler());
-        friendsContentObserver.setAdapter(recyclerViewAdapter);
-        cursor.registerContentObserver(friendsContentObserver);
-    }
-
-    private void initAdapter(Cursor cursor) {
-        recyclerViewAdapter = new FriendsDBAdapter(cursor, this);
-    }
-
-    private void initItemDecoration() {
-        int offset = this.getResources().getDimensionPixelSize(R.dimen.margin_friendslist_item_card);
-        itemDecoration = new DefaultItemDecoration(offset);
-    }
-
-    private void initItemAnimator() {
-        itemAnimator = new LandingAnimator();
-    }
-
-    private void initRecyclerView() {
-        layoutManager = new LinearLayoutManager(this);
-        friendsRecyclerView = (RecyclerView) findViewById(R.id.recycler_view_friends_activity);
-        friendsRecyclerView.setLayoutManager(layoutManager);
-        friendsRecyclerView.addItemDecoration(itemDecoration);
-        friendsRecyclerView.setItemAnimator(itemAnimator);
-        friendsRecyclerView.setAdapter(recyclerViewAdapter);
     }
 }

@@ -20,27 +20,22 @@ import java.util.List;
 
 public class DownloadServiceBroadcastReceiver extends BroadcastReceiver {
 
-    private List<User> friends;
-
     private WeakReference<BroadcastReceiverCallback> callback;
 
     public DownloadServiceBroadcastReceiver() {
     }
 
-    public DownloadServiceBroadcastReceiver(@Nullable List<User> friends, @NonNull BroadcastReceiverCallback callback) {
-        this.friends = friends;
-        this.callback = new WeakReference<BroadcastReceiverCallback>(callback);
+    public DownloadServiceBroadcastReceiver(@NonNull BroadcastReceiverCallback callback) {
+        this.callback = new WeakReference<>(callback);
     }
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        int result = intent.getIntExtra(DownloadService.RESULT_EXTRA, Activity.RESULT_CANCELED);
+        int result = intent.getIntExtra(DownloadService.RESULT_EXTRAS, Activity.RESULT_CANCELED);
         if (result == Activity.RESULT_OK) {
-            friends = intent.getParcelableArrayListExtra(DownloadService.FRIENDS_EXTRA);
             Log.i(DownloadService.LOG_TAG_DOWNLOAD_SERVICE_RESULT, "OK");
         } else {
-            friends = null;
-            Log.i(DownloadService.LOG_TAG_DOWNLOAD_SERVICE_RESULT, "OK");
+            Log.i(DownloadService.LOG_TAG_DOWNLOAD_SERVICE_RESULT, "CANCEL");
         }
         callback.get().onReceived();
     }

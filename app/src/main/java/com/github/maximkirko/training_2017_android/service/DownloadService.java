@@ -12,6 +12,7 @@ import com.github.maximkirko.training_2017_android.application.VKSimpleChatAppli
 import com.github.maximkirko.training_2017_android.model.User;
 import com.github.maximkirko.training_2017_android.read.FriendsJSONReader;
 import com.github.maximkirko.training_2017_android.read.Reader;
+import com.vk.sdk.api.VKParameters;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -27,9 +28,9 @@ public class DownloadService extends IntentService {
 
     private int result = Activity.RESULT_CANCELED;
     public static final String DOWNLOAD_SERVICE_URI = "DownloadService";
-    public static final String RESULT_EXTRA = "RESULT";
-    public static final String FRIENDS_EXTRA = "FRIENDS";
-    public static final String URL_EXTRA = "URL";
+    public static final String IS_FIRST_LOADING_EXTRAS = "IS_FIRST_LOADING";
+    public static final String RESULT_EXTRAS = "RESULT";
+    public static final String FRIENDS_EXTRAS = "FRIENDS";
     public static final String NOTIFICATION = "com.github.maximkirko.training_2017_android.service.receiver";
     public static final String LOG_TAG_DOWNLOAD_SERVICE_RESULT = "DOWNLOAD_SERVICE RESULT";
 
@@ -39,10 +40,21 @@ public class DownloadService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        String urlString = intent.getStringExtra(URL_EXTRA);
+        String urlString;
+        if (intent.getBooleanExtra(IS_FIRST_LOADING_EXTRAS, false)) {
+            urlString = getUrl();
+        } else {
+            urlString = getUrl().replace("count=10", "count=20");
+        }
         List<User> friends = getFriendsFromNetwork(urlString);
-        publishResults(friends);
         saveFriendsToDB(friends);
+        publishResults(friends);
+    }
+
+    @NonNull
+    private String getUrl() {
+        VKParameters vkParameters = VKService.initVKParameters();
+        return VKService.getUrlString(vkParameters);
     }
 
     @Nullable
@@ -82,15 +94,15 @@ public class DownloadService extends IntentService {
         return null;
     }
 
-    private void publishResults(@NonNull List<User> friends) {
-        Intent intent = new Intent(NOTIFICATION);
-        intent.putExtra(RESULT_EXTRA, result);
-        intent.putParcelableArrayListExtra(FRIENDS_EXTRA, (ArrayList<? extends Parcelable>) friends);
-        sendBroadcast(intent);
-    }
-
     private void saveFriendsToDB(@NonNull List<User> friends) {
         VKSimpleChatApplication.getDbHelper().setFriends(friends);
         VKSimpleChatApplication.getDbHelper().insertFriendsBatch(VKSimpleChatApplication.getDbHelper().getWritableDatabase(), getApplicationContext());
+    }
+
+    private void publishResults(@NonNull List<User> friends) {
+        Intent intent = new Intent(NOTIFICATION);
+        intent.putExtra(RESULT_EXTRAS, result);
+        intent.putParcelableArrayListExtra(FRIENDS_EXTRAS, (ArrayList<? extends Parcelable>) friends);
+        sendBroadcast(intent);
     }
 }
