@@ -35,19 +35,16 @@ public final class VKService {
     public static String getUrlString(VKParameters params) {
         //  method name
         String urlString = getApplicationContext().getString(R.string.base_vk_api_url) + "friends.get?";
-
         //  params
         for (VKParameters.Entry<String, Object> entry : params.entrySet()) {
             if (entry.getKey() != "access_token" && entry.getValue() != null) {
                 urlString += entry.getKey() + "=" + entry.getValue() + "&";
             }
         }
-
         //  access token
         urlString += "access_token=" + params.get(VKApiConst.ACCESS_TOKEN);
         //  VK API version
         urlString += "&v=5.8";
-
         urlString = urlString.replaceAll(" ", "%20");
         return urlString;
     }

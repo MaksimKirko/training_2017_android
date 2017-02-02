@@ -12,6 +12,11 @@ import com.vk.sdk.VKSdk;
 
 public class VKSimpleChatApplication extends Application {
 
+    // region Cache size
+    private static final int MEMORY_CACHE_SIZE = 4194304; //4mb
+    private static final int DISK_CACHE_SIZE = 4194304;
+    // endregion
+
     private static BitmapMemoryManagerConfigurator bitmapMemoryManagerConfigurator;
     private static DBHelper dbHelper;
 
@@ -22,9 +27,6 @@ public class VKSimpleChatApplication extends Application {
     public static DBHelper getDbHelper() {
         return dbHelper;
     }
-
-    private static final int MEMORY_CACHE_SIZE = 4194304; //4mb
-    private static final int DISK_CACHE_SIZE = 4194304;
 
     @Override
     public void onCreate() {

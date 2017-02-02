@@ -31,9 +31,9 @@ public class UserDetailsActivity extends AppCompatActivity implements View.OnCli
     private Button openPageButton;
 
     private User user;
-    private BitmapMemoryManagerConfigurator bitmapMemoryManagerConfigurator;
 
     private static final String USER_PAGE_BASE_URL = "https://vk.com/id";
+    public static final String USER_EXTRA = "USER";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,14 +46,14 @@ public class UserDetailsActivity extends AppCompatActivity implements View.OnCli
     }
 
     private void getIntentExtras() {
-        int id = this.getIntent().getIntExtra(FriendsListActivity.USER_EXTRA, -1);
+        int id = this.getIntent().getIntExtra(USER_EXTRA, -1);
         initUser(id);
     }
 
     private void initUser(int id) {
         Uri uri = ContentUris.withAppendedId(FriendsContentProvider.FRIENDS_CONTENT_URI, id);
         Cursor cursor = getContentResolver().query(uri, null, null, null, null);
-        if(cursor.moveToNext()) {
+        if (cursor.moveToNext()) {
             user = UserMapper.convert(cursor);
         }
     }

@@ -7,9 +7,11 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.Loader;
 import android.database.Cursor;
+import android.database.MergeCursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,7 +19,7 @@ import android.view.View;
 import android.widget.ProgressBar;
 
 import com.github.maximkirko.training_2017_android.R;
-import com.github.maximkirko.training_2017_android.adapter.FriendsDBAdapter;
+import com.github.maximkirko.training_2017_android.adapter.FriendsCursorAdapter;
 import com.github.maximkirko.training_2017_android.adapter.viewholder.UserClickListener;
 import com.github.maximkirko.training_2017_android.contentobserver.FriendsContentObserver;
 import com.github.maximkirko.training_2017_android.itemanimator.LandingAnimator;
@@ -29,26 +31,28 @@ import com.github.maximkirko.training_2017_android.service.DownloadService;
 
 public class FriendsListActivity extends AppCompatActivity
         implements UserClickListener, BroadcastReceiverCallback, LoaderManager.LoaderCallbacks<Cursor> {
-
+    // region Views
     private ProgressBar progressBar;
+    // endregion
 
     //    region Music RecyclerView settings
     private RecyclerView friendsRecyclerView;
-    private RecyclerView.Adapter recyclerViewAdapter;
+    private FriendsCursorAdapter recyclerViewAdapter;
     private RecyclerView.LayoutManager layoutManager;
     private RecyclerView.ItemDecoration itemDecoration;
     private RecyclerView.ItemAnimator itemAnimator;
     //    endregion
 
+    // region Friends loading properties
     private Cursor cursor;
     private PendingIntent pendingIntent;
     private Intent serviceIntent;
     private AlarmManager alarmManager;
     private DownloadServiceBroadcastReceiver broadcastReceiver;
-    private FriendsContentObserver friendsContentObserver;
 
-    public static final String USER_EXTRA = "USER";
     private static final int LOADER_FRIENDS_ID = 1;
+    private static final int ALARM_MANAGER_REPEATING_TIME = 1000 * 30 * 1; // 30 seconds
+    // endregion
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,16 +63,10 @@ public class FriendsListActivity extends AppCompatActivity
         initProgressBar();
         enableProgressBar();
 
-        // initialize cursor and adapter
-        initContentObserver();
-        initAdapter(cursor);
-        initRecyclerView();
-
         // initialize download service
         initBroadcastReceiver();
-        initServiceIntent();
+        initServiceIntent(true);
         startServiceIntent();
-        initPendingIntent();
         initAlarmManager();
     }
 
@@ -84,57 +82,29 @@ public class FriendsListActivity extends AppCompatActivity
         progressBar.setVisibility(View.INVISIBLE);
     }
 
-    private void initContentObserver() {
-        friendsContentObserver = new FriendsContentObserver(new Handler());
-        friendsContentObserver.setAdapter(recyclerViewAdapter);
-        cursor.registerContentObserver(friendsContentObserver);
-    }
-
-    private void initAdapter(Cursor cursor) {
-        recyclerViewAdapter = new FriendsDBAdapter(cursor, this);
-        initItemDecoration();
-        initItemAnimator();
-    }
-
-    private void initItemDecoration() {
-        int offset = this.getResources().getDimensionPixelSize(R.dimen.margin_friendslist_item_card);
-        itemDecoration = new DefaultItemDecoration(offset);
-    }
-
-    private void initItemAnimator() {
-        itemAnimator = new LandingAnimator();
-    }
-
-    private void initRecyclerView() {
-        layoutManager = new LinearLayoutManager(this);
-        friendsRecyclerView = (RecyclerView) findViewById(R.id.recycler_view_friends_activity);
-        friendsRecyclerView.setLayoutManager(layoutManager);
-        friendsRecyclerView.addItemDecoration(itemDecoration);
-        friendsRecyclerView.setItemAnimator(itemAnimator);
-        friendsRecyclerView.setAdapter(recyclerViewAdapter);
-    }
-
     private void initBroadcastReceiver() {
         broadcastReceiver = new DownloadServiceBroadcastReceiver(this);
     }
 
-    private void initServiceIntent() {
+    private void initServiceIntent(boolean isFirstLoading) {
         serviceIntent = new Intent(this, DownloadService.class);
+        serviceIntent.putExtra(DownloadService.IS_FIRST_LOADING_EXTRAS, isFirstLoading);
     }
 
     private void startServiceIntent() {
         startService(serviceIntent);
     }
 
-    private void initPendingIntent() {
-        pendingIntent = PendingIntent.getService(this, 0, serviceIntent, 0);
+    private void initAlarmManager() {
+        initServiceIntent(false);
+        initPendingIntent();
+        alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME,
+                SystemClock.elapsedRealtime() + ALARM_MANAGER_REPEATING_TIME, ALARM_MANAGER_REPEATING_TIME, pendingIntent);
     }
 
-    private void initAlarmManager() {
-        alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-        alarmManager.set(AlarmManager.RTC, System.currentTimeMillis(), pendingIntent);
-        alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME,
-                SystemClock.elapsedRealtime(), 1000 * 30 * 1, pendingIntent);
+    private void initPendingIntent() {
+        pendingIntent = PendingIntent.getService(this, 0, serviceIntent, 0);
     }
 
     @Override
@@ -156,7 +126,7 @@ public class FriendsListActivity extends AppCompatActivity
 
     private void startUserDetailsActivity(int id) {
         Intent intent = new Intent(this, UserDetailsActivity.class);
-        intent.putExtra(USER_EXTRA, id);
+        intent.putExtra(UserDetailsActivity.USER_EXTRA, id);
         startActivity(intent);
     }
 
@@ -186,6 +156,38 @@ public class FriendsListActivity extends AppCompatActivity
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         disableProgressBar();
+        if (this.cursor == null) {
+            this.cursor = cursor;
+            initAdapter();
+            initRecyclerView();
+            return;
+        }
         this.cursor = cursor;
+        recyclerViewAdapter.setCursor(cursor);
+        recyclerViewAdapter.notifyDataSetChanged();
+    }
+
+    private void initAdapter() {
+        recyclerViewAdapter = new FriendsCursorAdapter(cursor, this);
+        initItemDecoration();
+        initItemAnimator();
+    }
+
+    private void initItemDecoration() {
+        int offset = this.getResources().getDimensionPixelSize(R.dimen.margin_friendslist_item_card);
+        itemDecoration = new DefaultItemDecoration(offset);
+    }
+
+    private void initItemAnimator() {
+        itemAnimator = new LandingAnimator();
+    }
+
+    private void initRecyclerView() {
+        layoutManager = new LinearLayoutManager(this);
+        friendsRecyclerView = (RecyclerView) findViewById(R.id.recycler_view_friends_activity);
+        friendsRecyclerView.setLayoutManager(layoutManager);
+        friendsRecyclerView.addItemDecoration(itemDecoration);
+        friendsRecyclerView.setItemAnimator(itemAnimator);
+        friendsRecyclerView.setAdapter(recyclerViewAdapter);
     }
 }

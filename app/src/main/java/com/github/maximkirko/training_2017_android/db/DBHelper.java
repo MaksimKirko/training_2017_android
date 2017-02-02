@@ -66,6 +66,8 @@ public class DBHelper extends SQLiteOpenHelper {
                                 .build());
             }
             try {
+                db.execSQL(DROP_TABLE);
+                db.execSQL(CREATE_TABLE);
                 context.getContentResolver().applyBatch(FriendsContentProvider.AUTHORITY, ops);
             } catch (RemoteException | OperationApplicationException e) {
                 Log.e(e.getClass().getSimpleName(), e.getMessage());

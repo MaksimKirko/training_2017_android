@@ -5,14 +5,11 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.github.maximkirko.training_2017_android.model.User;
 import com.github.maximkirko.training_2017_android.service.DownloadService;
 
 import java.lang.ref.WeakReference;
-import java.util.List;
 
 /**
  * Created by MadMax on 30.01.2017.
@@ -37,6 +34,8 @@ public class DownloadServiceBroadcastReceiver extends BroadcastReceiver {
         } else {
             Log.i(DownloadService.LOG_TAG_DOWNLOAD_SERVICE_RESULT, "CANCEL");
         }
-        callback.get().onReceived();
+        if (callback != null) {
+            callback.get().onReceived();
+        }
     }
 }
