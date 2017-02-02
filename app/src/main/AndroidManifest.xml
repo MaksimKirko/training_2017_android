@@ -25,11 +25,7 @@
         <activity
             android:name=".activity.UserDetailsActivity"
             android:label="UserDetailsActivity"
-            android:theme="@style/AppTheme">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.github.maximkirko.training_2017_android.activity.FriendsListActivity" />
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name="com.vk.sdk.VKServiceActivity"
             android:label="ServiceActivity"
@@ -41,7 +37,7 @@
         <service android:name="com.github.maximkirko.training_2017_android.service.DownloadService" />
         <receiver android:name=".receiver.DownloadServiceBroadcastReceiver">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>

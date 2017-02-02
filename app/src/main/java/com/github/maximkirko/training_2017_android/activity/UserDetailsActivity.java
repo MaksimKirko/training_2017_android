@@ -1,34 +1,37 @@
 package com.github.maximkirko.training_2017_android.activity;
 
 import android.content.ContentUris;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.customtabs.CustomTabsIntent;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.github.maximkirko.training_2017_android.R;
-import com.github.maximkirko.training_2017_android.bitmapmemorymanager.BitmapMemoryManagerConfigurator;
 import com.github.maximkirko.training_2017_android.contentprovider.FriendsContentProvider;
 import com.github.maximkirko.training_2017_android.loader.ImageLoader;
 import com.github.maximkirko.training_2017_android.mapper.UserMapper;
 import com.github.maximkirko.training_2017_android.model.User;
-import com.github.maximkirko.training_2017_android.util.UserUtils;
 
 /**
  * Created by MadMax on 25.12.2016.
  */
 
 public class UserDetailsActivity extends AppCompatActivity implements View.OnClickListener {
-
+    // region Views
+    private Toolbar toolbar;
     private TextView tvTitle;
     private TextView onlineStatusView;
     private ImageView userPhotoView;
     private Button openPageButton;
+    // endregion
 
     private User user;
 
@@ -39,10 +42,18 @@ public class UserDetailsActivity extends AppCompatActivity implements View.OnCli
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.user_details_activity);
-
+        initToolbar();
         getIntentExtras();
         initViews();
         setViewsValues();
+    }
+
+    private void initToolbar() {
+        toolbar = (Toolbar) findViewById(R.id.toolbar_user_details_activity);
+        if (toolbar != null) {
+            setSupportActionBar(toolbar);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
     }
 
     private void getIntentExtras() {
@@ -84,5 +95,21 @@ public class UserDetailsActivity extends AppCompatActivity implements View.OnCli
         CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
         CustomTabsIntent customTabsIntent = builder.build();
         customTabsIntent.launchUrl(this, Uri.parse(url));
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        if (item.getItemId() == android.R.id.home) {
+            startFriendsListActivity();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void startFriendsListActivity() {
+        Intent intent = new Intent(this, FriendsListActivity.class);
+        startActivity(intent);
     }
 }
