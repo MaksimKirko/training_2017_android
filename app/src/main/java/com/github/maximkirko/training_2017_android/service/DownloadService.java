@@ -44,7 +44,7 @@ public class DownloadService extends IntentService {
         if (intent.getBooleanExtra(IS_FIRST_LOADING_EXTRAS, false)) {
             urlString = getUrl();
         } else {
-            urlString = getUrl().replace("count=10", "count=20");
+            urlString = getUrl().replace("count=3", "count=6");
         }
         List<User> friends = getFriendsFromNetwork(urlString);
         saveFriendsToDB(friends);

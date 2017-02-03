@@ -35,9 +35,9 @@
             android:name=".contentprovider.FriendsContentProvider"
             android:authorities="com.github.maximkirko.providers.friends" />
         <service android:name="com.github.maximkirko.training_2017_android.service.DownloadService" />
-        <receiver android:name=".receiver.DownloadServiceBroadcastReceiver">
+        <receiver android:name=".broadcastreceiver.DeviceLoadingBroadcastReceiver">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.USER_PRESENT" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>

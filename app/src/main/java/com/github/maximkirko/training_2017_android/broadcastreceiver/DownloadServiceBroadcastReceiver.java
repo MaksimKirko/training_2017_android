@@ -1,4 +1,4 @@
-package com.github.maximkirko.training_2017_android.receiver;
+package com.github.maximkirko.training_2017_android.broadcastreceiver;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -35,7 +35,7 @@ public class DownloadServiceBroadcastReceiver extends BroadcastReceiver {
             Log.i(DownloadService.LOG_TAG_DOWNLOAD_SERVICE_RESULT, "CANCEL");
         }
         if (callback != null) {
-            callback.get().onReceived();
+            callback.get().onReceived(this.getClass());
         }
     }
 }

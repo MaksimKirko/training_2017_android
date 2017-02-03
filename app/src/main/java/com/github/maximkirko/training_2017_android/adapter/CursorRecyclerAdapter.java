@@ -9,12 +9,13 @@ public abstract class CursorRecyclerAdapter<VH extends RecyclerView.ViewHolder> 
 
     public CursorRecyclerAdapter(Cursor cursor) {
         this.cursor = cursor;
-        cursor.moveToNext();
     }
 
     @Override
     public final void onBindViewHolder(VH holder, int position) {
-        cursor.moveToPosition(position);
+        if(position != 0) {
+            cursor.moveToPosition(position - 1);
+        }
         onBindViewHolder(holder, cursor);
     }
 
