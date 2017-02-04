@@ -1,6 +1,5 @@
-package com.github.maximkirko.training_2017_android.activity;
+package com.github.maximkirko.training_2017_android.activity.login;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -11,45 +10,35 @@ import android.view.View;
 import android.widget.Button;
 
 import com.github.maximkirko.training_2017_android.R;
+import com.github.maximkirko.training_2017_android.activity.core.FriendsListActivity;
+import com.github.maximkirko.training_2017_android.activity.splash.SplashActivity;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKCallback;
 import com.vk.sdk.VKScope;
 import com.vk.sdk.VKSdk;
 import com.vk.sdk.api.VKError;
-import com.vk.sdk.util.VKUtil;
-
-import java.util.Arrays;
 
 /**
  * Created by MadMax on 14.01.2017.
  */
 
-public class WelcomeActivity extends AppCompatActivity implements View.OnClickListener {
+public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
     private Button loginButton;
-
-    private SharedPreferences sharedPreferences;
-
-    private static final String ACCESS_PERMISSION_PREFERENCE = "ACCESS_PERMISSION";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.welcome_activity);
+        setContentView(R.layout.login_activity);
 
-        String[] fingerprints = VKUtil.getCertificateFingerprint(this, this.getPackageName());
-        Log.d("fingerprint", Arrays.toString(fingerprints));
+        // String[] fingerprints = VKUtil.getCertificateFingerprint(this, this.getPackageName());
+        // Log.d("fingerprint", Arrays.toString(fingerprints));
 
         initViews();
-        initSharedPreferences();
-
-        if (sharedPreferences.getBoolean(ACCESS_PERMISSION_PREFERENCE, false)) {
-            startFriendsListActivity();
-        }
     }
 
     private void initViews() {
-        loginButton = (Button) findViewById(R.id.button_welcome_activity_login);
+        loginButton = (Button) findViewById(R.id.button_login_activity_login);
         loginButton.setOnClickListener(this);
     }
 
@@ -77,20 +66,16 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
             @Override
             public void onError(VKError error) {
                 Log.i("AUTORIZATION", "ERROR");
-//                TODO error view
+                // TODO error view
             }
         })) {
             super.onActivityResult(requestCode, resultCode, data);
         }
     }
 
-    private void initSharedPreferences() {
-        sharedPreferences = getPreferences(Context.MODE_PRIVATE);
-    }
-
     public void saveAccessPermission() {
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean(ACCESS_PERMISSION_PREFERENCE, true);
+        SharedPreferences.Editor editor = SplashActivity.getSharedPreferences().edit();
+        editor.putBoolean(SplashActivity.ACCESS_PERMISSION_PREFERENCE, true);
         editor.apply();
     }
 }

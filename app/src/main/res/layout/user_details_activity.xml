@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.github.maximkirko.training_2017_android.activity.UserDetailsActivity">
+    tools:context="com.github.maximkirko.training_2017_android.activity.core.UserDetailsActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -40,7 +40,7 @@
                 android:layout_height="@dimen/size_user_details_photo"
                 android:layout_gravity="center_horizontal"
                 android:layout_margin="@dimen/margin_friendslist_item_image"
-                android:src="@drawable/all_default_user_image" />
+                tools:src="@drawable/all_default_user_image" />
 
             <TextView
                 android:id="@+id/textview_user_details_activity_description"

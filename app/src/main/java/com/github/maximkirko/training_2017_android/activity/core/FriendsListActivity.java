@@ -1,4 +1,4 @@
-package com.github.maximkirko.training_2017_android.activity;
+package com.github.maximkirko.training_2017_android.activity.core;
 
 import android.app.AlarmManager;
 import android.app.LoaderManager;

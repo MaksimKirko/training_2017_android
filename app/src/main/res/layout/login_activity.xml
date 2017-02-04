@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/all_background_color"
+    android:orientation="vertical"
+    tools:context="com.github.maximkirko.training_2017_android.activity.login.LoginActivity"
+    android:gravity="center">
+
+    <EditText
+        android:id="@+id/edittext_login_activity_login"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_login_activity_edittext_all"
+        android:hint="@string/login_activity_login_edittext_hint"/>
+
+    <EditText
+        android:id="@+id/edittext_login_activity_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_login_activity_edittext_all"
+        android:hint="@string/login_activity_password_edittext_hint"/>
+
+    <Button
+        android:id="@+id/button_login_activity_login"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_login_activity_button_login_all"
+        android:text="@string/login_activity_button_login_text" />
+</LinearLayout>

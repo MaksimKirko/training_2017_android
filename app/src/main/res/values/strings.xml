@@ -3,7 +3,7 @@
     <integer name="com_vk_sdk_AppId">5814025</integer>
 
     <string name="welcome_activity_title">Welcome to VK Simple Chat</string>
-    <string name="welcome_activity_button_login_text">Login</string>
+    <string name="login_activity_button_login_text">Login</string>
 
     <string name="all_online_status_true">Online</string>
     <string name="friendslist_item_send_message_button_text">Write message</string>
@@ -13,4 +13,6 @@
 
     <string name="user_details_button_open_original_text">Open page</string>
 
+    <string name="login_activity_login_edittext_hint">E-mail or phone number</string>
+    <string name="login_activity_password_edittext_hint">Password</string>
 </resources>
