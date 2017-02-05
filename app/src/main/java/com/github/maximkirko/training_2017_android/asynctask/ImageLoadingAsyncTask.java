@@ -1,4 +1,4 @@
-package com.github.maximkirko.training_2017_android.loader;
+package com.github.maximkirko.training_2017_android.asynctask;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -23,7 +23,7 @@ import java.util.concurrent.Executors;
  * Created by MadMax on 18.01.2017.
  */
 
-public class ImageLoader extends AsyncTask<String, Void, Bitmap> {
+public class ImageLoadingAsyncTask extends AsyncTask<String, Void, Bitmap> {
 
     // region fields for builder
     private String url;
@@ -38,11 +38,11 @@ public class ImageLoader extends AsyncTask<String, Void, Bitmap> {
     // link on configurator
     private BitmapMemoryManagerConfigurator bitmapMemoryManagerConfigurator = VKSimpleChatApplication.getBitmapManagerConfigurator();
 
-    private ImageLoader() {
+    private ImageLoadingAsyncTask() {
     }
 
     public static Loader newLoader() {
-        return new ImageLoader().new Loader();
+        return new ImageLoadingAsyncTask().new Loader();
     }
 
     public class Loader {
@@ -51,35 +51,35 @@ public class ImageLoader extends AsyncTask<String, Void, Bitmap> {
         }
 
         public Loader setTargetView(ImageView targetView) {
-            ImageLoader.this.targetView = new WeakReference<>(targetView);
+            ImageLoadingAsyncTask.this.targetView = new WeakReference<>(targetView);
             return this;
         }
 
         public Loader setPlaceHolder(int placeHolder) {
-            ImageLoader.this.placeHolder = placeHolder;
+            ImageLoadingAsyncTask.this.placeHolder = placeHolder;
             return this;
         }
 
         public Loader setImageHeight(int imageHeight) {
-            ImageLoader.this.imageHeight = imageHeight;
+            ImageLoadingAsyncTask.this.imageHeight = imageHeight;
             return this;
         }
 
         public Loader setImageWidth(int imageWidth) {
-            ImageLoader.this.imageWidth = imageWidth;
+            ImageLoadingAsyncTask.this.imageWidth = imageWidth;
             return this;
         }
 
-        public ImageLoader load(String url) {
-            ImageLoader imageLoader = new ImageLoader();
-            imageLoader.url = url;
-            imageLoader.targetView = ImageLoader.this.targetView;
-            imageLoader.placeHolder = ImageLoader.this.placeHolder;
-            imageLoader.imageHeight = ImageLoader.this.imageHeight;
-            imageLoader.imageWidth = ImageLoader.this.imageWidth;
+        public ImageLoadingAsyncTask load(String url) {
+            ImageLoadingAsyncTask imageLoadingAsyncTask = new ImageLoadingAsyncTask();
+            imageLoadingAsyncTask.url = url;
+            imageLoadingAsyncTask.targetView = ImageLoadingAsyncTask.this.targetView;
+            imageLoadingAsyncTask.placeHolder = ImageLoadingAsyncTask.this.placeHolder;
+            imageLoadingAsyncTask.imageHeight = ImageLoadingAsyncTask.this.imageHeight;
+            imageLoadingAsyncTask.imageWidth = ImageLoadingAsyncTask.this.imageWidth;
 
-            imageLoader.executeOnExecutor(executorService);
-            return imageLoader;
+            imageLoadingAsyncTask.executeOnExecutor(executorService);
+            return imageLoadingAsyncTask;
         }
     }
 

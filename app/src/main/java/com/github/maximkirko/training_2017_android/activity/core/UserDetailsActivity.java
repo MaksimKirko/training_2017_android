@@ -16,7 +16,7 @@ import android.widget.TextView;
 
 import com.github.maximkirko.training_2017_android.R;
 import com.github.maximkirko.training_2017_android.contentprovider.FriendsContentProvider;
-import com.github.maximkirko.training_2017_android.loader.ImageLoader;
+import com.github.maximkirko.training_2017_android.asynctask.ImageLoadingAsyncTask;
 import com.github.maximkirko.training_2017_android.mapper.UserMapper;
 import com.github.maximkirko.training_2017_android.model.User;
 
@@ -78,7 +78,7 @@ public class UserDetailsActivity extends AppCompatActivity implements View.OnCli
     }
 
     private void setViewsValues() {
-        ImageLoader.newLoader()
+        ImageLoadingAsyncTask.newLoader()
                 .setTargetView(userPhotoView)
                 .setPlaceHolder(R.drawable.all_default_user_image)
                 .setImageHeight(userPhotoView.getHeight())

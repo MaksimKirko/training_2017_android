@@ -3,7 +3,6 @@ package com.github.maximkirko.training_2017_android.service;
 import android.app.Activity;
 import android.app.IntentService;
 import android.content.Intent;
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -19,7 +18,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 
 public class DownloadService extends IntentService {
@@ -30,7 +28,6 @@ public class DownloadService extends IntentService {
     public static final String DOWNLOAD_SERVICE_URI = "DownloadService";
     public static final String IS_FIRST_LOADING_EXTRAS = "IS_FIRST_LOADING";
     public static final String RESULT_EXTRAS = "RESULT";
-    public static final String FRIENDS_EXTRAS = "FRIENDS";
     public static final String NOTIFICATION = "com.github.maximkirko.training_2017_android.service.receiver";
     public static final String LOG_TAG_DOWNLOAD_SERVICE_RESULT = "DOWNLOAD_SERVICE RESULT";
 
@@ -48,7 +45,7 @@ public class DownloadService extends IntentService {
         }
         List<User> friends = getFriendsFromNetwork(urlString);
         saveFriendsToDB(friends);
-        publishResults(friends);
+        publishResults();
     }
 
     @NonNull
@@ -99,10 +96,9 @@ public class DownloadService extends IntentService {
         VKSimpleChatApplication.getDbHelper().insertFriendsBatch(VKSimpleChatApplication.getDbHelper().getWritableDatabase(), getApplicationContext());
     }
 
-    private void publishResults(@NonNull List<User> friends) {
+    private void publishResults() {
         Intent intent = new Intent(NOTIFICATION);
         intent.putExtra(RESULT_EXTRAS, result);
-        intent.putParcelableArrayListExtra(FRIENDS_EXTRAS, (ArrayList<? extends Parcelable>) friends);
         sendBroadcast(intent);
     }
 }

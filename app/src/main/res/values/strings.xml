@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">training_2017_android</string>
-    <integer name="com_vk_sdk_AppId">5814025</integer>
+    <integer name="com_vk_sdk_appid">5814025</integer>
 
     <string name="welcome_activity_title">Welcome to VK Simple Chat</string>
     <string name="login_activity_button_login_text">Login</string>
@@ -15,4 +15,8 @@
 
     <string name="login_activity_login_edittext_hint">E-mail or phone number</string>
     <string name="login_activity_password_edittext_hint">Password</string>
+    <string name="login_activity_incorrect_cridentials_message">Incorrect cridentials</string>
+    <string name="login_activity_empty_login_field_message">Empty login field</string>
+    <string name="login_activity_empty_password_field_message">Empty password field</string>
+
 </resources>

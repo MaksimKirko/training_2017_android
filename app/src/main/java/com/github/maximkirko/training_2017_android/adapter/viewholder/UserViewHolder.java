@@ -7,7 +7,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.github.maximkirko.training_2017_android.R;
-import com.github.maximkirko.training_2017_android.loader.ImageLoader;
+import com.github.maximkirko.training_2017_android.asynctask.ImageLoadingAsyncTask;
 import com.github.maximkirko.training_2017_android.model.User;
 import com.github.maximkirko.training_2017_android.util.ItemSizeUtils;
 
@@ -21,7 +21,7 @@ public class UserViewHolder extends RecyclerView.ViewHolder implements View.OnCl
 
     private int userId;
     private WeakReference<UserClickListener> userClickListenerWeakReference;
-    private ImageLoader imageLoader;
+    private ImageLoadingAsyncTask imageLoadingAsyncTask;
 
     @Override
     public void onClick(View v) {
@@ -44,7 +44,7 @@ public class UserViewHolder extends RecyclerView.ViewHolder implements View.OnCl
     }
 
     public void onBindData(@NonNull User user) {
-        imageLoader = ImageLoader.newLoader()
+        imageLoadingAsyncTask = ImageLoadingAsyncTask.newLoader()
                 .setTargetView(userPhotoView)
                 .setPlaceHolder(R.drawable.all_default_user_image)
                 .setImageHeight(itemView.getResources().getDimensionPixelSize(R.dimen.size_friendslist_item_image))
@@ -57,6 +57,6 @@ public class UserViewHolder extends RecyclerView.ViewHolder implements View.OnCl
     }
 
     public void cancelTask() {
-        imageLoader.cancel(true);
+        imageLoadingAsyncTask.cancel(true);
     }
 }

@@ -4,13 +4,14 @@
     android:id="@+id/activity_splash"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.github.maximkirko.training_2017_android.activity.splash.SplashActivity"
+    tools:context="com.github.maximkirko.training_2017_android.activity.splash.SplashScreenActivity"
     android:orientation="vertical"
     android:gravity="center">
     
     <ImageView
+        android:id="@+id/imageview_splash_screen_activity"
         android:layout_width="@dimen/size_splash_activity_image"
         android:layout_height="@dimen/size_splash_activity_image"
-        tools:src="@drawable/all_default_user_image"/>
+        android:src="@drawable/splash_screen_image"/>
     
 </LinearLayout>

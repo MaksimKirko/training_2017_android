@@ -135,7 +135,7 @@ public class FriendsListActivity extends AppCompatActivity
         initPendingIntent();
         alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
         alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME,
-                SystemClock.elapsedRealtime(), ALARM_MANAGER_REPEATING_TIME, pendingIntent);
+                ALARM_MANAGER_REPEATING_TIME, ALARM_MANAGER_REPEATING_TIME, pendingIntent);
     }
 
     private void initPendingIntent() {
