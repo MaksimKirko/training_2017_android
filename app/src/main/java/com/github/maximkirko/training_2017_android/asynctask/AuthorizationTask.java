@@ -26,7 +26,7 @@ public class AuthorizationTask extends AsyncTask<String, Void, Void> {
 
     @Override
     protected Void doInBackground(String... params) {
-        String urlString = "";
+        String urlString = params[0];
         try {
             URL url = new URL(urlString);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();

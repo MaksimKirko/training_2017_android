@@ -11,6 +11,7 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         resValue 'string', 'base_vk_api_url', 'https://api.vk.com/method/'
+        resValue 'string', 'vk_oauth_url', 'https://oauth.vk.com/authorize?'
     }
     buildTypes {
         release {

@@ -13,9 +13,10 @@ import android.widget.Toast;
 import com.github.maximkirko.training_2017_android.R;
 import com.github.maximkirko.training_2017_android.activity.core.FriendsListActivity;
 import com.github.maximkirko.training_2017_android.activity.splash.SplashScreenActivity;
-import com.github.maximkirko.training_2017_android.asynctask.AuthorizationTask;
 import com.github.maximkirko.training_2017_android.asynctask.AsyncTaskCallback;
+import com.github.maximkirko.training_2017_android.asynctask.AuthorizationTask;
 import com.github.maximkirko.training_2017_android.util.StringUtils;
+import com.github.maximkirko.training_2017_android.util.VKUtils;
 
 /**
  * Created by MadMax on 14.01.2017.
@@ -25,6 +26,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     // input https://oauth.vk.com/authorize?client_id=5814025&redirect_uri=http://vk.com&display=page&scope=friends&response_type=token&v=5.62
     // output http://api.vk.com/blank.html#access_token=3d6c7afdfe96c571f0809ea79950d0b8038cbafd480b09e2a181d8d24d5e8f43650d50ca5e757199d470c&expires_in=86400&user_id=181965790
+    // error http://REDIRECT_URI#error=access_denied&error_description=The+user+or+authorization+server+denied+the+request.
 
     // region Views
     private EditText loginEditText;
@@ -33,6 +35,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     // endregion
 
     private AuthorizationTask authorizationTask;
+
+    private static String AUTH_REDIRECT_URL_SUCCESS = "http://REDIRECT_URI#access_token=";
+    private static String AUTH_REDIRECT_URL_ERROR = "http://REDIRECT_URI#error=access_denied&error_description=";
+
+    public static final String ACCESS_TOKEN_PREFERENCE = "ACCESS_TOKEN";
+    public static final String USER_ID_PREFERENCE = "USER_ID";
+    public static final String ACCESS_PERMISSION_PREFERENCE = "ACCESS_PERMISSION";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -95,14 +104,25 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onAsyncTaskFinished(String result) {
-        if (result.startsWith("http://REDIRECT_URI#access_token=")) {
-
+        if (result.startsWith(AUTH_REDIRECT_URL_SUCCESS)) {
+            String accessToken = VKUtils.getAccessTokenFromRedirectUrl(result);
+            String userId = VKUtils.getUserIdFromRedirectUrl(result);
+            saveAccessParamsToSharedPreferences(accessToken, userId);
+        } else if (result.startsWith(AUTH_REDIRECT_URL_ERROR)) {
+            // TODO error handling
         }
+    }
+
+    private void saveAccessParamsToSharedPreferences(String accessToken, String userId) {
+        SharedPreferences.Editor editor = SplashScreenActivity.getSharedPreferences().edit();
+        editor.putString(ACCESS_TOKEN_PREFERENCE, accessToken);
+        editor.putString(USER_ID_PREFERENCE, userId);
+        editor.apply();
     }
 
     private void saveAccessPermission() {
         SharedPreferences.Editor editor = SplashScreenActivity.getSharedPreferences().edit();
-        editor.putBoolean(SplashScreenActivity.ACCESS_PERMISSION_PREFERENCE, true);
+        editor.putBoolean(ACCESS_PERMISSION_PREFERENCE, true);
         editor.apply();
     }
 

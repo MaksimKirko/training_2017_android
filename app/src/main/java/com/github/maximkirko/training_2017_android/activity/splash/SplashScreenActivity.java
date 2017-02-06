@@ -14,7 +14,6 @@ import com.github.maximkirko.training_2017_android.activity.login.LoginActivity;
 public class SplashScreenActivity extends AppCompatActivity {
 
     private static SharedPreferences sharedPreferences;
-    public static final String ACCESS_PERMISSION_PREFERENCE = "ACCESS_PERMISSION";
 
     public static SharedPreferences getSharedPreferences() {
         return sharedPreferences;
@@ -25,7 +24,7 @@ public class SplashScreenActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
         initSharedPreferences();
-        if (sharedPreferences.getBoolean(ACCESS_PERMISSION_PREFERENCE, false)) {
+        if (sharedPreferences.getBoolean(LoginActivity.ACCESS_PERMISSION_PREFERENCE, false)) {
             startActivity(FriendsListActivity.class);
         } else {
             startActivity(LoginActivity.class);
