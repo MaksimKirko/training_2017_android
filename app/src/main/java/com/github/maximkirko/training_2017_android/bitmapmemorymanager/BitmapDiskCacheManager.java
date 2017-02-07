@@ -29,7 +29,7 @@ public class BitmapDiskCacheManager implements CacheManager {
     @Nullable
     public Bitmap getBitmapFromCache(String key) {
         try {
-            File directory = FileUtils.getImageDirectory(key);
+            File directory = FileUtils.getImageDirectory();
             File path = new File(directory, Uri.parse(key).getLastPathSegment());
             return BitmapFactory.decodeStream(new FileInputStream(path));
         } catch (FileNotFoundException e) {
@@ -39,7 +39,7 @@ public class BitmapDiskCacheManager implements CacheManager {
     }
 
     public void addBitmapToCache(String url, Bitmap bitmap) {
-        File directory = FileUtils.getImageDirectory(url);
+        File directory = FileUtils.getImageDirectory();
         while (bitmap.getByteCount() + FileUtils.folderSize(directory) > cacheSize) {
             FileUtils.removeOldest(directory);
         }
@@ -53,10 +53,17 @@ public class BitmapDiskCacheManager implements CacheManager {
             Log.e(e.getClass().getSimpleName(), e.getMessage());
         } finally {
             try {
-                fos.close();
+                if (fos != null) {
+                    fos.close();
+                }
             } catch (IOException e) {
                 Log.e(e.getClass().getSimpleName(), e.getMessage());
             }
         }
+    }
+
+    public void clearCache() {
+        File directory = FileUtils.getImageDirectory();
+        FileUtils.clearDirectory(directory);
     }
 }

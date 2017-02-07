@@ -1,6 +1,7 @@
 package com.github.maximkirko.training_2017_android.application;
 
 import android.app.Application;
+import android.content.SharedPreferences;
 
 import com.github.maximkirko.training_2017_android.bitmapmemorymanager.BitmapMemoryManagerConfigurator;
 import com.github.maximkirko.training_2017_android.db.DBHelper;
@@ -19,6 +20,7 @@ public class VKSimpleChatApplication extends Application {
 
     private static BitmapMemoryManagerConfigurator bitmapMemoryManagerConfigurator;
     private static DBHelper dbHelper;
+    private static SharedPreferences sharedPreferences;
 
     public static BitmapMemoryManagerConfigurator getBitmapManagerConfigurator() {
         return bitmapMemoryManagerConfigurator;
@@ -26,6 +28,14 @@ public class VKSimpleChatApplication extends Application {
 
     public static DBHelper getDbHelper() {
         return dbHelper;
+    }
+
+    public static SharedPreferences getSharedPreferences() {
+        return sharedPreferences;
+    }
+
+    public static void setSharedPreferences(SharedPreferences sharedPreferences) {
+        VKSimpleChatApplication.sharedPreferences = sharedPreferences;
     }
 
     @Override

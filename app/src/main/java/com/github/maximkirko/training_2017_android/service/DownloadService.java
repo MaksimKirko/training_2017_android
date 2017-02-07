@@ -41,7 +41,8 @@ public class DownloadService extends IntentService {
         if (intent.getBooleanExtra(IS_FIRST_LOADING_EXTRAS, false)) {
             urlString = getUrl();
         } else {
-            urlString = getUrl().replace("count=3", "count=6");
+            urlString = getUrl();
+            //urlString = getUrl().replace("count=3", "count=6");
         }
         List<User> friends = getFriendsFromNetwork(urlString);
         saveFriendsToDB(friends);
@@ -50,7 +51,7 @@ public class DownloadService extends IntentService {
 
     @NonNull
     private String getUrl() {
-        VKParameters vkParameters = VKService.initVKParameters();
+        VKParameters vkParameters = VKService.initVKParametersForFriendsRequest();
         return VKService.getUrlString(vkParameters);
     }
 

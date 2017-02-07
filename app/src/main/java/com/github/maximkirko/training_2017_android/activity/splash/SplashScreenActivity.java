@@ -2,29 +2,23 @@ package com.github.maximkirko.training_2017_android.activity.splash;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.ImageView;
 
 import com.github.maximkirko.training_2017_android.R;
 import com.github.maximkirko.training_2017_android.activity.core.FriendsListActivity;
 import com.github.maximkirko.training_2017_android.activity.login.LoginActivity;
+import com.github.maximkirko.training_2017_android.application.VKSimpleChatApplication;
+import com.github.maximkirko.training_2017_android.service.VKService;
 
 public class SplashScreenActivity extends AppCompatActivity {
-
-    private static SharedPreferences sharedPreferences;
-
-    public static SharedPreferences getSharedPreferences() {
-        return sharedPreferences;
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_splash);
+        setContentView(R.layout.splash_activity);
         initSharedPreferences();
-        if (sharedPreferences.getBoolean(LoginActivity.ACCESS_PERMISSION_PREFERENCE, false)) {
+        if (VKSimpleChatApplication.getSharedPreferences().getBoolean(VKService.ACCESS_PERMISSION_PREFERENCE, false)) {
             startActivity(FriendsListActivity.class);
         } else {
             startActivity(LoginActivity.class);
@@ -32,7 +26,7 @@ public class SplashScreenActivity extends AppCompatActivity {
     }
 
     private void initSharedPreferences() {
-        sharedPreferences = getPreferences(Context.MODE_PRIVATE);
+        VKSimpleChatApplication.setSharedPreferences(getPreferences(Context.MODE_PRIVATE));
     }
 
     private void startActivity(Class<? extends AppCompatActivity> activity) {

@@ -29,4 +29,8 @@ public class BitmapMemoryCacheManager implements CacheManager {
             memoryCache.put(key, bitmap);
         }
     }
+
+    public void clearCache() {
+        memoryCache = new LruCache<>(cacheSize);
+    }
 }

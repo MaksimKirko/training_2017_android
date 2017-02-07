@@ -74,4 +74,8 @@ public class DBHelper extends SQLiteOpenHelper {
             }
         }
     }
+
+    public void dropUserTable(@NonNull SQLiteDatabase db) {
+        db.execSQL(DROP_TABLE);
+    }
 }

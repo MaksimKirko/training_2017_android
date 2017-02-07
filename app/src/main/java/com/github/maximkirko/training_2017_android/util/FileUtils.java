@@ -14,7 +14,7 @@ import static com.vk.sdk.VKUIHelper.getApplicationContext;
 
 public class FileUtils {
 
-    public static File getImageDirectory(String url) {
+    public static File getImageDirectory() {
         ContextWrapper cw = new ContextWrapper(getApplicationContext());
         return cw.getDir("imageDir", Context.MODE_PRIVATE);
     }
@@ -40,7 +40,7 @@ public class FileUtils {
         }
     }
 
-    public static File getOldestModified(File directory) {
+    private static File getOldestModified(File directory) {
         File oldest = null;
         boolean isFirst = true;
         for (File file : directory.listFiles()) {
@@ -54,5 +54,14 @@ public class FileUtils {
             }
         }
         return oldest;
+    }
+
+    public static void clearDirectory(File directory) {
+        if (directory.isDirectory()) {
+            String[] children = directory.list();
+            for (int i = 0; i < children.length; i++) {
+                new File(directory, children[i]).delete();
+            }
+        }
     }
 }
