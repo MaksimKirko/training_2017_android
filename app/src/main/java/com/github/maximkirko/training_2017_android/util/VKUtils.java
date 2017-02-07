@@ -16,16 +16,32 @@ import static com.vk.sdk.VKUIHelper.getApplicationContext;
 
 public final class VKUtils {
 
+    // region request params
+    private static final String REDIRECT_URI_PARAM = "redirect_uri";
+    private static final String SCOPE_PARAM = "scope";
+    private static final String RESPONSE_TYPE_PARAM = "response_type";
+    private static final String API_VERSION_PARAM = "v";
+    // endregion
+
+    // region request values
+    public static final String REDIRECT_URI = "https://oauth.vk.com/blank.html";
+    public static final String SCOPE = "friends";
+    public static final String RESPONSE_TYPE = "token";
+    public static final String API_VERSION = "5.62";
+    // endregion
+
     public static String getFingerprint(@NonNull Context context) {
         String[] fingerprints = VKUtil.getCertificateFingerprint(context, context.getPackageName());
         return Arrays.toString(fingerprints);
     }
 
-    public static String getAuthUrl(String[] cridentials) {
+    public static String getAuthUrl() {
         String url = getApplicationContext().getString(R.string.vk_oauth_url);
-        url += "client_id=" + getApplicationContext().getResources().getInteger(R.integer.com_vk_sdk_appid);
-        url += "&redirect_uri=http://example.com/callback";
-        url += "&scope=friends&response_type=token&v=5.62";
+        url += "client_id=" + getApplicationContext().getResources().getInteger(R.integer.com_vk_sdk_AppId);
+        url += "&" + REDIRECT_URI_PARAM + "=" + REDIRECT_URI;
+        url += "&" + SCOPE_PARAM + "=" + SCOPE;
+        url += "&" + RESPONSE_TYPE_PARAM + "=" + RESPONSE_TYPE;
+        url += "&" + API_VERSION_PARAM + "=" + API_VERSION;
         return url;
     }
 
@@ -33,11 +49,9 @@ public final class VKUtils {
         return parseSuccessRedirectUri(url)[1];
     }
 
-
     public static String getExpiresInFromRedirectUrl(String url) {
         return parseSuccessRedirectUri(url)[2];
     }
-
 
     public static String getUserIdFromRedirectUrl(String url) {
         return parseSuccessRedirectUri(url)[3];

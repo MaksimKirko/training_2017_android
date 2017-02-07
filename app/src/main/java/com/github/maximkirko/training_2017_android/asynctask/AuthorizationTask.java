@@ -15,7 +15,7 @@ import java.net.URL;
 
 public class AuthorizationTask extends AsyncTask<String, Void, Void> {
 
-    // input https://oauth.vk.com/authorize?client_id=5814025&redirect_uri=http://vk.com&display=page&scope=friends&response_type=token&v=5.62
+    // input https://oauth.vk.com/authorize?client_id=5814025&redirect_uri=https://oauth.vk.com/blank.html&response_type=token&scope=2&v=5.62&state=&display=page&m=4&email=&password=
     // output http://api.vk.com/blank.html#access_token=3d6c7afdfe96c571f0809ea79950d0b8038cbafd480b09e2a181d8d24d5e8f43650d50ca5e757199d470c&expires_in=86400&user_id=181965790
 
     private WeakReference<AsyncTaskCallback<String>> asyncTaskCallback;
