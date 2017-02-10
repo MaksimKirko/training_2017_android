@@ -1,5 +1,6 @@
 package com.github.maximkirko.training_2017_android.bitmapmemorymanager;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -21,15 +22,17 @@ import java.io.IOException;
 public class BitmapDiskCacheManager implements CacheManager {
 
     private int cacheSize;
+    private Context context;
 
-    public BitmapDiskCacheManager(int cacheSize) {
+    public BitmapDiskCacheManager(int cacheSize, Context context) {
         this.cacheSize = cacheSize;
+        this.context = context;
     }
 
     @Nullable
     public Bitmap getBitmapFromCache(String key) {
         try {
-            File directory = FileUtils.getImageDirectory();
+            File directory = FileUtils.getImageDirectory(context);
             File path = new File(directory, Uri.parse(key).getLastPathSegment());
             return BitmapFactory.decodeStream(new FileInputStream(path));
         } catch (FileNotFoundException e) {
@@ -39,7 +42,7 @@ public class BitmapDiskCacheManager implements CacheManager {
     }
 
     public void addBitmapToCache(String url, Bitmap bitmap) {
-        File directory = FileUtils.getImageDirectory();
+        File directory = FileUtils.getImageDirectory(context);
         while (bitmap.getByteCount() + FileUtils.folderSize(directory) > cacheSize) {
             FileUtils.removeOldest(directory);
         }
@@ -63,7 +66,7 @@ public class BitmapDiskCacheManager implements CacheManager {
     }
 
     public void clearCache() {
-        File directory = FileUtils.getImageDirectory();
+        File directory = FileUtils.getImageDirectory(context);
         FileUtils.clearDirectory(directory);
     }
 }

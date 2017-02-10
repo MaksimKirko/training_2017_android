@@ -1,4 +1,4 @@
-package com.github.maximkirko.training_2017_android.read;
+package com.github.maximkirko.training_2017_android.reader;
 
 import android.support.annotation.NonNull;
 import android.util.JsonReader;
@@ -16,12 +16,27 @@ import java.util.List;
  * Created by MadMax on 10.01.2017.
  */
 
-public class FriendsJSONReader implements Reader<User> {
+public class UserJSONReader implements Reader<User> {
 
     private String jsonFriendsList;
 
-    public FriendsJSONReader(@NonNull String jsonFriendsList) {
+    public UserJSONReader(@NonNull String jsonFriendsList) {
         this.jsonFriendsList = jsonFriendsList;
+    }
+
+    public User read() throws IOException {
+        InputStream in;
+        in = new ByteArrayInputStream(jsonFriendsList.getBytes());
+        JsonReader reader = new JsonReader(new InputStreamReader(in, "UTF-8"));
+        try {
+            reader.beginObject();
+            if (reader.nextName().equals("response")) {
+                reader.beginArray();
+            }
+            return readUser(reader);
+        } finally {
+            reader.close();
+        }
     }
 
     public List<User> readToList() throws IOException {

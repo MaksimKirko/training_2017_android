@@ -9,67 +9,52 @@ import android.util.Log;
 
 import com.github.maximkirko.training_2017_android.application.VKSimpleChatApplication;
 import com.github.maximkirko.training_2017_android.model.User;
-import com.github.maximkirko.training_2017_android.read.FriendsJSONReader;
-import com.github.maximkirko.training_2017_android.read.Reader;
-import com.vk.sdk.api.VKParameters;
+import com.github.maximkirko.training_2017_android.reader.Reader;
+import com.github.maximkirko.training_2017_android.reader.UserJSONReader;
+import com.github.maximkirko.training_2017_android.util.NetworkUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.List;
 
-public class DownloadService extends IntentService {
+public class FriendsDownloadService extends IntentService {
 
     private Reader<User> reader;
 
     private int result = Activity.RESULT_CANCELED;
-    public static final String DOWNLOAD_SERVICE_URI = "DownloadService";
+    public static final String DOWNLOAD_SERVICE_URI = "FriendsDownloadService";
     public static final String IS_FIRST_LOADING_EXTRAS = "IS_FIRST_LOADING";
     public static final String RESULT_EXTRAS = "RESULT";
-    public static final String NOTIFICATION = "com.github.maximkirko.training_2017_android.service.receiver";
-    public static final String LOG_TAG_DOWNLOAD_SERVICE_RESULT = "DOWNLOAD_SERVICE RESULT";
+    public static final String NOTIFICATION = "com.github.maximkirko.training_2017_android.service.receiver.FriendsDownloadServiceBroadcastReceiver";
+    public static final String LOG_TAG_DOWNLOAD_SERVICE_RESULT = "FRIENDS_DOWNLOAD";
 
-    public DownloadService() {
+    public FriendsDownloadService() {
         super(DOWNLOAD_SERVICE_URI);
     }
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        String urlString;
-        if (intent.getBooleanExtra(IS_FIRST_LOADING_EXTRAS, false)) {
-            urlString = getUrl();
-        } else {
-            urlString = getUrl();
-            //urlString = getUrl().replace("count=3", "count=6");
-        }
-        List<User> friends = getFriendsFromNetwork(urlString);
+        String friendsRequestUrl = VKService.getFriendsRequestUrl(getBaseContext());
+//        if (intent.getBooleanExtra(IS_FIRST_LOADING_EXTRAS, false)) {
+//            urlString = getUrl();
+//        } else {
+//            urlString = getUrl().replace("count=3", "count=6");
+//        }
+        List<User> friends = getFriendsFromNetwork(friendsRequestUrl);
         saveFriendsToDB(friends);
         publishResults();
     }
 
-    @NonNull
-    private String getUrl() {
-        VKParameters vkParameters = VKService.initVKParametersForFriendsRequest();
-        return VKService.getUrlString(vkParameters);
-    }
-
     @Nullable
     private List<User> getFriendsFromNetwork(@NonNull String urlString) {
+        String jsonResponse = null;
         try {
-            URL url = new URL(urlString);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setDoInput(true);
-            connection.connect();
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader((connection.getInputStream())));
-            String jsonResponse = responseToString(bufferedReader);
-            result = Activity.RESULT_OK;
-            return getFriendsListFromJson(jsonResponse);
+            jsonResponse = responseToString(NetworkUtils.getConnectionInputStream(urlString));
         } catch (IOException e) {
             Log.e(IOException.class.getSimpleName(), e.getMessage());
         }
-        return null;
+        result = Activity.RESULT_OK;
+        return getFriendsListFromJson(jsonResponse);
     }
 
     private String responseToString(@NonNull BufferedReader bufferedReader) throws IOException {
@@ -84,7 +69,7 @@ public class DownloadService extends IntentService {
     @Nullable
     private List<User> getFriendsListFromJson(@NonNull String jsonResponse) {
         try {
-            reader = new FriendsJSONReader(jsonResponse);
+            reader = new UserJSONReader(jsonResponse);
             return reader.readToList();
         } catch (IOException e) {
             Log.e(IOException.class.getSimpleName(), e.getMessage());
@@ -93,8 +78,7 @@ public class DownloadService extends IntentService {
     }
 
     private void saveFriendsToDB(@NonNull List<User> friends) {
-        VKSimpleChatApplication.getDbHelper().setFriends(friends);
-        VKSimpleChatApplication.getDbHelper().insertFriendsBatch(VKSimpleChatApplication.getDbHelper().getWritableDatabase(), getApplicationContext());
+        VKSimpleChatApplication.getDbHelper().insertFriendsBatch(VKSimpleChatApplication.getDbHelper().getWritableDatabase(), getApplicationContext(), friends);
     }
 
     private void publishResults() {

@@ -2,11 +2,9 @@ package com.github.maximkirko.training_2017_android.util;
 
 import android.content.Context;
 import android.content.ContextWrapper;
-import android.net.Uri;
 
 import java.io.File;
 
-import static com.vk.sdk.VKUIHelper.getApplicationContext;
 
 /**
  * Created by MadMax on 16.01.2017.
@@ -14,8 +12,8 @@ import static com.vk.sdk.VKUIHelper.getApplicationContext;
 
 public class FileUtils {
 
-    public static File getImageDirectory() {
-        ContextWrapper cw = new ContextWrapper(getApplicationContext());
+    public static File getImageDirectory(Context context) {
+        ContextWrapper cw = new ContextWrapper(context);
         return cw.getDir("imageDir", Context.MODE_PRIVATE);
     }
 

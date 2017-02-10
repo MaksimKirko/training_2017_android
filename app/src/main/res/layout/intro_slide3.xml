@@ -3,13 +3,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorBackground"
     android:gravity="center"
-    android:orientation="vertical"
-    tools:context="com.github.maximkirko.training_2017_android.activity.login.LoginActivity">
+    android:orientation="vertical">
 
-    <WebView
-        android:id="@+id/webview_login_activity"
+    <TextView
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Intro 3" />
+
 </LinearLayout>

@@ -12,6 +12,8 @@ import com.github.maximkirko.training_2017_android.contentprovider.FriendsConten
 
 public class FriendsCursorLoader extends CursorLoader {
 
+    public static final int FRIENDS_LOADER_ID = 2;
+
     private FriendsContentProvider friendsContentProvider;
 
     public FriendsCursorLoader(Context context) {

@@ -7,7 +7,7 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.github.maximkirko.training_2017_android.service.DownloadService;
+import com.github.maximkirko.training_2017_android.service.FriendsDownloadService;
 
 import java.lang.ref.WeakReference;
 
@@ -15,24 +15,24 @@ import java.lang.ref.WeakReference;
  * Created by MadMax on 30.01.2017.
  */
 
-public class DownloadServiceBroadcastReceiver extends BroadcastReceiver {
+public class FriendsDownloadServiceBroadcastReceiver extends BroadcastReceiver {
 
     private WeakReference<BroadcastReceiverCallback> callback;
 
-    public DownloadServiceBroadcastReceiver() {
+    public FriendsDownloadServiceBroadcastReceiver() {
     }
 
-    public DownloadServiceBroadcastReceiver(@NonNull BroadcastReceiverCallback callback) {
+    public FriendsDownloadServiceBroadcastReceiver(@NonNull BroadcastReceiverCallback callback) {
         this.callback = new WeakReference<>(callback);
     }
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        int result = intent.getIntExtra(DownloadService.RESULT_EXTRAS, Activity.RESULT_CANCELED);
+        int result = intent.getIntExtra(FriendsDownloadService.RESULT_EXTRAS, Activity.RESULT_CANCELED);
         if (result == Activity.RESULT_OK) {
-            Log.i(DownloadService.LOG_TAG_DOWNLOAD_SERVICE_RESULT, "OK");
+            Log.i(FriendsDownloadService.LOG_TAG_DOWNLOAD_SERVICE_RESULT, "OK");
         } else {
-            Log.i(DownloadService.LOG_TAG_DOWNLOAD_SERVICE_RESULT, "CANCEL");
+            Log.i(FriendsDownloadService.LOG_TAG_DOWNLOAD_SERVICE_RESULT, "CANCEL");
         }
         if (callback != null) {
             callback.get().onReceived(this.getClass());

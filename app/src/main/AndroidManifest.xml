@@ -18,6 +18,9 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".activity.intro.IntroActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
             android:name=".activity.login.LoginActivity"
             android:theme="@style/AppTheme" />
         <activity
@@ -28,16 +31,17 @@
             android:name=".activity.core.UserDetailsActivity"
             android:label="UserDetailsActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name="com.vk.sdk.VKServiceActivity"
-            android:label="ServiceActivity"
-            android:theme="@style/VK.Transparent" />
 
+
+        <provider
+            android:name=".contentprovider.UserContentProvider"
+            android:authorities="com.github.maximkirko.providers.user" />
         <provider
             android:name=".contentprovider.FriendsContentProvider"
             android:authorities="com.github.maximkirko.providers.friends" />
 
-        <service android:name=".service.DownloadService" />
+        <service android:name=".service.UserDataDownloadService" />
+        <service android:name=".service.FriendsDownloadService" />
 
         <receiver android:name=".broadcastreceiver.DeviceLoadingBroadcastReceiver">
             <intent-filter>

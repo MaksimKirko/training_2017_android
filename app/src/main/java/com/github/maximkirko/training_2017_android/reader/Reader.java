@@ -1,6 +1,4 @@
-package com.github.maximkirko.training_2017_android.read;
-
-import android.content.Context;
+package com.github.maximkirko.training_2017_android.reader;
 
 import java.io.IOException;
 import java.util.List;
@@ -10,6 +8,8 @@ import java.util.List;
  */
 
 public interface Reader<T> {
+
+    T read() throws IOException;
 
     List<T> readToList() throws IOException;
 }

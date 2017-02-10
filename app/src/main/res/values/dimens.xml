@@ -9,12 +9,16 @@
     <dimen name="margin_friendslist_header_title">8dp</dimen>
     <dimen name="margin_login_activity_edittext_all">8dp</dimen>
     <dimen name="margin_login_activity_button_login_all">8dp</dimen>
+    <dimen name="margin_intro_activity_dots_layout_bottom">8dp</dimen>
 
     <dimen name="padding_top_user_details">36dp</dimen>
 
+    <dimen name="size_navigation_view_header_image">48dp</dimen>
     <dimen name="size_friendslist_item_image">72dp</dimen>
     <dimen name="size_user_details_photo">128dp</dimen>
     <dimen name="size_splash_activity_image">128dp</dimen>
+
+    <dimen name="height_intro_activity_dots_layout">12dp</dimen>
 
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="nav_header_vertical_spacing">16dp</dimen>

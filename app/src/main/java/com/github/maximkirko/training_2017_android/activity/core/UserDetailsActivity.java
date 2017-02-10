@@ -17,8 +17,11 @@ import android.widget.TextView;
 import com.github.maximkirko.training_2017_android.R;
 import com.github.maximkirko.training_2017_android.contentprovider.FriendsContentProvider;
 import com.github.maximkirko.training_2017_android.asynctask.ImageLoadingAsyncTask;
+import com.github.maximkirko.training_2017_android.contentprovider.UserContentProvider;
 import com.github.maximkirko.training_2017_android.mapper.UserMapper;
 import com.github.maximkirko.training_2017_android.model.User;
+import com.github.maximkirko.training_2017_android.service.VKService;
+import com.github.maximkirko.training_2017_android.sharedpreference.AppSharedPreferences;
 
 /**
  * Created by MadMax on 25.12.2016.
@@ -62,8 +65,14 @@ public class UserDetailsActivity extends AppCompatActivity implements View.OnCli
     }
 
     private void initUser(int id) {
-        Uri uri = ContentUris.withAppendedId(FriendsContentProvider.FRIENDS_CONTENT_URI, id);
-        Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+        Cursor cursor;
+        if (id == AppSharedPreferences.getInt(VKService.USER_ID_PREFERENCE, 0)) {
+            Uri uri = ContentUris.withAppendedId(UserContentProvider.USER_CONTENT_URI, id);
+            cursor = getContentResolver().query(uri, null, null, null, null);
+        } else {
+            Uri uri = ContentUris.withAppendedId(FriendsContentProvider.FRIENDS_CONTENT_URI, id);
+            cursor = getContentResolver().query(uri, null, null, null, null);
+        }
         if (cursor.moveToNext()) {
             user = UserMapper.convert(cursor);
         }

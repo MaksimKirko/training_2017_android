@@ -36,6 +36,6 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:25.0.1'
     compile 'com.android.support:appcompat-v7:25.0.1'
     compile 'com.android.support:gridlayout-v7:25.0.1'
-    compile 'com.vk:androidsdk:1.6.8'
     compile 'com.android.support:customtabs:25.0.1'
+    compile 'javax.inject:javax.inject:1'
 }

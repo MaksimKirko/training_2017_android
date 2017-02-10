@@ -1,11 +1,10 @@
 package com.github.maximkirko.training_2017_android.application;
 
 import android.app.Application;
-import android.content.SharedPreferences;
 
 import com.github.maximkirko.training_2017_android.bitmapmemorymanager.BitmapMemoryManagerConfigurator;
 import com.github.maximkirko.training_2017_android.db.DBHelper;
-import com.vk.sdk.VKSdk;
+import com.github.maximkirko.training_2017_android.sharedpreference.AppSharedPreferences;
 
 /**
  * Created by MadMax on 09.01.2017.
@@ -20,7 +19,6 @@ public class VKSimpleChatApplication extends Application {
 
     private static BitmapMemoryManagerConfigurator bitmapMemoryManagerConfigurator;
     private static DBHelper dbHelper;
-    private static SharedPreferences sharedPreferences;
 
     public static BitmapMemoryManagerConfigurator getBitmapManagerConfigurator() {
         return bitmapMemoryManagerConfigurator;
@@ -30,26 +28,23 @@ public class VKSimpleChatApplication extends Application {
         return dbHelper;
     }
 
-    public static SharedPreferences getSharedPreferences() {
-        return sharedPreferences;
-    }
-
-    public static void setSharedPreferences(SharedPreferences sharedPreferences) {
-        VKSimpleChatApplication.sharedPreferences = sharedPreferences;
-    }
-
     @Override
     public void onCreate() {
         super.onCreate();
-        VKSdk.initialize(this.getApplicationContext());
+        initSharedPreferences();
         initBitmapMemoryManager();
         initDBHelper();
+    }
+
+    private void initSharedPreferences() {
+        AppSharedPreferences.init(this);
     }
 
     private void initBitmapMemoryManager() {
         bitmapMemoryManagerConfigurator = BitmapMemoryManagerConfigurator.newBuilder()
                 .setMemCacheSize(MEMORY_CACHE_SIZE)
                 .setDiskCacheSize(DISK_CACHE_SIZE)
+                .setContext(this)
                 .build();
     }
 

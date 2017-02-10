@@ -7,7 +7,6 @@ import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.Loader;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -18,10 +17,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -30,14 +29,22 @@ import com.github.maximkirko.training_2017_android.activity.login.LoginActivity;
 import com.github.maximkirko.training_2017_android.adapter.FriendsCursorAdapter;
 import com.github.maximkirko.training_2017_android.adapter.viewholder.UserClickListener;
 import com.github.maximkirko.training_2017_android.application.VKSimpleChatApplication;
+import com.github.maximkirko.training_2017_android.asynctask.ImageLoadingAsyncTask;
 import com.github.maximkirko.training_2017_android.broadcastreceiver.BroadcastReceiverCallback;
 import com.github.maximkirko.training_2017_android.broadcastreceiver.DeviceLoadingBroadcastReceiver;
-import com.github.maximkirko.training_2017_android.broadcastreceiver.DownloadServiceBroadcastReceiver;
+import com.github.maximkirko.training_2017_android.broadcastreceiver.FriendsDownloadServiceBroadcastReceiver;
+import com.github.maximkirko.training_2017_android.broadcastreceiver.UserDataDownloadServiceBroadcastReceiver;
+import com.github.maximkirko.training_2017_android.db.DBHelper;
 import com.github.maximkirko.training_2017_android.itemanimator.LandingAnimator;
 import com.github.maximkirko.training_2017_android.itemdecorator.DefaultItemDecoration;
 import com.github.maximkirko.training_2017_android.loader.FriendsCursorLoader;
-import com.github.maximkirko.training_2017_android.service.DownloadService;
+import com.github.maximkirko.training_2017_android.loader.UserDataCursorLoader;
+import com.github.maximkirko.training_2017_android.mapper.UserMapper;
+import com.github.maximkirko.training_2017_android.model.User;
+import com.github.maximkirko.training_2017_android.service.FriendsDownloadService;
+import com.github.maximkirko.training_2017_android.service.UserDataDownloadService;
 import com.github.maximkirko.training_2017_android.service.VKService;
+import com.github.maximkirko.training_2017_android.sharedpreference.AppSharedPreferences;
 
 public class FriendsListActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, UserClickListener, BroadcastReceiverCallback, LoaderManager.LoaderCallbacks<Cursor> {
@@ -47,6 +54,9 @@ public class FriendsListActivity extends AppCompatActivity
     private Toolbar toolbar;
     private NavigationView navigationView;
     private View navHeaderView;
+    private TextView headerTitleView;
+    private TextView headerDescriptionView;
+    private ImageView headerImageView;
     private ProgressBar progressBar;
     // endregion
 
@@ -59,14 +69,16 @@ public class FriendsListActivity extends AppCompatActivity
     //    endregion
 
     // region Friends loading properties
-    private Cursor cursor;
+    private User user;
+    private Cursor friendsCursor;
     private PendingIntent pendingIntent;
-    private Intent serviceIntent;
+    private Intent userDataServiceIntent;
+    private Intent friendsServiceIntent;
     private AlarmManager alarmManager;
     private DeviceLoadingBroadcastReceiver deviceLoadingBroadcastReceiver;
-    private DownloadServiceBroadcastReceiver downloadServiceBroadcastReceiver;
+    private UserDataDownloadServiceBroadcastReceiver userDataDownloadServiceBroadcastReceiver;
+    private FriendsDownloadServiceBroadcastReceiver friendsDownloadServiceBroadcastReceiver;
 
-    private static final int LOADER_FRIENDS_ID = 1;
     private static final int ALARM_MANAGER_REPEATING_TIME = 1000 * 30 * 1; // 30 seconds
     // endregion
 
@@ -83,11 +95,17 @@ public class FriendsListActivity extends AppCompatActivity
         initProgressBar();
         enableProgressBar();
 
-        // initialize download service
         initDeviceLoadingBroadcastReceiver();
-        initDownloadServiceBroadcastReceiver();
-        initServiceIntent(true);
-        startServiceIntent();
+
+        // initialize user data download service
+        initUserDataDownloadServiceBroadcastReceiver();
+        initUserDataServiceIntent();
+        startServiceIntent(userDataServiceIntent);
+
+        // initialize friends download service
+        initFriendsDownloadServiceBroadcastReceiver();
+        initFriendsServiceIntent(true);
+        startServiceIntent(friendsServiceIntent);
     }
 
     private void initToolbar() {
@@ -113,6 +131,7 @@ public class FriendsListActivity extends AppCompatActivity
     private void initNavigationView() {
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        initNavigationViewHeader();
     }
 
     private void initNavigationViewHeader() {
@@ -120,11 +139,14 @@ public class FriendsListActivity extends AppCompatActivity
         navHeaderView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO header click
+                if (user != null) {
+                    startUserDetailsActivity(AppSharedPreferences.getInt(VKService.USER_ID_PREFERENCE, 0));
+                }
             }
         });
-        TextView titleView = (TextView) findViewById(R.id.textview_navigation_drawer_header_title);
-        TextView descriptionView = (TextView) findViewById(R.id.textview_navigation_drawer_header_description);
+        headerTitleView = (TextView) navHeaderView.findViewById(R.id.textview_navigation_drawer_header_title);
+        headerDescriptionView = (TextView) navHeaderView.findViewById(R.id.textview_navigation_drawer_header_description);
+        headerImageView = (ImageView) navHeaderView.findViewById(R.id.imageview_navigation_drawer_header);
     }
 
     private void initProgressBar() {
@@ -143,29 +165,39 @@ public class FriendsListActivity extends AppCompatActivity
         deviceLoadingBroadcastReceiver = new DeviceLoadingBroadcastReceiver(this);
     }
 
-    private void initDownloadServiceBroadcastReceiver() {
-        downloadServiceBroadcastReceiver = new DownloadServiceBroadcastReceiver(this);
+    private void initUserDataDownloadServiceBroadcastReceiver() {
+        userDataDownloadServiceBroadcastReceiver = new UserDataDownloadServiceBroadcastReceiver(this);
     }
 
-    private void initServiceIntent(boolean isFirstLoading) {
-        serviceIntent = new Intent(this, DownloadService.class);
-        serviceIntent.putExtra(DownloadService.IS_FIRST_LOADING_EXTRAS, isFirstLoading);
+    private void initFriendsDownloadServiceBroadcastReceiver() {
+        friendsDownloadServiceBroadcastReceiver = new FriendsDownloadServiceBroadcastReceiver(this);
     }
 
-    private void startServiceIntent() {
+    private void initUserDataServiceIntent() {
+        userDataServiceIntent = new Intent(this, UserDataDownloadService.class);
+    }
+
+    private void initFriendsServiceIntent(boolean isFirstLoading) {
+        friendsServiceIntent = new Intent(this, FriendsDownloadService.class);
+        friendsServiceIntent.putExtra(FriendsDownloadService.IS_FIRST_LOADING_EXTRAS, isFirstLoading);
+    }
+
+    private void startServiceIntent(Intent serviceIntent) {
         startService(serviceIntent);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        registerReceiver(downloadServiceBroadcastReceiver, new IntentFilter(DownloadService.NOTIFICATION));
+        registerReceiver(userDataDownloadServiceBroadcastReceiver, new IntentFilter(UserDataDownloadService.NOTIFICATION));
+        registerReceiver(friendsDownloadServiceBroadcastReceiver, new IntentFilter(FriendsDownloadService.NOTIFICATION));
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        unregisterReceiver(downloadServiceBroadcastReceiver);
+        unregisterReceiver(userDataDownloadServiceBroadcastReceiver);
+        unregisterReceiver(friendsDownloadServiceBroadcastReceiver);
     }
 
     @Override
@@ -181,15 +213,23 @@ public class FriendsListActivity extends AppCompatActivity
 
     @Override
     public void onReceived(Class<? extends BroadcastReceiver> broadcastReceiver) {
-        if (broadcastReceiver == DownloadServiceBroadcastReceiver.class) {
+        if (broadcastReceiver == UserDataDownloadServiceBroadcastReceiver.class) {
+            startUserDataLoader();
+        } else if (broadcastReceiver == FriendsDownloadServiceBroadcastReceiver.class) {
             startFriendsLoader();
         } else if (broadcastReceiver == DeviceLoadingBroadcastReceiver.class) {
             initAlarmManager();
         }
     }
 
+    private void startUserDataLoader() {
+        getLoaderManager().initLoader(UserDataCursorLoader.USER_DATA_LOADER_ID, null, this);
+        Loader<Cursor> loader = getLoaderManager().getLoader(UserDataCursorLoader.USER_DATA_LOADER_ID);
+        loader.forceLoad();
+    }
+
     private void initAlarmManager() {
-        initServiceIntent(false);
+        initFriendsServiceIntent(false);
         initPendingIntent();
         alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
         alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME,
@@ -197,18 +237,20 @@ public class FriendsListActivity extends AppCompatActivity
     }
 
     private void initPendingIntent() {
-        pendingIntent = PendingIntent.getService(this, 0, serviceIntent, 0);
+        pendingIntent = PendingIntent.getService(this, 0, friendsServiceIntent, 0);
     }
 
-    public void startFriendsLoader() {
-        getLoaderManager().initLoader(LOADER_FRIENDS_ID, null, this);
-        Loader<Cursor> loader = getLoaderManager().getLoader(LOADER_FRIENDS_ID);
+    private void startFriendsLoader() {
+        getLoaderManager().initLoader(FriendsCursorLoader.FRIENDS_LOADER_ID, null, this);
+        Loader<Cursor> loader = getLoaderManager().getLoader(FriendsCursorLoader.FRIENDS_LOADER_ID);
         loader.forceLoad();
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle bundle) {
-        if (id == LOADER_FRIENDS_ID) {
+        if (id == UserDataCursorLoader.USER_DATA_LOADER_ID) {
+            return new UserDataCursorLoader(getApplicationContext());
+        } else if (id == FriendsCursorLoader.FRIENDS_LOADER_ID) {
             return new FriendsCursorLoader(getApplicationContext());
         }
         return null;
@@ -220,20 +262,41 @@ public class FriendsListActivity extends AppCompatActivity
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        disableProgressBar();
-        if (this.cursor == null) {
-            this.cursor = cursor;
-            initAdapter();
-            initRecyclerView();
-            return;
+        System.out.println(loader.getClass().getSimpleName());
+        if (loader instanceof UserDataCursorLoader) {
+            if (cursor.moveToNext()) {
+                user = UserMapper.convert(cursor);
+                setUserData();
+            }
+        } else if (loader instanceof FriendsCursorLoader) {
+            disableProgressBar();
+            if (this.friendsCursor == null) {
+                this.friendsCursor = cursor;
+                initAdapter();
+                initRecyclerView();
+                return;
+            }
+            this.friendsCursor = cursor;
+            recyclerViewAdapter.setCursor(cursor);
+            recyclerViewAdapter.notifyDataSetChanged();
         }
-        this.cursor = cursor;
-        recyclerViewAdapter.setCursor(cursor);
-        recyclerViewAdapter.notifyDataSetChanged();
+    }
+
+    private void setUserData() {
+        if (user != null) {
+            headerTitleView.setText(user.getFirst_name() + " " + user.getLast_name());
+            headerDescriptionView.setText(user.isOnline() ? getResources().getString(R.string.all_online_status_true) : "");
+            ImageLoadingAsyncTask.newLoader()
+                    .setTargetView(headerImageView)
+                    .setPlaceHolder(R.drawable.all_default_user_image)
+                    .setImageHeight(headerImageView.getHeight())
+                    .setImageWidth(headerImageView.getWidth())
+                    .load(user.getPhoto_100());
+        }
     }
 
     private void initAdapter() {
-        recyclerViewAdapter = new FriendsCursorAdapter(cursor, this);
+        recyclerViewAdapter = new FriendsCursorAdapter(friendsCursor, this);
         initItemDecoration();
         initItemAnimator();
     }
@@ -303,11 +366,9 @@ public class FriendsListActivity extends AppCompatActivity
     }
 
     private void clearSharedPreferences() {
-        SharedPreferences.Editor editor = VKSimpleChatApplication.getSharedPreferences().edit();
-        editor.remove(VKService.ACCESS_PERMISSION_PREFERENCE);
-        editor.remove(VKService.ACCESS_TOKEN_PREFERENCE);
-        editor.remove(VKService.USER_ID_PREFERENCE);
-        editor.apply();
+        AppSharedPreferences.removePreference(VKService.ACCESS_PERMISSION_PREFERENCE);
+        AppSharedPreferences.removePreference(VKService.ACCESS_TOKEN_PREFERENCE);
+        AppSharedPreferences.removePreference(VKService.USER_ID_PREFERENCE);
     }
 
     private void clearCache() {
@@ -316,7 +377,9 @@ public class FriendsListActivity extends AppCompatActivity
     }
 
     private void clearDB() {
-        VKSimpleChatApplication.getDbHelper().dropUserTable(VKSimpleChatApplication.getDbHelper().getWritableDatabase());
+        DBHelper dbHelper = VKSimpleChatApplication.getDbHelper();
+        dbHelper.dropTable(dbHelper.getWritableDatabase(), DBHelper.FRIEND_TABLE_NAME);
+        dbHelper.dropTable(dbHelper.getWritableDatabase(), DBHelper.USER_TABLE_NAME);
     }
 
     private void startLoginActivity() {

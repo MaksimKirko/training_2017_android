@@ -23,4 +23,9 @@
     <string name="navigation_drawer_friends">Friends</string>
     <string name="navigation_drawer_logout">Logout</string>
 
+    <!-- Intro screen -->
+    <string name="intro_button_next_text">Next</string>
+    <string name="intro_button_skip_text">Skip</string>
+    <string name="intro_button_got_it_text">Got it</string>
+
 </resources>

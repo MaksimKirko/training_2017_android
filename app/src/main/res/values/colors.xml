@@ -4,5 +4,8 @@
     <color name="colorPrimaryDark">#202753</color>
     <color name="colorAccent">#1670c4</color>
 
-    <color name="all_background_color">#ffffff</color>
+    <color name="colorBackground">#ffffff</color>
+
+    <color name="colorIntroDotsActive">#313030</color>
+    <color name="colorIntroDotsInactive">#b4b1b1</color>
 </resources>

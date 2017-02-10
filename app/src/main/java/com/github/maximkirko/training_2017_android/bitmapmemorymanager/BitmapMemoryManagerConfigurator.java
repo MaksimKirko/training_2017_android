@@ -1,5 +1,7 @@
 package com.github.maximkirko.training_2017_android.bitmapmemorymanager;
 
+import android.content.Context;
+
 /**
  * Created by MadMax on 15.01.2017.
  */
@@ -10,6 +12,7 @@ public class BitmapMemoryManagerConfigurator {
     private BitmapDiskCacheManager bitmapDiskCacheManager;
     private int memCacheSize;
     private int diskCacheSize;
+    private Context context;
 
     public BitmapMemoryCacheManager getBitmapMemoryCacheManager() {
         return bitmapMemoryCacheManager;
@@ -41,10 +44,15 @@ public class BitmapMemoryManagerConfigurator {
             return this;
         }
 
+        public Builder setContext(Context context) {
+            BitmapMemoryManagerConfigurator.this.context = context;
+            return this;
+        }
+
         public BitmapMemoryManagerConfigurator build() {
             BitmapMemoryManagerConfigurator bitmapMemoryManagerConfigurator = new BitmapMemoryManagerConfigurator();
             bitmapMemoryManagerConfigurator.bitmapMemoryCacheManager = new BitmapMemoryCacheManager(memCacheSize);
-            bitmapMemoryManagerConfigurator.bitmapDiskCacheManager = new BitmapDiskCacheManager(diskCacheSize);
+            bitmapMemoryManagerConfigurator.bitmapDiskCacheManager = new BitmapDiskCacheManager(diskCacheSize, context);
             return bitmapMemoryManagerConfigurator;
         }
     }
