@@ -42,7 +42,9 @@ public class VKAuthWebViewClient extends WebViewClient {
 
     private void checkRedirectUrl(String url) {
         if (url.startsWith(VKService.REDIRECT_URI + "#" + VKService.ACCESS_TOKEN_PARAM)) {
-            webClientCallbackWeakReference.get().onUrlLoading(url);
+            if (webClientCallbackWeakReference != null) {
+                webClientCallbackWeakReference.get().onUrlLoading(url);
+            }
             clearCookies();
         }
     }
