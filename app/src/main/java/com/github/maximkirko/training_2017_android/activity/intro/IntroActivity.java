@@ -20,7 +20,7 @@ import android.widget.TextView;
 
 import com.github.maximkirko.training_2017_android.R;
 import com.github.maximkirko.training_2017_android.activity.login.LoginActivity;
-import com.github.maximkirko.training_2017_android.activity.navigator.ActivityNavigator;
+import com.github.maximkirko.training_2017_android.activity.navigator.IntentManager;
 import com.github.maximkirko.training_2017_android.sharedpreference.AppSharedPreferences;
 
 /**
@@ -113,7 +113,8 @@ public class IntroActivity extends AppCompatActivity {
 
     private void startLoginActivity() {
         AppSharedPreferences.putBoolean(IS_FIRST_LAUNCH_PREFERENCE, false);
-        ActivityNavigator.startActivityWithDestroy(this, LoginActivity.class);
+        startActivity(IntentManager.getIntentForLoginActivity(this));
+        finish();
     }
 
     private int getItem(int i) {

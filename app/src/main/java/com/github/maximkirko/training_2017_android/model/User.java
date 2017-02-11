@@ -14,6 +14,8 @@ public class User implements Parcelable {
     private String last_name;
     private String photo_100;
     private boolean online;
+    private boolean is_favorite;
+    private int raiting;
 
     public int getId() {
         return id;
@@ -55,26 +57,43 @@ public class User implements Parcelable {
         this.online = online;
     }
 
+    public boolean is_favorite() {
+        return is_favorite;
+    }
+
+    public void setIs_favorite(boolean is_favorite) {
+        this.is_favorite = is_favorite;
+    }
+
+    public int getRaiting() {
+        return raiting;
+    }
+
+    public void setRaiting(int raiting) {
+        this.raiting = raiting;
+    }
+
+    public User() {
+    }
+
+    public User(int id, String first_name, String last_name, String photo_100, boolean online, boolean is_favorite, int raiting) {
+        this.id = id;
+        this.first_name = first_name;
+        this.last_name = last_name;
+        this.photo_100 = photo_100;
+        this.online = online;
+        this.is_favorite = is_favorite;
+        this.raiting = raiting;
+    }
+
     protected User(Parcel in) {
         id = in.readInt();
         first_name = in.readString();
         last_name = in.readString();
         photo_100 = in.readString();
         online = in.readByte() != 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(id);
-        dest.writeString(first_name);
-        dest.writeString(last_name);
-        dest.writeString(photo_100);
-        dest.writeByte((byte) (online ? 1 : 0));
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
+        is_favorite = in.readByte() != 0;
+        raiting = in.readInt();
     }
 
     public static final Creator<User> CREATOR = new Creator<User>() {
@@ -89,25 +108,19 @@ public class User implements Parcelable {
         }
     };
 
-    public User() {
-    }
-
-    public User(int id, String first_name, String last_name, String photo_100, boolean online) {
-        this.id = id;
-        this.first_name = first_name;
-        this.last_name = last_name;
-        this.photo_100 = photo_100;
-        this.online = online;
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
     @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", first_name='" + first_name + '\'' +
-                ", last_name='" + last_name + '\'' +
-                ", photo_100='" + photo_100 + '\'' +
-                ", online=" + online +
-                '}';
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
+        dest.writeString(first_name);
+        dest.writeString(last_name);
+        dest.writeString(photo_100);
+        dest.writeByte((byte) (online ? 1 : 0));
+        dest.writeByte((byte) (is_favorite ? 1 : 0));
+        dest.writeInt(raiting);
     }
 }

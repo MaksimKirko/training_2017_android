@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.github.maximkirko.training_2017_android.R;
+import com.github.maximkirko.training_2017_android.activity.navigator.IntentManager;
 import com.github.maximkirko.training_2017_android.contentprovider.FriendsContentProvider;
 import com.github.maximkirko.training_2017_android.asynctask.ImageLoadingAsyncTask;
 import com.github.maximkirko.training_2017_android.contentprovider.UserContentProvider;
@@ -65,14 +66,14 @@ public class UserDetailsActivity extends AppCompatActivity implements View.OnCli
     }
 
     private void initUser(int id) {
-        Cursor cursor;
+        Uri uri;
         if (id == AppSharedPreferences.getInt(VKService.USER_ID_PREFERENCE, 0)) {
-            Uri uri = ContentUris.withAppendedId(UserContentProvider.USER_CONTENT_URI, id);
-            cursor = getContentResolver().query(uri, null, null, null, null);
+            uri = UserContentProvider.USER_CONTENT_URI;
         } else {
-            Uri uri = ContentUris.withAppendedId(FriendsContentProvider.FRIENDS_CONTENT_URI, id);
-            cursor = getContentResolver().query(uri, null, null, null, null);
+            uri = FriendsContentProvider.FRIENDS_CONTENT_URI;
         }
+        uri = ContentUris.withAppendedId(uri, id);
+        Cursor cursor = getContentResolver().query(uri, null, null, null, null);
         if (cursor.moveToNext()) {
             user = UserMapper.convert(cursor);
         }
@@ -110,15 +111,10 @@ public class UserDetailsActivity extends AppCompatActivity implements View.OnCli
     public boolean onOptionsItemSelected(MenuItem item) {
 
         if (item.getItemId() == android.R.id.home) {
-            startFriendsListActivity();
+            startActivity(IntentManager.getIntentForFriendsListActivity(this));
             return true;
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    private void startFriendsListActivity() {
-        Intent intent = new Intent(this, FriendsListActivity.class);
-        startActivity(intent);
     }
 }

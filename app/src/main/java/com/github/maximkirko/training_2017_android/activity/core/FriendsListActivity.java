@@ -26,6 +26,7 @@ import android.widget.TextView;
 
 import com.github.maximkirko.training_2017_android.R;
 import com.github.maximkirko.training_2017_android.activity.login.LoginActivity;
+import com.github.maximkirko.training_2017_android.activity.navigator.IntentManager;
 import com.github.maximkirko.training_2017_android.adapter.FriendsCursorAdapter;
 import com.github.maximkirko.training_2017_android.adapter.viewholder.UserClickListener;
 import com.github.maximkirko.training_2017_android.application.VKSimpleChatApplication;
@@ -140,7 +141,8 @@ public class FriendsListActivity extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 if (user != null) {
-                    startUserDetailsActivity(AppSharedPreferences.getInt(VKService.USER_ID_PREFERENCE, 0));
+                    int id = AppSharedPreferences.getInt(VKService.USER_ID_PREFERENCE, 0);
+                    IntentManager.getIntentForUserDetailsActivity(getBaseContext(), id);
                 }
             }
         });
@@ -202,13 +204,7 @@ public class FriendsListActivity extends AppCompatActivity
 
     @Override
     public void onItemClick(int id) {
-        startUserDetailsActivity(id);
-    }
-
-    private void startUserDetailsActivity(int id) {
-        Intent intent = new Intent(this, UserDetailsActivity.class);
-        intent.putExtra(UserDetailsActivity.USER_EXTRA, id);
-        startActivity(intent);
+        IntentManager.getIntentForUserDetailsActivity(this, id);
     }
 
     @Override
@@ -362,7 +358,8 @@ public class FriendsListActivity extends AppCompatActivity
         clearSharedPreferences();
         clearCache();
         clearDB();
-        startLoginActivity();
+        startActivity(IntentManager.getIntentForLoginActivity(this));
+        finish();
     }
 
     private void clearSharedPreferences() {
@@ -380,11 +377,5 @@ public class FriendsListActivity extends AppCompatActivity
         DBHelper dbHelper = VKSimpleChatApplication.getDbHelper();
         dbHelper.dropTable(dbHelper.getWritableDatabase(), DBHelper.FRIEND_TABLE_NAME);
         dbHelper.dropTable(dbHelper.getWritableDatabase(), DBHelper.USER_TABLE_NAME);
-    }
-
-    private void startLoginActivity() {
-        Intent intent = new Intent(this, LoginActivity.class);
-        startActivity(intent);
-        finish();
     }
 }
