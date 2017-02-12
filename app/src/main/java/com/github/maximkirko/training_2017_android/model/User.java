@@ -3,6 +3,8 @@ package com.github.maximkirko.training_2017_android.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.sql.Timestamp;
+
 /**
  * Created by MadMax on 10.01.2017.
  */
@@ -15,7 +17,7 @@ public class User implements Parcelable {
     private String photo_100;
     private boolean online;
     private boolean is_favorite;
-    private int raiting;
+    private int rating;
 
     public int getId() {
         return id;
@@ -65,25 +67,25 @@ public class User implements Parcelable {
         this.is_favorite = is_favorite;
     }
 
-    public int getRaiting() {
-        return raiting;
+    public int getRating() {
+        return rating;
     }
 
-    public void setRaiting(int raiting) {
-        this.raiting = raiting;
+    public void setRating(int rating) {
+        this.rating = rating;
     }
 
     public User() {
     }
 
-    public User(int id, String first_name, String last_name, String photo_100, boolean online, boolean is_favorite, int raiting) {
+    public User(int id, String first_name, String last_name, String photo_100, boolean online, boolean is_favorite, int rating) {
         this.id = id;
         this.first_name = first_name;
         this.last_name = last_name;
         this.photo_100 = photo_100;
         this.online = online;
         this.is_favorite = is_favorite;
-        this.raiting = raiting;
+        this.rating = rating;
     }
 
     protected User(Parcel in) {
@@ -93,7 +95,23 @@ public class User implements Parcelable {
         photo_100 = in.readString();
         online = in.readByte() != 0;
         is_favorite = in.readByte() != 0;
-        raiting = in.readInt();
+        rating = in.readInt();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
+        dest.writeString(first_name);
+        dest.writeString(last_name);
+        dest.writeString(photo_100);
+        dest.writeByte((byte) (online ? 1 : 0));
+        dest.writeByte((byte) (is_favorite ? 1 : 0));
+        dest.writeInt(rating);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
     public static final Creator<User> CREATOR = new Creator<User>() {
@@ -107,20 +125,4 @@ public class User implements Parcelable {
             return new User[size];
         }
     };
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(id);
-        dest.writeString(first_name);
-        dest.writeString(last_name);
-        dest.writeString(photo_100);
-        dest.writeByte((byte) (online ? 1 : 0));
-        dest.writeByte((byte) (is_favorite ? 1 : 0));
-        dest.writeInt(raiting);
-    }
 }

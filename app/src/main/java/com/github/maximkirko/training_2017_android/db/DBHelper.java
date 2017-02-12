@@ -36,7 +36,9 @@ public class DBHelper extends SQLiteOpenHelper {
 
     // region query
     private static final String CREATE_USER_TABLE = CREATE_TABLE + USER_TABLE_NAME + "(id integer PRIMARY KEY, first_name text, last_name text, photo_100 text, online boolean);";
-    private static final String CREATE_FRIEND_TABLE = CREATE_TABLE + FRIEND_TABLE_NAME + "(id integer PRIMARY KEY, first_name text, last_name text, photo_100 text, online boolean);";
+    private static final String CREATE_FRIEND_TABLE = CREATE_TABLE + FRIEND_TABLE_NAME + "(id integer PRIMARY KEY, first_name text, last_name text, photo_100 text, online boolean, " +
+            "rating integer, is_favorite boolean);";
+    // created timestamp,
     // endregion
 
     // region fields
@@ -45,6 +47,8 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String USER_TABLE_FIELD_LAST_NAME = "last_name";
     public static final String USER_TABLE_FIELD_PHOTO_100 = "photo_100";
     public static final String USER_TABLE_FIELD_ONLINE = "online";
+    public static final String FRIENDS_TABLE_FIELD_RATING = "rating";
+    public static final String FRIENDS_TABLE_FIELD_IS_FAVORITE = "is_favorite";
     // endregion
 
     public DBHelper(@NonNull Context context) {
@@ -66,7 +70,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public void insertUserData(@NonNull SQLiteDatabase db, @NonNull Context context, @NonNull User user) {
         ArrayList<ContentProviderOperation> ops = new ArrayList<>();
-        ops.add(userToContetnProviderOperation(user, UserContentProvider.USER_CONTENT_URI));
+        ops.add(userToContentProviderOperation(user, UserContentProvider.USER_CONTENT_URI));
         try {
             dropTable(db, USER_TABLE_NAME);
             db.execSQL(CREATE_USER_TABLE);
@@ -79,7 +83,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public void insertFriendsBatch(@NonNull SQLiteDatabase db, @NonNull Context context, @NonNull List<User> friends) {
         ArrayList<ContentProviderOperation> ops = new ArrayList<>();
         for (User user : friends) {
-            ops.add(userToContetnProviderOperation(user, FriendsContentProvider.FRIENDS_CONTENT_URI));
+            ops.add(friendToContentProviderOperation(user, FriendsContentProvider.FRIENDS_CONTENT_URI));
         }
         try {
             dropTable(db, FRIEND_TABLE_NAME);
@@ -90,13 +94,26 @@ public class DBHelper extends SQLiteOpenHelper {
         }
     }
 
-    private ContentProviderOperation userToContetnProviderOperation(@NonNull User user, @NonNull Uri contentUri) {
+    private ContentProviderOperation userToContentProviderOperation(@NonNull User user, @NonNull Uri contentUri) {
         return ContentProviderOperation.newInsert(contentUri)
                 .withValue(USER_TABLE_FIELD_ID, user.getId())
                 .withValue(USER_TABLE_FIELD_FIRST_NAME, user.getFirst_name())
                 .withValue(USER_TABLE_FIELD_LAST_NAME, user.getLast_name())
                 .withValue(USER_TABLE_FIELD_PHOTO_100, user.getPhoto_100())
                 .withValue(USER_TABLE_FIELD_ONLINE, user.isOnline())
+                .build();
+    }
+
+
+    private ContentProviderOperation friendToContentProviderOperation(@NonNull User user, @NonNull Uri contentUri) {
+        return ContentProviderOperation.newInsert(contentUri)
+                .withValue(USER_TABLE_FIELD_ID, user.getId())
+                .withValue(USER_TABLE_FIELD_FIRST_NAME, user.getFirst_name())
+                .withValue(USER_TABLE_FIELD_LAST_NAME, user.getLast_name())
+                .withValue(USER_TABLE_FIELD_PHOTO_100, user.getPhoto_100())
+                .withValue(USER_TABLE_FIELD_ONLINE, user.isOnline())
+                .withValue(FRIENDS_TABLE_FIELD_IS_FAVORITE, user.is_favorite())
+                .withValue(FRIENDS_TABLE_FIELD_RATING, user.getRating())
                 .build();
     }
 

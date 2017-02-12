@@ -25,6 +25,7 @@ public final class VKService {
     public static final String API_VERSION_PARAM = "v";
     public static final String GET_FRIENDS_METHOD_NAME_PARAM = "friends.get?";
     public static final String GET_USER_METHOD_NAME_PARAM = "users.get?";
+    public static final String COUNT_PARAM = "count";
     public static final String FIELDS_PARAM = "fields";
     // endregion
 
@@ -33,12 +34,14 @@ public final class VKService {
     public static final String SCOPE = "friends";
     public static final String RESPONSE_TYPE = "token";
     public static final String API_VERSION = "5.62";
+    public static final String COUNT = "10";
     public static final String FIELDS = "nickname, online, last_seen, photo_100";
     // endregion
 
     public static String getUserRequestUrl(Context context) {
         String url = context.getString(R.string.base_vk_api_url) + GET_USER_METHOD_NAME_PARAM;
         url += ACCESS_TOKEN_PARAM + "=" + AppSharedPreferences.getString(ACCESS_TOKEN_PREFERENCE, null);
+        url += "&" + COUNT_PARAM + "=" + COUNT;
         url += "&" + FIELDS_PARAM + "=" + FIELDS;
         url += "&" + API_VERSION_PARAM + "=" + API_VERSION;
         url = url.replaceAll(" ", "%20");

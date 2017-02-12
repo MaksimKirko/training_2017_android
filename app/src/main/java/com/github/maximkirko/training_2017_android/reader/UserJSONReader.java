@@ -9,7 +9,9 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -80,7 +82,6 @@ public class UserJSONReader implements Reader<User> {
         String last_name = null;
         String photo_100 = null;
         int online = 0;
-        boolean is_favorite = false;
 
         reader.beginObject();
         while (reader.hasNext()) {
@@ -95,14 +96,12 @@ public class UserJSONReader implements Reader<User> {
                 photo_100 = reader.nextString();
             } else if (name.equals("online")) {
                 online = reader.nextInt();
-            } else if (name.equals("is_favorite")) {
-                is_favorite = reader.nextInt() != 0;
             } else {
                 reader.skipValue();
             }
         }
         reader.endObject();
 
-        return new User(id, first_name, last_name, photo_100, online != 0, is_favorite, 0);
+        return new User(id, first_name, last_name, photo_100, online != 0, false, 0);
     }
 }

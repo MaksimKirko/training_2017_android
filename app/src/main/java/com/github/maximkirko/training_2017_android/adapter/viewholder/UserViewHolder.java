@@ -3,6 +3,7 @@ package com.github.maximkirko.training_2017_android.adapter.viewholder;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -18,6 +19,7 @@ public class UserViewHolder extends RecyclerView.ViewHolder implements View.OnCl
     private TextView nameView;
     private TextView onlineStatusView;
     private ImageView userPhotoView;
+    private CheckBox isFavoriteView;
 
     private int userId;
     private WeakReference<UserClickListener> userClickListenerWeakReference;
@@ -33,14 +35,17 @@ public class UserViewHolder extends RecyclerView.ViewHolder implements View.OnCl
 
     public UserViewHolder(@NonNull View itemView, @NonNull UserClickListener userClickListener) {
         super(itemView);
-
         itemView.setLayoutParams(ItemSizeUtils.getLayoutParams(itemView.getContext()));
         userClickListenerWeakReference = new WeakReference<>(userClickListener);
         itemView.setOnClickListener(this);
+        initViews();
+    }
 
+    private void initViews() {
         nameView = (TextView) itemView.findViewById(R.id.textview_friendslist_item_name);
         onlineStatusView = (TextView) itemView.findViewById(R.id.textview_friendslist_item_online_status);
         userPhotoView = (ImageView) itemView.findViewById(R.id.imageview_friendslist_item_photo);
+        isFavoriteView = (CheckBox) itemView.findViewById(R.id.checkbox_friendslist_item_is_favorite);
     }
 
     public void onBindData(@NonNull User user) {
@@ -50,10 +55,14 @@ public class UserViewHolder extends RecyclerView.ViewHolder implements View.OnCl
                 .setImageHeight(itemView.getResources().getDimensionPixelSize(R.dimen.size_friendslist_item_image))
                 .setImageWidth(itemView.getResources().getDimensionPixelSize(R.dimen.size_friendslist_item_image))
                 .load(user.getPhoto_100());
+        this.userId = user.getId();
+        setViewsValues(user);
+    }
 
+    private void setViewsValues(User user) {
         nameView.setText(user.getFirst_name() + " " + user.getLast_name());
         onlineStatusView.setText(user.isOnline() ? itemView.getResources().getString(R.string.all_online_status_true) : "");
-        this.userId = user.getId();
+        isFavoriteView.setChecked(user.is_favorite());
     }
 
     public void cancelTask() {

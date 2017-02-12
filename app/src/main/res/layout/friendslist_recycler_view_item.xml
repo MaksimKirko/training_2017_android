@@ -19,8 +19,8 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="2"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
                 android:orientation="vertical">
 
                 <ImageView
@@ -40,8 +40,9 @@
                     android:layout_margin="@dimen/margin_friendslist_item_online_status"
                     android:ellipsize="end"
                     android:gravity="center"
-                    android:maxLines="3"
-                    tools:text="заходил 24 декабря 2016 в 17:29" />
+                    android:maxLines="1"
+                    android:textSize="@dimen/size_friendslist_item_online_status_text"
+                    tools:text="Online" />
 
             </LinearLayout>
 
@@ -49,33 +50,46 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:orientation="vertical">
+                android:orientation="horizontal">
 
                 <TextView
                     android:id="@+id/textview_friendslist_item_name"
                     style="@style/TextAppearance.AppCompat.Title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="start"
                     android:layout_margin="@dimen/margin_friendslist_item_title"
+                    android:layout_weight="1"
                     android:ellipsize="end"
-                    android:gravity="left|bottom"
                     android:maxLines="2"
+                    android:textSize="@dimen/size_friendslist_item_title_text"
                     tools:text="Name Name Name Name Name Name" />
 
-                <Button
-                    style="@style/Widget.AppCompat.Button.Borderless.Colored"
-                    android:layout_width="match_parent"
+                <LinearLayout
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:layout_margin="@dimen/margin_friendslist_item_title"
-                    android:gravity="start"
-                    android:maxLines="2"
-                    android:text="@string/friendslist_item_send_message_button_text" />
+                    android:orientation="vertical">
+
+                    <CheckBox
+                        android:id="@+id/checkbox_friendslist_item_is_favorite"
+                        style="?android:attr/starStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:layout_margin="@dimen/margin_friendslist_item_is_favorite" />
+
+                    <TextView
+                        android:id="@+id/textview_friendslist_item_raiting"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_margin="@dimen/margin_friendslist_item_rating"
+                        android:layout_gravity="center"
+                        android:gravity="end"
+                        tools:text="+1"/>
+
+                </LinearLayout>
 
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
-
 
 </android.support.v7.widget.CardView>
