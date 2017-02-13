@@ -1,5 +1,6 @@
 package com.github.maximkirko.training_2017_android.activity.core.fragment;
 
+import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -12,9 +13,12 @@ import android.view.ViewGroup;
 import com.github.maximkirko.training_2017_android.R;
 import com.github.maximkirko.training_2017_android.activity.navigator.IntentManager;
 import com.github.maximkirko.training_2017_android.adapter.FriendsCursorAdapter;
+import com.github.maximkirko.training_2017_android.adapter.viewholder.CheckBoxOnChangeListener;
 import com.github.maximkirko.training_2017_android.adapter.viewholder.UserClickListener;
 import com.github.maximkirko.training_2017_android.itemanimator.LandingAnimator;
 import com.github.maximkirko.training_2017_android.itemdecorator.DefaultItemDecoration;
+import com.github.maximkirko.training_2017_android.loader.FavoriteFriendsCursorLoader;
+import com.github.maximkirko.training_2017_android.loader.FriendsCursorLoader;
 
 /**
  * Created by MadMax on 12.02.2017.

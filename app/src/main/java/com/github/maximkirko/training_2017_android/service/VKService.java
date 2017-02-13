@@ -40,14 +40,22 @@ public final class VKService {
     public static final String RESPONSE_TYPE = "token";
     public static final String API_VERSION = "5.62";
     public static final String COUNT = "10";
-    public static final String FIELDS = "nickname, online, last_seen, photo_100";
+    public static final String[] FIELDS = {"nickname", "online", "last_seen", "photo_100"};
     // endregion
 
     public static String getUserRequestUrl() {
         String url = BASE_REQUEST_URL + GET_USER_METHOD_NAME_PARAM;
         url += ACCESS_TOKEN_PARAM + "=" + AppSharedPreferences.getString(ACCESS_TOKEN_PREFERENCE, null);
         url += "&" + COUNT_PARAM + "=" + COUNT;
-        url += "&" + FIELDS_PARAM + "=" + FIELDS;
+        url += "&" + FIELDS_PARAM + "=";
+        int i = 0;
+        for (String field : FIELDS) {
+            url += field;
+            if (i < FIELDS.length - 1) {
+                url += ", ";
+            }
+            i++;
+        }
         url += "&" + API_VERSION_PARAM + "=" + API_VERSION;
         url = url.replaceAll(" ", "%20");
         return url;

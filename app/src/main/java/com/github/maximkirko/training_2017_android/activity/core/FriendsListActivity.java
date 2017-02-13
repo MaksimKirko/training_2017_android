@@ -29,12 +29,14 @@ import com.github.maximkirko.training_2017_android.R;
 import com.github.maximkirko.training_2017_android.activity.core.fragment.FriendsFragment;
 import com.github.maximkirko.training_2017_android.activity.navigator.IntentManager;
 import com.github.maximkirko.training_2017_android.adapter.FriendslistFragmentPagerAdapter;
+import com.github.maximkirko.training_2017_android.adapter.viewholder.CheckBoxOnChangeListener;
 import com.github.maximkirko.training_2017_android.application.VKSimpleChatApplication;
 import com.github.maximkirko.training_2017_android.asynctask.ImageLoadingAsyncTask;
 import com.github.maximkirko.training_2017_android.broadcastreceiver.BroadcastReceiverCallback;
 import com.github.maximkirko.training_2017_android.broadcastreceiver.DeviceLoadingBroadcastReceiver;
 import com.github.maximkirko.training_2017_android.broadcastreceiver.DownloadServiceBroadcastReceiver;
 import com.github.maximkirko.training_2017_android.db.DBHelper;
+import com.github.maximkirko.training_2017_android.loader.FavoriteFriendsCursorLoader;
 import com.github.maximkirko.training_2017_android.loader.FriendsCursorLoader;
 import com.github.maximkirko.training_2017_android.loader.UserDataCursorLoader;
 import com.github.maximkirko.training_2017_android.mapper.UserMapper;
@@ -47,7 +49,7 @@ import com.github.maximkirko.training_2017_android.service.VKService;
 import com.github.maximkirko.training_2017_android.sharedpreference.AppSharedPreferences;
 
 public class FriendsListActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, BroadcastReceiverCallback, LoaderManager.LoaderCallbacks<Cursor> {
+        implements NavigationView.OnNavigationItemSelectedListener, BroadcastReceiverCallback, CheckBoxOnChangeListener, LoaderManager.LoaderCallbacks<Cursor> {
 
     // region Views
     private DrawerLayout drawer;
@@ -206,7 +208,6 @@ public class FriendsListActivity extends AppCompatActivity
 
     @Override
     public void onReceived(String serviceClass) {
-        String s = UserDataDownloadService.SERVICE_CLASS;
         if (serviceClass.equals(UserDataDownloadService.SERVICE_CLASS)) {
             startUserDataLoader();
         } else if (serviceClass.equals(FriendsDataDownloadService.SERVICE_CLASS)) {
@@ -241,11 +242,28 @@ public class FriendsListActivity extends AppCompatActivity
     }
 
     @Override
+    public void onChecked(int id, boolean isChecked) {
+        if(isChecked) {
+
+        } else {
+            startFavoriteFriendsLoader();
+        }
+    }
+
+    private void startFavoriteFriendsLoader() {
+        getLoaderManager().initLoader(FriendsCursorLoader.FRIENDS_LOADER_ID, null, this);
+        Loader<Cursor> loader = getLoaderManager().getLoader(FavoriteFriendsCursorLoader.FAVORITE_FRIENDS_LOADER_ID);
+        loader.forceLoad();
+    }
+
+    @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle bundle) {
         if (id == UserDataCursorLoader.USER_DATA_LOADER_ID) {
             return new UserDataCursorLoader(getApplicationContext());
         } else if (id == FriendsCursorLoader.FRIENDS_LOADER_ID) {
             return new FriendsCursorLoader(getApplicationContext());
+        } else if (id == FavoriteFriendsCursorLoader.FAVORITE_FRIENDS_LOADER_ID) {
+            return new FavoriteFriendsCursorLoader(getApplicationContext());
         }
         return null;
     }
@@ -256,7 +274,6 @@ public class FriendsListActivity extends AppCompatActivity
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        System.out.println(loader.getClass().getSimpleName());
         if (loader instanceof UserDataCursorLoader) {
             if (cursor.moveToNext()) {
                 user = UserMapper.convert(cursor);
@@ -270,7 +287,8 @@ public class FriendsListActivity extends AppCompatActivity
                 return;
             }
             this.friendsCursor = cursor;
-            attachCursorToFragments(cursor);
+        } else if (loader instanceof FavoriteFriendsCursorLoader) {
+
         }
     }
 

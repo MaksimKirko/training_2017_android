@@ -1,8 +1,11 @@
 package com.github.maximkirko.training_2017_android.db;
 
+import android.content.ContentProvider;
 import android.content.ContentProviderOperation;
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.OperationApplicationException;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
@@ -10,8 +13,10 @@ import android.os.RemoteException;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.github.maximkirko.training_2017_android.contentprovider.FavoriteFriendsProvider;
 import com.github.maximkirko.training_2017_android.contentprovider.FriendsContentProvider;
 import com.github.maximkirko.training_2017_android.contentprovider.UserContentProvider;
+import com.github.maximkirko.training_2017_android.mapper.UserMapper;
 import com.github.maximkirko.training_2017_android.model.User;
 
 import java.util.ArrayList;
@@ -32,14 +37,14 @@ public class DBHelper extends SQLiteOpenHelper {
     // region tables
     public static String FRIEND_TABLE_NAME = "friend";
     public static String USER_TABLE_NAME = "user";
-    public static String USER_FAVORITE_TABLE_NAME = "user_favorite";
+    public static String FAVORITE_FRIENDS_TABLE_NAME = "user_favorite";
     // endregion
 
     // region query
     private static final String CREATE_USER_TABLE = CREATE_TABLE + USER_TABLE_NAME + "(id integer PRIMARY KEY, first_name text, last_name text, photo_100 text, online boolean);";
     private static final String CREATE_FRIEND_TABLE = CREATE_TABLE + FRIEND_TABLE_NAME + "(id integer PRIMARY KEY, first_name text, last_name text, photo_100 text, online boolean, " +
-            "rating integer, is_favorite boolean);";
-    private static final String CREATE_USER_FAVORITE_TABLE = CREATE_TABLE + USER_FAVORITE_TABLE_NAME + "(id integer PRIMARY KEY, become timestamp);";
+            "last_seen timestamp, rating integer);";
+    private static final String CREATE_FAVORITE_FRIENDS_TABLE = CREATE_TABLE + FAVORITE_FRIENDS_TABLE_NAME + "(id integer PRIMARY KEY, become timestamp);";
     // created timestamp,
     // endregion
 
@@ -49,9 +54,9 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String USER_TABLE_FIELD_LAST_NAME = "last_name";
     public static final String USER_TABLE_FIELD_PHOTO_100 = "photo_100";
     public static final String USER_TABLE_FIELD_ONLINE = "online";
-    public static final String USER_FAVORITE_TABLE_FIELD_BECOME = "become";
+    public static final String FRIENDS_TABLE_FIELD_LAST_SEEN = "last_seen";
     public static final String FRIENDS_TABLE_FIELD_RATING = "rating";
-    public static final String FRIENDS_TABLE_FIELD_IS_FAVORITE = "is_favorite";
+    public static final String FAVORITE_FRIENDS_TABLE_FIELD_BECOME = "become";
     // endregion
 
     public DBHelper(@NonNull Context context) {
@@ -83,6 +88,16 @@ public class DBHelper extends SQLiteOpenHelper {
         }
     }
 
+    private ContentProviderOperation userToContentProviderOperation(@NonNull User user, @NonNull Uri contentUri) {
+        return ContentProviderOperation.newInsert(contentUri)
+                .withValue(USER_TABLE_FIELD_ID, user.getId())
+                .withValue(USER_TABLE_FIELD_FIRST_NAME, user.getFirst_name())
+                .withValue(USER_TABLE_FIELD_LAST_NAME, user.getLast_name())
+                .withValue(USER_TABLE_FIELD_PHOTO_100, user.getPhoto_100())
+                .withValue(USER_TABLE_FIELD_ONLINE, user.isOnline())
+                .build();
+    }
+
     public void insertFriendsBatch(@NonNull SQLiteDatabase db, @NonNull Context context, @NonNull List<User> friends) {
         ArrayList<ContentProviderOperation> ops = new ArrayList<>();
         for (User user : friends) {
@@ -97,17 +112,6 @@ public class DBHelper extends SQLiteOpenHelper {
         }
     }
 
-    private ContentProviderOperation userToContentProviderOperation(@NonNull User user, @NonNull Uri contentUri) {
-        return ContentProviderOperation.newInsert(contentUri)
-                .withValue(USER_TABLE_FIELD_ID, user.getId())
-                .withValue(USER_TABLE_FIELD_FIRST_NAME, user.getFirst_name())
-                .withValue(USER_TABLE_FIELD_LAST_NAME, user.getLast_name())
-                .withValue(USER_TABLE_FIELD_PHOTO_100, user.getPhoto_100())
-                .withValue(USER_TABLE_FIELD_ONLINE, user.isOnline())
-                .build();
-    }
-
-
     private ContentProviderOperation friendToContentProviderOperation(@NonNull User user, @NonNull Uri contentUri) {
         return ContentProviderOperation.newInsert(contentUri)
                 .withValue(USER_TABLE_FIELD_ID, user.getId())
@@ -115,9 +119,41 @@ public class DBHelper extends SQLiteOpenHelper {
                 .withValue(USER_TABLE_FIELD_LAST_NAME, user.getLast_name())
                 .withValue(USER_TABLE_FIELD_PHOTO_100, user.getPhoto_100())
                 .withValue(USER_TABLE_FIELD_ONLINE, user.isOnline())
-                .withValue(FRIENDS_TABLE_FIELD_IS_FAVORITE, user.is_favorite())
+                .withValue(FRIENDS_TABLE_FIELD_LAST_SEEN, user.getLast_seen())
                 .withValue(FRIENDS_TABLE_FIELD_RATING, user.getRating())
                 .build();
+    }
+
+    public void insertFavoriteFriend(@NonNull SQLiteDatabase db, @NonNull Context context, @NonNull User user) {
+        ArrayList<ContentProviderOperation> ops = new ArrayList<>();
+        ops.add(ContentProviderOperation.newInsert(FavoriteFriendsProvider.FAVORITE_FRIENDS_CONTENT_URI)
+                .withValue(USER_TABLE_FIELD_ID, user.getId())
+                .withValue(FAVORITE_FRIENDS_TABLE_FIELD_BECOME, System.currentTimeMillis())
+                .build());
+        try {
+            dropTable(db, FAVORITE_FRIENDS_TABLE_NAME);
+            db.execSQL(CREATE_FAVORITE_FRIENDS_TABLE);
+            context.getContentResolver().applyBatch(FavoriteFriendsProvider.FAVORITE_FRIENDS_CONTENT_AUTHORITY, ops);
+        } catch (RemoteException | OperationApplicationException e) {
+            Log.e(e.getClass().getSimpleName(), e.getMessage());
+        }
+    }
+
+    public List<User> getFavoriteFriends(@NonNull SQLiteDatabase db, @NonNull ContentProvider favoritesContentProvider, @NonNull ContentProvider userContentProvider) {
+        Cursor cursor = favoritesContentProvider.query(FavoriteFriendsProvider.FAVORITE_FRIENDS_CONTENT_URI, null, null, null, null);
+        List<User> favorites = new ArrayList<>();
+        while (cursor.moveToNext()) {
+            int id = cursor.getInt(cursor.getColumnIndex(USER_TABLE_FIELD_ID));
+            Uri uri = ContentUris.withAppendedId(UserContentProvider.USER_CONTENT_URI, id);
+            Cursor userCursor = userContentProvider.query(uri, null, null, null, null);
+            favorites.add(UserMapper.convert(userCursor));
+        }
+        return favorites;
+    }
+
+    public Cursor getFavoriteFriends(@NonNull SQLiteDatabase db) {
+        String query = "SELECT * FROM " + FAVORITE_FRIENDS_TABLE_NAME + " f1 INNER JOIN " + FRIEND_TABLE_NAME + " f2 ON f1.id=f2.id";
+        return db.rawQuery(query, null);
     }
 
     public void dropTable(@NonNull SQLiteDatabase db, String tableName) {

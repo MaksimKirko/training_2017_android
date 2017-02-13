@@ -11,7 +11,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -77,31 +76,29 @@ public class UserJSONReader implements Reader<User> {
     }
 
     private User readUser(JsonReader reader) throws IOException {
-        int id = 0;
-        String first_name = null;
-        String last_name = null;
-        String photo_100 = null;
-        int online = 0;
-
+        User user = new User();
         reader.beginObject();
         while (reader.hasNext()) {
             String name = reader.nextName();
             if (name.equals("id")) {
-                id = reader.nextInt();
+                user.setId(reader.nextInt());
             } else if (name.equals("first_name")) {
-                first_name = reader.nextString();
+                user.setFirst_name(reader.nextString());
             } else if (name.equals("last_name")) {
-                last_name = reader.nextString();
+                user.setLast_name(reader.nextString());
             } else if (name.equals("photo_100")) {
-                photo_100 = reader.nextString();
+                user.setPhoto_100(reader.nextString());
             } else if (name.equals("online")) {
-                online = reader.nextInt();
+                user.setOnline(reader.nextInt() != 0);
+            } else if (name.equals("last_seen")) {
+                reader.beginObject();
+                reader.nextName();
+                user.setLast_seen(new Timestamp((long) reader.nextInt()));
             } else {
                 reader.skipValue();
             }
         }
         reader.endObject();
-
-        return new User(id, first_name, last_name, photo_100, online != 0, false, 0);
+        return user;
     }
 }

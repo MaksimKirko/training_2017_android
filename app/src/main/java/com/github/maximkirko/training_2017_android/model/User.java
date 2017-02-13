@@ -16,6 +16,7 @@ public class User implements Parcelable {
     private String last_name;
     private String photo_100;
     private boolean online;
+    private Timestamp last_seen;
     private boolean is_favorite;
     private int rating;
 
@@ -57,6 +58,14 @@ public class User implements Parcelable {
 
     public void setOnline(boolean online) {
         this.online = online;
+    }
+
+    public Timestamp getLast_seen() {
+        return last_seen;
+    }
+
+    public void setLast_seen(Timestamp last_seen) {
+        this.last_seen = last_seen;
     }
 
     public boolean is_favorite() {

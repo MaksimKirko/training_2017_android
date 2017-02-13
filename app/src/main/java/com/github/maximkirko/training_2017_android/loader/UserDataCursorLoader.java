@@ -27,7 +27,7 @@ public class UserDataCursorLoader extends CursorLoader {
 
     @Override
     public Cursor loadInBackground() {
-        //Uri uri = ContentUris.withAppendedId(UserContentProvider.USER_CONTENT_URI, AppSharedPreferences.getInt(VKService.USER_ID_PREFERENCE, 0));
+        //Uri uri = ContentUris.withAppendedId(UserContentProvider.CONTENT_URI, AppSharedPreferences.getInt(VKService.USER_ID_PREFERENCE, 0));
         return userContentProvider.query(UserContentProvider.USER_CONTENT_URI, null, null, null, null);
     }
 }

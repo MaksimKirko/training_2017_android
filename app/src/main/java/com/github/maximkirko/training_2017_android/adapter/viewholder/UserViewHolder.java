@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -24,6 +25,7 @@ public class UserViewHolder extends RecyclerView.ViewHolder implements View.OnCl
 
     private int userId;
     private WeakReference<UserClickListener> userClickListenerWeakReference;
+    private WeakReference<CheckBoxOnChangeListener> checkBoxOnChangeListenerWeakReference;
     private ImageLoadingAsyncTask imageLoadingAsyncTask;
 
     @Override
@@ -34,10 +36,11 @@ public class UserViewHolder extends RecyclerView.ViewHolder implements View.OnCl
         }
     }
 
-    public UserViewHolder(@NonNull View itemView, @NonNull UserClickListener userClickListener) {
+    public UserViewHolder(@NonNull View itemView, @NonNull UserClickListener userClickListener, @NonNull CheckBoxOnChangeListener checkBoxOnChangeListener) {
         super(itemView);
         itemView.setLayoutParams(ItemSizeUtils.getLayoutParams(itemView.getContext()));
         userClickListenerWeakReference = new WeakReference<>(userClickListener);
+        checkBoxOnChangeListenerWeakReference = new WeakReference<CheckBoxOnChangeListener>(checkBoxOnChangeListener);
         itemView.setOnClickListener(this);
         initViews();
     }
@@ -47,6 +50,14 @@ public class UserViewHolder extends RecyclerView.ViewHolder implements View.OnCl
         onlineStatusView = (TextView) itemView.findViewById(R.id.textview_friendslist_item_online_status);
         userPhotoView = (ImageView) itemView.findViewById(R.id.imageview_friendslist_item_photo);
         isFavoriteView = (CheckBox) itemView.findViewById(R.id.checkbox_friendslist_item_is_favorite);
+        isFavoriteView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(checkBoxOnChangeListenerWeakReference != null) {
+                    checkBoxOnChangeListenerWeakReference.get().onChecked(userId, isChecked);
+                }
+            }
+        });
         raitingView = (TextView) itemView.findViewById(R.id.textview_friendslist_item_raiting);
     }
 
