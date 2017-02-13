@@ -11,6 +11,11 @@ import com.github.maximkirko.training_2017_android.sharedpreference.AppSharedPre
 
 public final class VKService {
 
+    // region base urls
+    private static final String BASE_AUTH_URL = "https://oauth.vk.com/authorize?";
+    private static final String BASE_REQUEST_URL = "https://api.vk.com/method/";
+    // endregion
+
     // region preferences
     public static final String ACCESS_TOKEN_PREFERENCE = "ACCESS_TOKEN";
     public static final String USER_ID_PREFERENCE = "USER_ID";
@@ -38,8 +43,8 @@ public final class VKService {
     public static final String FIELDS = "nickname, online, last_seen, photo_100";
     // endregion
 
-    public static String getUserRequestUrl(Context context) {
-        String url = context.getString(R.string.base_vk_api_url) + GET_USER_METHOD_NAME_PARAM;
+    public static String getUserRequestUrl() {
+        String url = BASE_REQUEST_URL + GET_USER_METHOD_NAME_PARAM;
         url += ACCESS_TOKEN_PARAM + "=" + AppSharedPreferences.getString(ACCESS_TOKEN_PREFERENCE, null);
         url += "&" + COUNT_PARAM + "=" + COUNT;
         url += "&" + FIELDS_PARAM + "=" + FIELDS;
@@ -48,8 +53,8 @@ public final class VKService {
         return url;
     }
 
-    public static String getFriendsRequestUrl(Context context) {
-        String url = context.getString(R.string.base_vk_api_url) + GET_FRIENDS_METHOD_NAME_PARAM;
+    public static String getFriendsRequestUrl() {
+        String url = BASE_REQUEST_URL + GET_FRIENDS_METHOD_NAME_PARAM;
         url += ACCESS_TOKEN_PARAM + "=" + AppSharedPreferences.getString(ACCESS_TOKEN_PREFERENCE, null);
         url += "&" + FIELDS_PARAM + "=" + FIELDS;
         url += "&" + API_VERSION_PARAM + "=" + API_VERSION;

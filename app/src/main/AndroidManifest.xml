@@ -42,7 +42,7 @@
             android:authorities="com.github.maximkirko.providers.friends" />
 
         <service android:name=".service.UserDataDownloadService" />
-        <service android:name=".service.FriendsDownloadService" />
+        <service android:name=".service.FriendsDataDownloadService" />
 
         <receiver android:name=".broadcastreceiver.DeviceLoadingBroadcastReceiver">
             <intent-filter>

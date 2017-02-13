@@ -9,27 +9,24 @@ import com.github.maximkirko.training_2017_android.model.User;
 import com.github.maximkirko.training_2017_android.reader.UserJSONReader;
 
 import java.io.IOException;
+import java.util.List;
 
-/**
- * Created by MadMax on 09.02.2017.
- */
+public class FriendsDataDownloadService extends VKRequestAbstractService<List<User>> {
 
-public class UserDataDownloadService extends VKRequestAbstractService<User> {
+    public static final String DOWNLOAD_SERVICE_URI = "FriendsDataDownloadService";
+    public static final String SERVICE_CLASS = "FRIENDS";
 
-    public static final String DOWNLOAD_SERVICE_URI = "UserDataDownloadService";
-    public static final String SERVICE_CLASS = "USER";
-
-    public UserDataDownloadService() {
+    public FriendsDataDownloadService() {
         super(DOWNLOAD_SERVICE_URI, SERVICE_CLASS);
-        requestUrl = VKService.getUserRequestUrl();
+        requestUrl = VKService.getFriendsRequestUrl();
     }
 
     @Nullable
     @Override
-    protected User getDataFromJson(@NonNull String jsonResponse) {
+    protected List<User> getDataFromJson(@NonNull String jsonResponse) {
         try {
             reader = new UserJSONReader(jsonResponse);
-            return reader.read();
+            return reader.readToList();
         } catch (IOException e) {
             Log.e(IOException.class.getSimpleName(), e.getMessage());
         }
@@ -37,7 +34,7 @@ public class UserDataDownloadService extends VKRequestAbstractService<User> {
     }
 
     @Override
-    protected void saveData(@NonNull User data) {
-        VKSimpleChatApplication.getDbHelper().insertUserData(VKSimpleChatApplication.getDbHelper().getWritableDatabase(), getApplicationContext(), data);
+    protected void saveData(@NonNull List<User> data) {
+        VKSimpleChatApplication.getDbHelper().insertFriendsBatch(VKSimpleChatApplication.getDbHelper().getWritableDatabase(), getApplicationContext(), data);
     }
 }

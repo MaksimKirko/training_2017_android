@@ -3,7 +3,6 @@ package com.github.maximkirko.training_2017_android.activity.core;
 import android.app.AlarmManager;
 import android.app.LoaderManager;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.Loader;
@@ -18,6 +17,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -33,16 +33,16 @@ import com.github.maximkirko.training_2017_android.application.VKSimpleChatAppli
 import com.github.maximkirko.training_2017_android.asynctask.ImageLoadingAsyncTask;
 import com.github.maximkirko.training_2017_android.broadcastreceiver.BroadcastReceiverCallback;
 import com.github.maximkirko.training_2017_android.broadcastreceiver.DeviceLoadingBroadcastReceiver;
-import com.github.maximkirko.training_2017_android.broadcastreceiver.FriendsDownloadServiceBroadcastReceiver;
-import com.github.maximkirko.training_2017_android.broadcastreceiver.UserDataDownloadServiceBroadcastReceiver;
+import com.github.maximkirko.training_2017_android.broadcastreceiver.DownloadServiceBroadcastReceiver;
 import com.github.maximkirko.training_2017_android.db.DBHelper;
 import com.github.maximkirko.training_2017_android.loader.FriendsCursorLoader;
 import com.github.maximkirko.training_2017_android.loader.UserDataCursorLoader;
 import com.github.maximkirko.training_2017_android.mapper.UserMapper;
 import com.github.maximkirko.training_2017_android.model.User;
 import com.github.maximkirko.training_2017_android.operation.VKRequestOperation;
-import com.github.maximkirko.training_2017_android.service.FriendsDownloadService;
+import com.github.maximkirko.training_2017_android.service.FriendsDataDownloadService;
 import com.github.maximkirko.training_2017_android.service.UserDataDownloadService;
+import com.github.maximkirko.training_2017_android.service.VKRequestAbstractService;
 import com.github.maximkirko.training_2017_android.service.VKService;
 import com.github.maximkirko.training_2017_android.sharedpreference.AppSharedPreferences;
 
@@ -78,8 +78,7 @@ public class FriendsListActivity extends AppCompatActivity
     private Intent friendsServiceIntent;
     private AlarmManager alarmManager;
     private DeviceLoadingBroadcastReceiver deviceLoadingBroadcastReceiver;
-    private UserDataDownloadServiceBroadcastReceiver userDataDownloadServiceBroadcastReceiver;
-    private FriendsDownloadServiceBroadcastReceiver friendsDownloadServiceBroadcastReceiver;
+    private DownloadServiceBroadcastReceiver downloadServiceBroadcastReceiver;
 
     private static final int ALARM_MANAGER_REPEATING_TIME = 1000 * 30 * 1; // 30 seconds
     // endregion
@@ -98,20 +97,21 @@ public class FriendsListActivity extends AppCompatActivity
         enableProgressBar();
 
         initDeviceLoadingBroadcastReceiver();
+        initDownloadServiceBroadcastReceiver();
 
         // initialize user data download service
         initUserDataServiceIntent();
-        VKRequestOperation userDataRequest = VKRequestOperation.newRequest()
+        VKRequestOperation.newRequest()
                 .setContext(this)
-                .setBroadcastReceiver(new UserDataDownloadServiceBroadcastReceiver(this))
+                .setBroadcastReceiver(downloadServiceBroadcastReceiver)
                 .setServiceIntent(userDataServiceIntent)
                 .execute();
 
         // initialize friends download service
         initFriendsServiceIntent(true);
-        VKRequestOperation friendsRequest = VKRequestOperation.newRequest()
+        VKRequestOperation.newRequest()
                 .setContext(this)
-                .setBroadcastReceiver(new FriendsDownloadServiceBroadcastReceiver(this))
+                .setBroadcastReceiver(downloadServiceBroadcastReceiver)
                 .setServiceIntent(friendsServiceIntent)
                 .execute();
     }
@@ -174,36 +174,44 @@ public class FriendsListActivity extends AppCompatActivity
         deviceLoadingBroadcastReceiver = new DeviceLoadingBroadcastReceiver(this);
     }
 
+    private void initDownloadServiceBroadcastReceiver() {
+        downloadServiceBroadcastReceiver = new DownloadServiceBroadcastReceiver(this);
+    }
+
     private void initUserDataServiceIntent() {
         userDataServiceIntent = new Intent(this, UserDataDownloadService.class);
     }
 
     private void initFriendsServiceIntent(boolean isFirstLoading) {
-        friendsServiceIntent = new Intent(this, FriendsDownloadService.class);
-        friendsServiceIntent.putExtra(FriendsDownloadService.IS_FIRST_LOADING_EXTRAS, isFirstLoading);
+        friendsServiceIntent = new Intent(this, FriendsDataDownloadService.class);
+        friendsServiceIntent.putExtra(FriendsDataDownloadService.IS_FIRST_LOADING_EXTRAS, isFirstLoading);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        registerReceiver(userDataDownloadServiceBroadcastReceiver, new IntentFilter(UserDataDownloadService.NOTIFICATION));
-        registerReceiver(friendsDownloadServiceBroadcastReceiver, new IntentFilter(FriendsDownloadService.NOTIFICATION));
+        registerReceiver(new DeviceLoadingBroadcastReceiver(), new IntentFilter());
+        registerReceiver(downloadServiceBroadcastReceiver, new IntentFilter(VKRequestAbstractService.NOTIFICATION));
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        unregisterReceiver(userDataDownloadServiceBroadcastReceiver);
-        unregisterReceiver(friendsDownloadServiceBroadcastReceiver);
+        try {
+            unregisterReceiver(downloadServiceBroadcastReceiver);
+        } catch (IllegalArgumentException e) {
+            Log.e(e.getClass().getSimpleName(), e.getMessage());
+        }
     }
 
     @Override
-    public void onReceived(Class<? extends BroadcastReceiver> broadcastReceiver) {
-        if (broadcastReceiver == UserDataDownloadServiceBroadcastReceiver.class) {
+    public void onReceived(String serviceClass) {
+        String s = UserDataDownloadService.SERVICE_CLASS;
+        if (serviceClass.equals(UserDataDownloadService.SERVICE_CLASS)) {
             startUserDataLoader();
-        } else if (broadcastReceiver == FriendsDownloadServiceBroadcastReceiver.class) {
+        } else if (serviceClass.equals(FriendsDataDownloadService.SERVICE_CLASS)) {
             startFriendsLoader();
-        } else if (broadcastReceiver == DeviceLoadingBroadcastReceiver.class) {
+        } else if (serviceClass.equals(DeviceLoadingBroadcastReceiver.SERVICE_CLASS)) {
             initAlarmManager();
         }
     }

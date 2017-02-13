@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="@dimen/height_friendslist_nav_header"
     android:background="@drawable/side_nav_bar"
-    android:gravity="bottom"
+    android:gravity="bottom|left"
     android:orientation="vertical"
     android:paddingBottom="@dimen/margin_margin_friendslist_header_horizontal_vertical"
     android:paddingLeft="@dimen/margin_friendslist_header_horizontal"
@@ -15,16 +15,17 @@
 
     <ImageView
         android:id="@+id/imageview_navigation_drawer_header"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingTop="@dimen/spacing_friendslist_nav_header_vertical"
-        tools:src="@android:drawable/sym_def_app_icon"/>
+        android:layout_width="@dimen/size_friendslist_nav_header_image"
+        android:layout_height="@dimen/size_friendslist_nav_header_image"
+        android:layout_weight="1"
+        android:layout_marginTop="@dimen/margin_friendslist_nav_header_image_top"
+        tools:src="@android:drawable/sym_def_app_icon" />
 
     <TextView
         android:id="@+id/textview_navigation_drawer_header_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="@dimen/spacing_friendslist_nav_header_vertical"
+        android:layout_weight="1"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         tools:text="Android Studio" />
 
@@ -32,6 +33,7 @@
         android:id="@+id/textview_navigation_drawer_header_description"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_weight="1"
         tools:text="android.studio@android.com" />
 
 </LinearLayout>

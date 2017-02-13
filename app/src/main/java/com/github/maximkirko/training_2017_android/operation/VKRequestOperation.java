@@ -51,22 +51,4 @@ public class VKRequestOperation {
     protected void startServiceIntent(Intent serviceIntent) {
         context.startService(serviceIntent);
     }
-
-
-    /*private void initUserDataDownloadServiceBroadcastReceiver() {
-        userDataDownloadServiceBroadcastReceiver = new UserDataDownloadServiceBroadcastReceiver(this);
-    }
-
-    private void initFriendsDownloadServiceBroadcastReceiver() {
-        friendsDownloadServiceBroadcastReceiver = new FriendsDownloadServiceBroadcastReceiver(this);
-    }
-
-    private void initUserDataServiceIntent() {
-        userDataServiceIntent = new Intent(this, UserDataDownloadService.class);
-    }
-
-    private void initFriendsServiceIntent(boolean isFirstLoading) {
-        friendsServiceIntent = new Intent(this, FriendsDownloadService.class);
-        friendsServiceIntent.putExtra(FriendsDownloadService.IS_FIRST_LOADING_EXTRAS, isFirstLoading);
-    }*/
 }

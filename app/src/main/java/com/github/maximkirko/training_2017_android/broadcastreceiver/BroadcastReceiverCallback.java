@@ -7,5 +7,5 @@ import android.content.BroadcastReceiver;
  */
 
 public interface BroadcastReceiverCallback {
-    void onReceived(Class<? extends BroadcastReceiver> broadcastReceiver);
+    void onReceived(String serviceClass);
 }

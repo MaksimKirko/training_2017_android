@@ -14,6 +14,8 @@ import java.lang.ref.WeakReference;
 
 public class DeviceLoadingBroadcastReceiver extends BroadcastReceiver {
 
+    public static final String SERVICE_CLASS = "DEVICE";
+
     private static WeakReference<BroadcastReceiverCallback> callback;
 
     public DeviceLoadingBroadcastReceiver() {
@@ -27,7 +29,7 @@ public class DeviceLoadingBroadcastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         if (callback != null) {
-            callback.get().onReceived(this.getClass());
+            callback.get().onReceived(SERVICE_CLASS);
         }
     }
 }
