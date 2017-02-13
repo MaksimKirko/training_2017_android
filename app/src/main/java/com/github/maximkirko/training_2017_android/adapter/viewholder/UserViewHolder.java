@@ -20,6 +20,7 @@ public class UserViewHolder extends RecyclerView.ViewHolder implements View.OnCl
     private TextView onlineStatusView;
     private ImageView userPhotoView;
     private CheckBox isFavoriteView;
+    private TextView raitingView;
 
     private int userId;
     private WeakReference<UserClickListener> userClickListenerWeakReference;
@@ -46,6 +47,7 @@ public class UserViewHolder extends RecyclerView.ViewHolder implements View.OnCl
         onlineStatusView = (TextView) itemView.findViewById(R.id.textview_friendslist_item_online_status);
         userPhotoView = (ImageView) itemView.findViewById(R.id.imageview_friendslist_item_photo);
         isFavoriteView = (CheckBox) itemView.findViewById(R.id.checkbox_friendslist_item_is_favorite);
+        raitingView = (TextView) itemView.findViewById(R.id.textview_friendslist_item_raiting);
     }
 
     public void onBindData(@NonNull User user) {
@@ -63,6 +65,10 @@ public class UserViewHolder extends RecyclerView.ViewHolder implements View.OnCl
         nameView.setText(user.getFirst_name() + " " + user.getLast_name());
         onlineStatusView.setText(user.isOnline() ? itemView.getResources().getString(R.string.all_online_status_true) : "");
         isFavoriteView.setChecked(user.is_favorite());
+        int rating = user.getRating();
+        if (rating != 0) {
+            raitingView.setText(rating > 0 ? "+" + rating : rating + "");
+        }
     }
 
     public void cancelTask() {

@@ -21,6 +21,16 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+            <android.support.v4.view.PagerTitleStrip
+                android:id="@+id/strip_friendslist_viewpager_title"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/height_friendslist_viewpager_title"
+                android:layout_gravity="top"
+                android:paddingBottom="@dimen/padding_friendlist_viewpager_title_bottom"
+                android:paddingTop="@dimen/padding_friendlist_viewpager_title_top"
+                android:textAlignment="center"
+                tools:text="Title" />
+
         </android.support.v4.view.ViewPager>
 
     </LinearLayout>

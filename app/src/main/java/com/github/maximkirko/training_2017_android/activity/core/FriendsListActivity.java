@@ -10,12 +10,9 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.PagerTitleStrip;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -29,11 +26,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.github.maximkirko.training_2017_android.R;
-import com.github.maximkirko.training_2017_android.activity.core.fragment.AllFriendsFragment;
 import com.github.maximkirko.training_2017_android.activity.core.fragment.FriendsFragment;
-import com.github.maximkirko.training_2017_android.activity.core.fragment.NewFriendsFragment;
-import com.github.maximkirko.training_2017_android.activity.core.fragment.TopFriendsFragment;
 import com.github.maximkirko.training_2017_android.activity.navigator.IntentManager;
+import com.github.maximkirko.training_2017_android.adapter.FriendslistFragmentPagerAdapter;
 import com.github.maximkirko.training_2017_android.application.VKSimpleChatApplication;
 import com.github.maximkirko.training_2017_android.asynctask.ImageLoadingAsyncTask;
 import com.github.maximkirko.training_2017_android.broadcastreceiver.BroadcastReceiverCallback;
@@ -45,6 +40,7 @@ import com.github.maximkirko.training_2017_android.loader.FriendsCursorLoader;
 import com.github.maximkirko.training_2017_android.loader.UserDataCursorLoader;
 import com.github.maximkirko.training_2017_android.mapper.UserMapper;
 import com.github.maximkirko.training_2017_android.model.User;
+import com.github.maximkirko.training_2017_android.operation.VKRequestOperation;
 import com.github.maximkirko.training_2017_android.service.FriendsDownloadService;
 import com.github.maximkirko.training_2017_android.service.UserDataDownloadService;
 import com.github.maximkirko.training_2017_android.service.VKService;
@@ -62,8 +58,11 @@ public class FriendsListActivity extends AppCompatActivity
     private TextView headerDescriptionView;
     private ImageView headerImageView;
     private ViewPager viewPager;
+    private PagerTitleStrip pagerTitleStrip;
     private ProgressBar progressBar;
     // endregion
+
+    private PagerAdapter pagerAdapter;
 
     // region Fragments
     private FriendsFragment allFriendsFragment;
@@ -101,14 +100,20 @@ public class FriendsListActivity extends AppCompatActivity
         initDeviceLoadingBroadcastReceiver();
 
         // initialize user data download service
-        initUserDataDownloadServiceBroadcastReceiver();
         initUserDataServiceIntent();
-        startServiceIntent(userDataServiceIntent);
+        VKRequestOperation userDataRequest = VKRequestOperation.newRequest()
+                .setContext(this)
+                .setBroadcastReceiver(new UserDataDownloadServiceBroadcastReceiver(this))
+                .setServiceIntent(userDataServiceIntent)
+                .execute();
 
         // initialize friends download service
-        initFriendsDownloadServiceBroadcastReceiver();
         initFriendsServiceIntent(true);
-        startServiceIntent(friendsServiceIntent);
+        VKRequestOperation friendsRequest = VKRequestOperation.newRequest()
+                .setContext(this)
+                .setBroadcastReceiver(new FriendsDownloadServiceBroadcastReceiver(this))
+                .setServiceIntent(friendsServiceIntent)
+                .execute();
     }
 
     private void initToolbar() {
@@ -153,30 +158,6 @@ public class FriendsListActivity extends AppCompatActivity
         headerImageView = (ImageView) navHeaderView.findViewById(R.id.imageview_navigation_drawer_header);
     }
 
-    private void initViewPager() {
-        viewPager = (ViewPager) findViewById(R.id.viewpager_friendslist_activity);
-        PagerAdapter pagerAdapter = new MyFragmentPagerAdapter(getSupportFragmentManager());
-        viewPager.setAdapter(pagerAdapter);
-
-        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-
-            @Override
-            public void onPageSelected(int position) {
-
-            }
-
-            @Override
-            public void onPageScrolled(int arg0, float arg1, int arg2) {
-
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int arg0) {
-
-            }
-        });
-    }
-
     private void initProgressBar() {
         progressBar = (ProgressBar) findViewById(R.id.progressbar_friends_activity);
     }
@@ -193,14 +174,6 @@ public class FriendsListActivity extends AppCompatActivity
         deviceLoadingBroadcastReceiver = new DeviceLoadingBroadcastReceiver(this);
     }
 
-    private void initUserDataDownloadServiceBroadcastReceiver() {
-        userDataDownloadServiceBroadcastReceiver = new UserDataDownloadServiceBroadcastReceiver(this);
-    }
-
-    private void initFriendsDownloadServiceBroadcastReceiver() {
-        friendsDownloadServiceBroadcastReceiver = new FriendsDownloadServiceBroadcastReceiver(this);
-    }
-
     private void initUserDataServiceIntent() {
         userDataServiceIntent = new Intent(this, UserDataDownloadService.class);
     }
@@ -208,10 +181,6 @@ public class FriendsListActivity extends AppCompatActivity
     private void initFriendsServiceIntent(boolean isFirstLoading) {
         friendsServiceIntent = new Intent(this, FriendsDownloadService.class);
         friendsServiceIntent.putExtra(FriendsDownloadService.IS_FIRST_LOADING_EXTRAS, isFirstLoading);
-    }
-
-    private void startServiceIntent(Intent serviceIntent) {
-        startService(serviceIntent);
     }
 
     @Override
@@ -310,14 +279,39 @@ public class FriendsListActivity extends AppCompatActivity
         }
     }
 
+    private void initViewPager() {
+        viewPager = (ViewPager) findViewById(R.id.viewpager_friendslist_activity);
+        pagerTitleStrip = (PagerTitleStrip) findViewById(R.id.strip_friendslist_viewpager_title);
+        initViewPagerAdapter();
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+
+            @Override
+            public void onPageSelected(int position) {
+            }
+
+            @Override
+            public void onPageScrolled(int arg0, float arg1, int arg2) {
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int arg0) {
+            }
+        });
+    }
+
+    private void initViewPagerAdapter() {
+        pagerAdapter = new FriendslistFragmentPagerAdapter(this, getSupportFragmentManager(), friendsCursor);
+        viewPager.setAdapter(pagerAdapter);
+    }
+
     private void attachCursorToFragments(Cursor cursor) {
-        if(allFriendsFragment != null) {
+        if (allFriendsFragment != null) {
             allFriendsFragment.attachCursor(cursor);
         }
-        if(newFriendsFragment != null) {
+        if (newFriendsFragment != null) {
             newFriendsFragment.attachCursor(cursor);
         }
-        if(topFriendsFragment != null) {
+        if (topFriendsFragment != null) {
             topFriendsFragment.attachCursor(cursor);
         }
     }
@@ -384,30 +378,5 @@ public class FriendsListActivity extends AppCompatActivity
         DBHelper dbHelper = VKSimpleChatApplication.getDbHelper();
         dbHelper.dropTable(dbHelper.getWritableDatabase(), DBHelper.FRIEND_TABLE_NAME);
         dbHelper.dropTable(dbHelper.getWritableDatabase(), DBHelper.USER_TABLE_NAME);
-    }
-
-    class MyFragmentPagerAdapter extends FragmentPagerAdapter {
-
-        public MyFragmentPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            switch (position) {
-                case 0:
-                    return new AllFriendsFragment().newInstance(friendsCursor);
-                case 1:
-                    return new NewFriendsFragment().newInstance(friendsCursor);
-                case 2:
-                    return new TopFriendsFragment().newInstance(friendsCursor);
-            }
-            return null;
-        }
-
-        @Override
-        public int getCount() {
-            return 3;
-        }
     }
 }

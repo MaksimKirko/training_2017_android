@@ -32,12 +32,14 @@ public class DBHelper extends SQLiteOpenHelper {
     // region tables
     public static String FRIEND_TABLE_NAME = "friend";
     public static String USER_TABLE_NAME = "user";
+    public static String USER_FAVORITE_TABLE_NAME = "user_favorite";
     // endregion
 
     // region query
     private static final String CREATE_USER_TABLE = CREATE_TABLE + USER_TABLE_NAME + "(id integer PRIMARY KEY, first_name text, last_name text, photo_100 text, online boolean);";
     private static final String CREATE_FRIEND_TABLE = CREATE_TABLE + FRIEND_TABLE_NAME + "(id integer PRIMARY KEY, first_name text, last_name text, photo_100 text, online boolean, " +
             "rating integer, is_favorite boolean);";
+    private static final String CREATE_USER_FAVORITE_TABLE = CREATE_TABLE + USER_FAVORITE_TABLE_NAME + "(id integer PRIMARY KEY, become timestamp);";
     // created timestamp,
     // endregion
 
@@ -47,6 +49,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String USER_TABLE_FIELD_LAST_NAME = "last_name";
     public static final String USER_TABLE_FIELD_PHOTO_100 = "photo_100";
     public static final String USER_TABLE_FIELD_ONLINE = "online";
+    public static final String USER_FAVORITE_TABLE_FIELD_BECOME = "become";
     public static final String FRIENDS_TABLE_FIELD_RATING = "rating";
     public static final String FRIENDS_TABLE_FIELD_IS_FAVORITE = "is_favorite";
     // endregion

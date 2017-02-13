@@ -5,6 +5,7 @@
     <color name="colorAccent">#1670c4</color>
 
     <color name="colorBackground">#ffffff</color>
+    <color name="colorBackgroundAlternative">#bfc4e2</color>
 
     <color name="colorIntroDotsActive">#313030</color>
     <color name="colorIntroDotsInactive">#b4b1b1</color>
