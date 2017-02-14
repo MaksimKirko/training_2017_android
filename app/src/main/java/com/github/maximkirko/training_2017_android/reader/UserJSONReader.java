@@ -92,8 +92,13 @@ public class UserJSONReader implements Reader<User> {
                 user.setOnline(reader.nextInt() != 0);
             } else if (name.equals("last_seen")) {
                 reader.beginObject();
-                reader.nextName();
-                user.setLast_seen(new Timestamp((long) reader.nextInt()));
+                String last_seen_name = reader.nextName();
+                if (last_seen_name.equals("time")) {
+                    user.setLast_seen(new Timestamp(reader.nextLong() * 1000));
+                }
+            } else if (name.equals("platform")) {
+                reader.nextInt();
+                reader.endObject();
             } else {
                 reader.skipValue();
             }

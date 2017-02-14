@@ -2,6 +2,7 @@ package com.github.maximkirko.training_2017_android.application;
 
 import android.app.Application;
 
+import com.facebook.stetho.Stetho;
 import com.github.maximkirko.training_2017_android.bitmapmemorymanager.BitmapMemoryManagerConfigurator;
 import com.github.maximkirko.training_2017_android.db.DBHelper;
 import com.github.maximkirko.training_2017_android.sharedpreference.AppSharedPreferences;
@@ -31,6 +32,7 @@ public class VKSimpleChatApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        Stetho.initializeWithDefaults(this);
         initSharedPreferences();
         initBitmapMemoryManager();
         initDBHelper();

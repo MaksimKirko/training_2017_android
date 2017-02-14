@@ -40,14 +40,21 @@ public final class VKService {
     public static final String RESPONSE_TYPE = "token";
     public static final String API_VERSION = "5.62";
     public static final String COUNT = "10";
-    public static final String[] FIELDS = {"nickname", "online", "last_seen", "photo_100"};
+    public static final String[] FIELDS = {"online", "photo_100", "last_seen"};
     // endregion
 
     public static String getUserRequestUrl() {
         String url = BASE_REQUEST_URL + GET_USER_METHOD_NAME_PARAM;
         url += ACCESS_TOKEN_PARAM + "=" + AppSharedPreferences.getString(ACCESS_TOKEN_PREFERENCE, null);
         url += "&" + COUNT_PARAM + "=" + COUNT;
-        url += "&" + FIELDS_PARAM + "=";
+        url += "&" + FIELDS_PARAM + "=" + setFields();
+        url += "&" + API_VERSION_PARAM + "=" + API_VERSION;
+        url = url.replaceAll(" ", "%20");
+        return url;
+    }
+
+    private static String setFields() {
+        String url = "";
         int i = 0;
         for (String field : FIELDS) {
             url += field;
@@ -56,15 +63,13 @@ public final class VKService {
             }
             i++;
         }
-        url += "&" + API_VERSION_PARAM + "=" + API_VERSION;
-        url = url.replaceAll(" ", "%20");
         return url;
     }
 
     public static String getFriendsRequestUrl() {
         String url = BASE_REQUEST_URL + GET_FRIENDS_METHOD_NAME_PARAM;
         url += ACCESS_TOKEN_PARAM + "=" + AppSharedPreferences.getString(ACCESS_TOKEN_PREFERENCE, null);
-        url += "&" + FIELDS_PARAM + "=" + FIELDS;
+        url += "&" + FIELDS_PARAM + "=" + setFields();
         url += "&" + API_VERSION_PARAM + "=" + API_VERSION;
         url = url.replaceAll(" ", "%20");
         return url;

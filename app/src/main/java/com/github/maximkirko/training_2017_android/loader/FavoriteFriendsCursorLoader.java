@@ -13,7 +13,7 @@ import com.github.maximkirko.training_2017_android.db.DBHelper;
 
 public class FavoriteFriendsCursorLoader extends CursorLoader {
 
-    public static final int FAVORITE_FRIENDS_LOADER_ID = 3;
+    public static final int LOADER_ID = 3;
 
     public FavoriteFriendsCursorLoader(Context context) {
         super(context);

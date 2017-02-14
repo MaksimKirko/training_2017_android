@@ -1,7 +1,6 @@
 package com.github.maximkirko.training_2017_android.activity.core;
 
 import android.content.ContentUris;
-import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -15,7 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.github.maximkirko.training_2017_android.R;
-import com.github.maximkirko.training_2017_android.activity.navigator.IntentManager;
+import com.github.maximkirko.training_2017_android.navigator.IntentManager;
 import com.github.maximkirko.training_2017_android.contentprovider.FriendsContentProvider;
 import com.github.maximkirko.training_2017_android.asynctask.ImageLoadingAsyncTask;
 import com.github.maximkirko.training_2017_android.contentprovider.UserContentProvider;

@@ -6,6 +6,10 @@
             android:icon="@drawable/ic_person_outline_black_24dp"
             android:title="@string/navigation_drawer_friends" />
         <item
+            android:id="@+id/nav_favorite_friends"
+            android:icon="@drawable/ic_star_border_black_24dp"
+            android:title="@string/navigation_drawer_favorite_friends" />
+        <item
             android:id="@+id/nav_logout"
             android:icon="@drawable/ic_keyboard_return_black_24dp"
             android:title="@string/navigation_drawer_logout" />

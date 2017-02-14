@@ -35,6 +35,16 @@
 
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/textview_friendslist_error"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:text="@string/all_no_network_error_message_text"
+        android:textSize="@dimen/size_friendslist_item_title_text"
+        android:visibility="invisible" />
+
     <ProgressBar
         android:id="@+id/progressbar_friends_activity"
         style="@style/Widget.AppCompat.ProgressBar"

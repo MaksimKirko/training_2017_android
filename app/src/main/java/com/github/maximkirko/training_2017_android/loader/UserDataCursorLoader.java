@@ -16,7 +16,7 @@ import com.github.maximkirko.training_2017_android.sharedpreference.AppSharedPre
 
 public class UserDataCursorLoader extends CursorLoader {
 
-    public static final int USER_DATA_LOADER_ID = 1;
+    public static final int LOADER_ID = 1;
 
     private UserContentProvider userContentProvider;
 

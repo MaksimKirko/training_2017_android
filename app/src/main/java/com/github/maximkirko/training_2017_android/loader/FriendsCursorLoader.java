@@ -12,17 +12,14 @@ import com.github.maximkirko.training_2017_android.contentprovider.FriendsConten
 
 public class FriendsCursorLoader extends CursorLoader {
 
-    public static final int FRIENDS_LOADER_ID = 2;
-
-    private FriendsContentProvider friendsContentProvider;
+    public static final int LOADER_ID = 2;
 
     public FriendsCursorLoader(Context context) {
         super(context);
-        this.friendsContentProvider = new FriendsContentProvider();
     }
 
     @Override
     public Cursor loadInBackground() {
-        return friendsContentProvider.query(FriendsContentProvider.FRIENDS_CONTENT_URI, null, null, null, null);
+        return getContext().getContentResolver().query(FriendsContentProvider.FRIENDS_CONTENT_URI, null, null, null, null);
     }
 }

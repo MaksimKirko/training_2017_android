@@ -1,8 +1,10 @@
 package com.github.maximkirko.training_2017_android.activity.core.fragment;
 
-import android.database.Cursor;
 import android.os.Bundle;
 import android.view.View;
+
+import com.github.maximkirko.training_2017_android.activity.core.FriendsListActivity;
+import com.github.maximkirko.training_2017_android.asynctask.TaskFinishedCallback;
 
 /**
  * Created by MadMax on 12.02.2017.
@@ -10,9 +12,10 @@ import android.view.View;
 
 public class TopFriendsFragment extends FriendsFragment {
 
-    public static TopFriendsFragment newInstance(Cursor cursor) {
+    public static TopFriendsFragment newInstance(TaskFinishedCallback taskFinishedCallback) {
         TopFriendsFragment topFriendsFragment = new TopFriendsFragment();
-        topFriendsFragment.cursor = cursor;
+        topFriendsFragment.init(taskFinishedCallback);
+        topFriendsFragment.cursor = FriendsListActivity.getTopFriendsCursor();
         return topFriendsFragment;
     }
 
@@ -20,18 +23,12 @@ public class TopFriendsFragment extends FriendsFragment {
     }
 
     @Override
-    public void onViewCreated (View view, Bundle savedInstanceState) {
+    public void onViewCreated(View view, Bundle savedInstanceState) {
         initAdapter();
         initRecyclerView();
-        if(cursor != null) {
+        if (cursor != null) {
             recyclerViewAdapter.setCursor(cursor);
             recyclerViewAdapter.notifyDataSetChanged();
         }
-    }
-
-    @Override
-    public void attachCursor(Cursor cursor) {
-        recyclerViewAdapter.setCursor(cursor);
-        recyclerViewAdapter.notifyDataSetChanged();
     }
 }

@@ -5,7 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.github.maximkirko.training_2017_android.R;
 import com.github.maximkirko.training_2017_android.activity.intro.IntroActivity;
-import com.github.maximkirko.training_2017_android.activity.navigator.IntentManager;
+import com.github.maximkirko.training_2017_android.navigator.IntentManager;
 import com.github.maximkirko.training_2017_android.service.VKService;
 import com.github.maximkirko.training_2017_android.sharedpreference.AppSharedPreferences;
 

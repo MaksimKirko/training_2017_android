@@ -29,13 +29,7 @@ public abstract class AbstractContentProvider extends ContentProvider {
 
     protected final int URI = 1;
     protected final int URI_ID = 2;
-    protected final UriMatcher uriMatcher;
-
-    {
-        uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-        uriMatcher.addURI(CONTENT_AUTHORITY, PATH, URI);
-        uriMatcher.addURI(CONTENT_AUTHORITY, PATH + "/#", URI_ID);
-    }
+    protected UriMatcher uriMatcher;
 
     protected SQLiteDatabase db;
 

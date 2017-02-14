@@ -75,7 +75,7 @@ public class FriendsContentProvider extends ContentProvider {
         if (uriMatcher.match(uri) != URI_FRIENDS)
             throw new IllegalArgumentException("Wrong URI: " + uri);
 
-        db = VKSimpleChatApplication.getDbHelper().getWritableDatabase();
+        db = VKSimpleChatApplication.getDbHelper().getReadableDatabase();
         long rowID = db.insert(DBHelper.FRIEND_TABLE_NAME, null, values);
         Uri resultUri = ContentUris.withAppendedId(FRIENDS_CONTENT_URI, rowID);
         if (getContext() != null) {

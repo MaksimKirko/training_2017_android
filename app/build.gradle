@@ -38,4 +38,5 @@ dependencies {
     compile 'com.android.support:gridlayout-v7:25.0.1'
     compile 'com.android.support:customtabs:25.0.1'
     compile 'javax.inject:javax.inject:1'
+    compile 'com.facebook.stetho:stetho:1.4.2'
 }

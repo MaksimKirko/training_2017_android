@@ -1,6 +1,5 @@
 package com.github.maximkirko.training_2017_android.activity.core.fragment;
 
-import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -11,23 +10,28 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.github.maximkirko.training_2017_android.R;
-import com.github.maximkirko.training_2017_android.activity.navigator.IntentManager;
-import com.github.maximkirko.training_2017_android.adapter.FriendsCursorAdapter;
+import com.github.maximkirko.training_2017_android.activity.core.FriendsListActivity;
 import com.github.maximkirko.training_2017_android.adapter.viewholder.CheckBoxOnChangeListener;
+import com.github.maximkirko.training_2017_android.asynctask.FavoriteRemoveAsyncTask;
+import com.github.maximkirko.training_2017_android.asynctask.FavoriteSaveAsyncTask;
+import com.github.maximkirko.training_2017_android.asynctask.TaskFinishedCallback;
+import com.github.maximkirko.training_2017_android.navigator.IntentManager;
+import com.github.maximkirko.training_2017_android.adapter.FriendsCursorAdapter;
 import com.github.maximkirko.training_2017_android.adapter.viewholder.UserClickListener;
 import com.github.maximkirko.training_2017_android.itemanimator.LandingAnimator;
 import com.github.maximkirko.training_2017_android.itemdecorator.DefaultItemDecoration;
-import com.github.maximkirko.training_2017_android.loader.FavoriteFriendsCursorLoader;
-import com.github.maximkirko.training_2017_android.loader.FriendsCursorLoader;
+
+import java.lang.ref.WeakReference;
 
 /**
  * Created by MadMax on 12.02.2017.
  */
 
-public abstract class FriendsFragment extends Fragment implements UserClickListener {
+public abstract class FriendsFragment extends Fragment implements UserClickListener, CheckBoxOnChangeListener {
 
     protected View v;
     protected Cursor cursor;
+    protected WeakReference<TaskFinishedCallback> taskFinishedCallbackWeakReference;
 
     //    region Music RecyclerView settings
     protected RecyclerView friendsRecyclerView;
@@ -37,7 +41,9 @@ public abstract class FriendsFragment extends Fragment implements UserClickListe
     protected RecyclerView.ItemAnimator itemAnimator;
     //    endregion
 
-    public abstract void attachCursor(Cursor cursor);
+    protected void init(TaskFinishedCallback taskFinishedCallback) {
+        taskFinishedCallbackWeakReference = new WeakReference<>(taskFinishedCallback);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -53,7 +59,7 @@ public abstract class FriendsFragment extends Fragment implements UserClickListe
     }
 
     protected void initAdapter() {
-        recyclerViewAdapter = new FriendsCursorAdapter(cursor, this);
+        recyclerViewAdapter = new FriendsCursorAdapter(cursor, this, this);
         initItemDecoration();
         initItemAnimator();
     }
@@ -74,5 +80,24 @@ public abstract class FriendsFragment extends Fragment implements UserClickListe
         friendsRecyclerView.addItemDecoration(itemDecoration);
         friendsRecyclerView.setItemAnimator(itemAnimator);
         friendsRecyclerView.setAdapter(recyclerViewAdapter);
+    }
+
+    @Override
+    public void onChecked(int id, boolean isChecked) {
+        if (isChecked) {
+            startFavoriteSaveTask(id);
+        } else {
+            startFavoriteRemoveTask(id);
+        }
+    }
+
+    private void startFavoriteSaveTask(int id) {
+        FavoriteSaveAsyncTask favoriteSaveAsyncTask = new FavoriteSaveAsyncTask(getContext(), taskFinishedCallbackWeakReference.get());
+        favoriteSaveAsyncTask.execute(id);
+    }
+
+    private void startFavoriteRemoveTask(int id) {
+        FavoriteRemoveAsyncTask favoriteRemoveAsyncTask = new FavoriteRemoveAsyncTask(getContext(), taskFinishedCallbackWeakReference.get());
+        favoriteRemoveAsyncTask.execute(id);
     }
 }

@@ -3,13 +3,13 @@ package com.github.maximkirko.training_2017_android.adapter;
 import android.database.Cursor;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.github.maximkirko.training_2017_android.R;
 import com.github.maximkirko.training_2017_android.adapter.itemtype.ItemTypeAware;
+import com.github.maximkirko.training_2017_android.adapter.viewholder.CheckBoxOnChangeListener;
 import com.github.maximkirko.training_2017_android.adapter.viewholder.HeaderViewHolder;
 import com.github.maximkirko.training_2017_android.adapter.viewholder.UserClickListener;
 import com.github.maximkirko.training_2017_android.adapter.viewholder.UserViewHolder;
@@ -20,14 +20,16 @@ import com.github.maximkirko.training_2017_android.util.UserUtils;
 public class FriendsCursorAdapter extends CursorRecyclerAdapter<RecyclerView.ViewHolder> {
 
     private UserClickListener songClickListener;
+    private CheckBoxOnChangeListener checkBoxOnChangeListener;
 
     public void setCursor(Cursor cursor) {
         this.cursor = cursor;
     }
 
-    public FriendsCursorAdapter(Cursor c, UserClickListener songClickListener) {
+    public FriendsCursorAdapter(Cursor c, UserClickListener songClickListener, CheckBoxOnChangeListener checkBoxOnChangeListener) {
         super(c);
         this.songClickListener = songClickListener;
+        this.checkBoxOnChangeListener = checkBoxOnChangeListener;
     }
 
     @ItemTypeAware.ItemType
@@ -48,7 +50,7 @@ public class FriendsCursorAdapter extends CursorRecyclerAdapter<RecyclerView.Vie
         } else if (viewType == ItemTypeAware.TYPE_ITEM) {
             itemView = LayoutInflater.from(viewGroup.getContext())
                     .inflate(R.layout.friendslist_recycler_view_item, viewGroup, false);
-            viewHolder = new UserViewHolder(itemView, songClickListener);
+            viewHolder = new UserViewHolder(itemView, songClickListener, checkBoxOnChangeListener);
             if (cursor.moveToNext()) ;
         }
         return viewHolder;

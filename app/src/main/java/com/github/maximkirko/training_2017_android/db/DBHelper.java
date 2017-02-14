@@ -119,7 +119,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 .withValue(USER_TABLE_FIELD_LAST_NAME, user.getLast_name())
                 .withValue(USER_TABLE_FIELD_PHOTO_100, user.getPhoto_100())
                 .withValue(USER_TABLE_FIELD_ONLINE, user.isOnline())
-                .withValue(FRIENDS_TABLE_FIELD_LAST_SEEN, user.getLast_seen())
+                .withValue(FRIENDS_TABLE_FIELD_LAST_SEEN, user.getLast_seen().getTime())
                 .withValue(FRIENDS_TABLE_FIELD_RATING, user.getRating())
                 .build();
     }
@@ -137,18 +137,6 @@ public class DBHelper extends SQLiteOpenHelper {
         } catch (RemoteException | OperationApplicationException e) {
             Log.e(e.getClass().getSimpleName(), e.getMessage());
         }
-    }
-
-    public List<User> getFavoriteFriends(@NonNull SQLiteDatabase db, @NonNull ContentProvider favoritesContentProvider, @NonNull ContentProvider userContentProvider) {
-        Cursor cursor = favoritesContentProvider.query(FavoriteFriendsProvider.FAVORITE_FRIENDS_CONTENT_URI, null, null, null, null);
-        List<User> favorites = new ArrayList<>();
-        while (cursor.moveToNext()) {
-            int id = cursor.getInt(cursor.getColumnIndex(USER_TABLE_FIELD_ID));
-            Uri uri = ContentUris.withAppendedId(UserContentProvider.USER_CONTENT_URI, id);
-            Cursor userCursor = userContentProvider.query(uri, null, null, null, null);
-            favorites.add(UserMapper.convert(userCursor));
-        }
-        return favorites;
     }
 
     public Cursor getFavoriteFriends(@NonNull SQLiteDatabase db) {
