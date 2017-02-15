@@ -39,7 +39,7 @@
         <activity
             android:name=".activity.preference.SettingsActivity"
             android:label="Settings"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme" />
 
         <provider
             android:name=".contentprovider.UserContentProvider"

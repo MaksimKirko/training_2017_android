@@ -3,11 +3,14 @@ package com.github.maximkirko.training_2017_android.activity.core;
 import android.app.AlarmManager;
 import android.app.LoaderManager;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.Loader;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
@@ -25,8 +28,10 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.maximkirko.training_2017_android.R;
+import com.github.maximkirko.training_2017_android.activity.core.fragment.AllFriendsFragment;
 import com.github.maximkirko.training_2017_android.activity.core.fragment.FavoriteFriendsFragment;
 import com.github.maximkirko.training_2017_android.activity.preference.DefaultPreferenceFragment;
 import com.github.maximkirko.training_2017_android.adapter.FriendslistFragmentPagerAdapter;
@@ -36,6 +41,9 @@ import com.github.maximkirko.training_2017_android.asynctask.TaskFinishedCallbac
 import com.github.maximkirko.training_2017_android.broadcastreceiver.BroadcastReceiverCallback;
 import com.github.maximkirko.training_2017_android.broadcastreceiver.DeviceLoadingBroadcastReceiver;
 import com.github.maximkirko.training_2017_android.broadcastreceiver.DownloadServiceBroadcastReceiver;
+import com.github.maximkirko.training_2017_android.contentobserver.ContentObserverCallback;
+import com.github.maximkirko.training_2017_android.contentobserver.FavoriteFriendsContentObserver;
+import com.github.maximkirko.training_2017_android.contentprovider.FavoriteFriendsProvider;
 import com.github.maximkirko.training_2017_android.db.DBHelper;
 import com.github.maximkirko.training_2017_android.loader.FavoriteFriendsCursorLoader;
 import com.github.maximkirko.training_2017_android.loader.FriendsCursorLoader;
@@ -53,7 +61,7 @@ import com.github.maximkirko.training_2017_android.service.VKService;
 import com.github.maximkirko.training_2017_android.sharedpreference.AppSharedPreferences;
 
 public class FriendsListActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, BroadcastReceiverCallback, LoaderManager.LoaderCallbacks<Cursor>, TaskFinishedCallback {
+        implements NavigationView.OnNavigationItemSelectedListener, BroadcastReceiverCallback, LoaderManager.LoaderCallbacks<Cursor>, TaskFinishedCallback, ContentObserverCallback {
 
     // region Views
     private DrawerLayout drawer;
@@ -73,6 +81,8 @@ public class FriendsListActivity extends AppCompatActivity
 
     private FragmentTransaction fragmentTransaction;
     private FavoriteFriendsFragment favoriteFriendsFragment;
+
+    private SharedPreferences sharedPreferences;
 
     // region Cursors
     private static Cursor allFriendsCursor;
@@ -109,6 +119,11 @@ public class FriendsListActivity extends AppCompatActivity
     private static final int ALARM_MANAGER_REPEATING_TIME = 1000 * 30 * 1; // 30 seconds
     // endregion
 
+    public static String NEW_COUNT_PREFERENCE;
+    public static String TOP_COUNT_PREFERENCE;
+
+    private FavoriteFriendsContentObserver favoriteFriendsContentObserver;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -122,8 +137,11 @@ public class FriendsListActivity extends AppCompatActivity
         initViews();
         enableProgressBar();
 
+        getSettingsPreferences();
+
         initDeviceLoadingBroadcastReceiver();
         initDownloadServiceBroadcastReceiver();
+        initContentObserver();
 
         // initialize user data download service
         initUserDataServiceIntent();
@@ -206,6 +224,10 @@ public class FriendsListActivity extends AppCompatActivity
         errorView.setVisibility(View.INVISIBLE);
     }
 
+    private void getSettingsPreferences() {
+        NEW_COUNT_PREFERENCE = AppSharedPreferences.getString("new_count", "10");
+        TOP_COUNT_PREFERENCE = AppSharedPreferences.getString("top_count", "10");
+    }
 
     private void initDeviceLoadingBroadcastReceiver() {
         deviceLoadingBroadcastReceiver = new DeviceLoadingBroadcastReceiver(this);
@@ -213,6 +235,10 @@ public class FriendsListActivity extends AppCompatActivity
 
     private void initDownloadServiceBroadcastReceiver() {
         downloadServiceBroadcastReceiver = new DownloadServiceBroadcastReceiver(this);
+    }
+
+    private void initContentObserver() {
+        favoriteFriendsContentObserver = new FavoriteFriendsContentObserver(new Handler(), this);
     }
 
     private void initUserDataServiceIntent() {
@@ -227,12 +253,14 @@ public class FriendsListActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
+        getContentResolver().registerContentObserver(FavoriteFriendsProvider.FAVORITE_FRIENDS_CONTENT_URI, true, favoriteFriendsContentObserver);
         registerReceiver(downloadServiceBroadcastReceiver, new IntentFilter(VKRequestAbstractService.NOTIFICATION));
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        getContentResolver().unregisterContentObserver(favoriteFriendsContentObserver);
         try {
             unregisterReceiver(downloadServiceBroadcastReceiver);
         } catch (IllegalArgumentException e) {
@@ -241,17 +269,26 @@ public class FriendsListActivity extends AppCompatActivity
     }
 
     @Override
+    public void onChange() {
+        //startFriendsLoaders();
+    }
+
+    @Override
     public void onReceived(String serviceClass) {
         if (serviceClass.equals(UserDataDownloadService.SERVICE_CLASS)) {
             startLoader(UserDataCursorLoader.LOADER_ID);
         } else if (serviceClass.equals(FriendsDataDownloadService.SERVICE_CLASS)) {
-            startLoader(FriendsCursorLoader.LOADER_ID);
-            startLoader(NewFriendsCursorLoader.LOADER_ID);
-            startLoader(TopFriendsCursorLoader.LOADER_ID);
+            startFriendsLoaders();
             startLoader(FavoriteFriendsCursorLoader.LOADER_ID);
         } else if (serviceClass.equals(DeviceLoadingBroadcastReceiver.SERVICE_CLASS)) {
             initAlarmManager();
         }
+    }
+
+    private void startFriendsLoaders() {
+        startLoader(FriendsCursorLoader.LOADER_ID);
+        startLoader(NewFriendsCursorLoader.LOADER_ID);
+        startLoader(TopFriendsCursorLoader.LOADER_ID);
     }
 
     private void initAlarmManager() {
@@ -314,6 +351,9 @@ public class FriendsListActivity extends AppCompatActivity
             }
             if (loader instanceof FriendsCursorLoader) {
                 allFriendsCursor = cursor;
+                if(AllFriendsFragment.adapter != null) {
+                    AllFriendsFragment.adapter.notifyDataSetChanged();
+                }
             } else if (loader instanceof NewFriendsCursorLoader) {
                 newFriendsCursor = cursor;
             } else if (loader instanceof TopFriendsCursorLoader) {

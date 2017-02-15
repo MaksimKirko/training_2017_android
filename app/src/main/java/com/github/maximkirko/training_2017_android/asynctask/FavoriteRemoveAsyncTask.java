@@ -5,7 +5,9 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
 
+import com.github.maximkirko.training_2017_android.activity.core.FriendsListActivity;
 import com.github.maximkirko.training_2017_android.application.VKSimpleChatApplication;
+import com.github.maximkirko.training_2017_android.contentobserver.FavoriteFriendsContentObserver;
 import com.github.maximkirko.training_2017_android.contentprovider.FavoriteFriendsProvider;
 import com.github.maximkirko.training_2017_android.db.DBHelper;
 
@@ -29,6 +31,8 @@ public class FavoriteRemoveAsyncTask extends AsyncTask<Integer, Void, Void> {
     protected Void doInBackground(Integer... params) {
         Uri uri = ContentUris.withAppendedId(FavoriteFriendsProvider.FAVORITE_FRIENDS_CONTENT_URI, params[0]);
         context.getContentResolver().delete(uri, null, null);
+        DBHelper dbHelper = VKSimpleChatApplication.getDbHelper();
+        dbHelper.updateFriends(dbHelper.getWritableDatabase(), params[0], false);
         return null;
     }
 

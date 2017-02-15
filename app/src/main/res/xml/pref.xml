@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <EditTextPreference
-        android:key="new_count"
-        android:summary="@string/preference_new_count_summary"
-        android:title="@string/preference_new_count_title" />
-    <EditTextPreference
-        android:key="top_count"
-        android:summary="@string/preference_top_count_summary"
-        android:title="@string/preference_top_count_title" />
+    <PreferenceCategory android:title="@string/preference_friends_category_title">
+        <EditTextPreference
+            android:key="new_count"
+            android:summary="@string/preference_new_count_summary"
+            android:title="@string/preference_new_count_title"
+            android:defaultValue="10"/>
+        <EditTextPreference
+            android:key="top_count"
+            android:summary="@string/preference_top_count_summary"
+            android:title="@string/preference_top_count_title"
+            android:defaultValue="10"/>
+    </PreferenceCategory>
 </PreferenceScreen>

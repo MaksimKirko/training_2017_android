@@ -6,7 +6,10 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 
+import com.github.maximkirko.training_2017_android.activity.core.FriendsListActivity;
 import com.github.maximkirko.training_2017_android.application.VKSimpleChatApplication;
+import com.github.maximkirko.training_2017_android.contentobserver.FavoriteFriendsContentObserver;
+import com.github.maximkirko.training_2017_android.contentprovider.FavoriteFriendsProvider;
 import com.github.maximkirko.training_2017_android.contentprovider.FriendsContentProvider;
 import com.github.maximkirko.training_2017_android.db.DBHelper;
 import com.github.maximkirko.training_2017_android.mapper.UserMapper;

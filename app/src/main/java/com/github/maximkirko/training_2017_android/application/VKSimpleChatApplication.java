@@ -1,8 +1,10 @@
 package com.github.maximkirko.training_2017_android.application;
 
 import android.app.Application;
+import android.preference.PreferenceManager;
 
 import com.facebook.stetho.Stetho;
+import com.github.maximkirko.training_2017_android.R;
 import com.github.maximkirko.training_2017_android.bitmapmemorymanager.BitmapMemoryManagerConfigurator;
 import com.github.maximkirko.training_2017_android.db.DBHelper;
 import com.github.maximkirko.training_2017_android.sharedpreference.AppSharedPreferences;
@@ -33,6 +35,7 @@ public class VKSimpleChatApplication extends Application {
     public void onCreate() {
         super.onCreate();
         Stetho.initializeWithDefaults(this);
+        PreferenceManager.setDefaultValues(this, R.xml.pref, false);
         initSharedPreferences();
         initBitmapMemoryManager();
         initDBHelper();

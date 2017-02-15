@@ -92,12 +92,16 @@ public abstract class FriendsFragment extends Fragment implements UserClickListe
     }
 
     private void startFavoriteSaveTask(int id) {
-        FavoriteSaveAsyncTask favoriteSaveAsyncTask = new FavoriteSaveAsyncTask(getContext(), taskFinishedCallbackWeakReference.get());
-        favoriteSaveAsyncTask.execute(id);
+        if (taskFinishedCallbackWeakReference != null) {
+            FavoriteSaveAsyncTask favoriteSaveAsyncTask = new FavoriteSaveAsyncTask(getContext(), taskFinishedCallbackWeakReference.get());
+            favoriteSaveAsyncTask.execute(id);
+        }
     }
 
     private void startFavoriteRemoveTask(int id) {
-        FavoriteRemoveAsyncTask favoriteRemoveAsyncTask = new FavoriteRemoveAsyncTask(getContext(), taskFinishedCallbackWeakReference.get());
-        favoriteRemoveAsyncTask.execute(id);
+        if (taskFinishedCallbackWeakReference != null) {
+            FavoriteRemoveAsyncTask favoriteRemoveAsyncTask = new FavoriteRemoveAsyncTask(getContext(), taskFinishedCallbackWeakReference.get());
+            favoriteRemoveAsyncTask.execute(id);
+        }
     }
 }

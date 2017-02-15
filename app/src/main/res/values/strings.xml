@@ -34,6 +34,7 @@
     <string name="intro_button_skip_text">Skip</string>
     <string name="intro_button_got_it_text">Got it</string>
 
+    <string name="preference_friends_category_title">Friends</string>
     <string name="preference_new_count_title">New friends</string>
     <string name="preference_top_count_title">Top friends</string>
     <string name="preference_new_count_summary">Count of shown friends on "New" tab</string>

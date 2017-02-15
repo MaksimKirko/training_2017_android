@@ -12,7 +12,7 @@ import javax.inject.Singleton;
 @Singleton
 public class AppSharedPreferences {
 
-    private static final String APP_PREFERENCES = "APP_PREFERENCES";
+    private static final String APP_PREFERENCES = "com.github.maximkirko.training_2017_android_sprint2_preferences";
 
     private static SharedPreferences preferences;
 

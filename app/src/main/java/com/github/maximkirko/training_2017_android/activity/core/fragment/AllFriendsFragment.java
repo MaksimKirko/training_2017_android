@@ -1,6 +1,7 @@
 package com.github.maximkirko.training_2017_android.activity.core.fragment;
 
 import android.os.Bundle;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.github.maximkirko.training_2017_android.activity.core.FriendsListActivity;
@@ -14,10 +15,13 @@ import java.lang.ref.WeakReference;
 
 public class AllFriendsFragment extends FriendsFragment {
 
+    public static RecyclerView.Adapter adapter;
+
     public static AllFriendsFragment newInstance(TaskFinishedCallback taskFinishedCallback) {
         AllFriendsFragment allFriendsFragment = new AllFriendsFragment();
         allFriendsFragment.init(taskFinishedCallback);
         allFriendsFragment.cursor = FriendsListActivity.getAllFriendsCursor();
+        adapter = allFriendsFragment.recyclerViewAdapter;
         return allFriendsFragment;
     }
 

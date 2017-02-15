@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 
 import com.github.maximkirko.training_2017_android.R;
 import com.github.maximkirko.training_2017_android.activity.core.fragment.AllFriendsFragment;
@@ -15,7 +16,7 @@ import com.github.maximkirko.training_2017_android.asynctask.TaskFinishedCallbac
 
 import java.lang.ref.WeakReference;
 
-public class FriendslistFragmentPagerAdapter extends FragmentPagerAdapter {
+public class FriendslistFragmentPagerAdapter extends FragmentStatePagerAdapter {
 
     private Context context;
     private Cursor cursor;

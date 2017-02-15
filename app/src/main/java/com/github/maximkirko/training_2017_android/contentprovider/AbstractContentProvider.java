@@ -41,9 +41,6 @@ public abstract class AbstractContentProvider extends ContentProvider {
                         String[] selectionArgs, String sortOrder) {
         switch (uriMatcher.match(uri)) {
             case URI:
-//                if (TextUtils.isEmpty(sortOrder)) {
-//                    sortOrder = DBHelper.USER_TABLE_FIELD_FIRST_NAME + " ASC";
-//                }
                 break;
             case URI_ID:
                 String id = uri.getLastPathSegment();
