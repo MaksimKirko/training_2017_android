@@ -3,7 +3,6 @@ package com.github.maximkirko.training_2017_android.activity.core;
 import android.app.AlarmManager;
 import android.app.LoaderManager;
 import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.Loader;
@@ -28,12 +27,10 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.github.maximkirko.training_2017_android.R;
 import com.github.maximkirko.training_2017_android.activity.core.fragment.AllFriendsFragment;
 import com.github.maximkirko.training_2017_android.activity.core.fragment.FavoriteFriendsFragment;
-import com.github.maximkirko.training_2017_android.activity.preference.DefaultPreferenceFragment;
 import com.github.maximkirko.training_2017_android.adapter.FriendslistFragmentPagerAdapter;
 import com.github.maximkirko.training_2017_android.application.VKSimpleChatApplication;
 import com.github.maximkirko.training_2017_android.asynctask.ImageLoadingAsyncTask;
@@ -351,7 +348,7 @@ public class FriendsListActivity extends AppCompatActivity
             }
             if (loader instanceof FriendsCursorLoader) {
                 allFriendsCursor = cursor;
-                if(AllFriendsFragment.adapter != null) {
+                if (AllFriendsFragment.adapter != null) {
                     AllFriendsFragment.adapter.notifyDataSetChanged();
                 }
             } else if (loader instanceof NewFriendsCursorLoader) {
@@ -438,20 +435,15 @@ public class FriendsListActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.nav_friends) {
-            //removeFavoriteFriendsFragment();
+            removeFavoriteFriendsFragment();
         } else if (id == R.id.nav_favorite_friends) {
-            startFavoriteFriendsActivity();
-            //showFavoriteFriendsFragment();
+            showFavoriteFriendsFragment();
         } else if (id == R.id.nav_logout) {
             logout();
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
-    }
-
-    private void startFavoriteFriendsActivity() {
-        startActivity(IntentManager.getIntentForFavoriteFriendsListActivity(this));
     }
 
     private void removeFavoriteFriendsFragment() {
@@ -465,7 +457,7 @@ public class FriendsListActivity extends AppCompatActivity
         viewPager.setVisibility(View.INVISIBLE);
         favoriteFriendsFragment = FavoriteFriendsFragment.newInstance();
         fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.add(R.id.activity_friendslist, favoriteFriendsFragment);
+        fragmentTransaction.add(R.id.friendslist_fragment_container, favoriteFriendsFragment);
         fragmentTransaction.commit();
     }
 

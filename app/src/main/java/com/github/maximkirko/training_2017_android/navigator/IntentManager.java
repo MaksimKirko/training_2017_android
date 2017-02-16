@@ -3,7 +3,6 @@ package com.github.maximkirko.training_2017_android.navigator;
 import android.content.Context;
 import android.content.Intent;
 
-import com.github.maximkirko.training_2017_android.activity.core.FavoriteFriendsActivity;
 import com.github.maximkirko.training_2017_android.activity.core.FriendsListActivity;
 import com.github.maximkirko.training_2017_android.activity.core.UserDetailsActivity;
 import com.github.maximkirko.training_2017_android.activity.intro.IntroActivity;
@@ -32,10 +31,6 @@ public class IntentManager {
 
     public static Intent getIntentForFriendsListActivity(Context context) {
         return new Intent(context, FriendsListActivity.class);
-    }
-
-    public static Intent getIntentForFavoriteFriendsListActivity(Context context) {
-        return new Intent(context, FavoriteFriendsActivity.class);
     }
 
     public static Intent getIntentForSettingsActivity(Context context) {

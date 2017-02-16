@@ -33,13 +33,9 @@
             android:label="UserDetailsActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".activity.core.FavoriteFriendsActivity"
-            android:label="Favorites"
-            android:theme="@style/AppTheme" />
-        <activity
             android:name=".activity.preference.SettingsActivity"
             android:label="Settings"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <provider
             android:name=".contentprovider.UserContentProvider"

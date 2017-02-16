@@ -8,12 +8,11 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.github.maximkirko.training_2017_android.activity.core.FriendsListActivity">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/activity_friendslist"
+        android:id="@+id/friendslist_fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
         tools:context="com.github.maximkirko.training_2017_android.activity.core.FriendsListActivity">
 
         <android.support.v4.view.ViewPager
@@ -33,7 +32,7 @@
 
         </android.support.v4.view.ViewPager>
 
-    </LinearLayout>
+    </FrameLayout>
 
     <TextView
         android:id="@+id/textview_friendslist_error"
