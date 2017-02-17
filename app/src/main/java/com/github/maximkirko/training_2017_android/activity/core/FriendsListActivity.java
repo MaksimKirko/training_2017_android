@@ -6,7 +6,6 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.Loader;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
@@ -31,6 +30,8 @@ import android.widget.TextView;
 import com.github.maximkirko.training_2017_android.R;
 import com.github.maximkirko.training_2017_android.activity.core.fragment.AllFriendsFragment;
 import com.github.maximkirko.training_2017_android.activity.core.fragment.FavoriteFriendsFragment;
+import com.github.maximkirko.training_2017_android.activity.core.fragment.NewFriendsFragment;
+import com.github.maximkirko.training_2017_android.activity.core.fragment.TopFriendsFragment;
 import com.github.maximkirko.training_2017_android.adapter.FriendslistFragmentPagerAdapter;
 import com.github.maximkirko.training_2017_android.application.VKSimpleChatApplication;
 import com.github.maximkirko.training_2017_android.asynctask.ImageLoadingAsyncTask;
@@ -74,37 +75,8 @@ public class FriendsListActivity extends AppCompatActivity
     private ProgressBar progressBar;
     // endregion
 
-    private PagerAdapter pagerAdapter;
 
-    private FragmentTransaction fragmentTransaction;
-    private FavoriteFriendsFragment favoriteFriendsFragment;
-
-    private SharedPreferences sharedPreferences;
-
-    // region Cursors
-    private static Cursor allFriendsCursor;
-    private static Cursor newFriendsCursor;
-    private static Cursor topFriendsCursor;
-    private static Cursor favoriteFriendsCursor;
-
-    public static Cursor getAllFriendsCursor() {
-        return allFriendsCursor;
-    }
-
-    public static Cursor getNewFriendsCursor() {
-        return newFriendsCursor;
-    }
-
-    public static Cursor getTopFriendsCursor() {
-        return topFriendsCursor;
-    }
-
-    public static Cursor getFavoriteFriendsCursor() {
-        return favoriteFriendsCursor;
-    }
-    // endregion
-
-    // region Friends loading properties
+    // region Features
     private User user;
     private PendingIntent pendingIntent;
     private Intent userDataServiceIntent;
@@ -112,21 +84,25 @@ public class FriendsListActivity extends AppCompatActivity
     private AlarmManager alarmManager;
     private DeviceLoadingBroadcastReceiver deviceLoadingBroadcastReceiver;
     private DownloadServiceBroadcastReceiver downloadServiceBroadcastReceiver;
+    private FavoriteFriendsContentObserver favoriteFriendsContentObserver;
+    private PagerAdapter pagerAdapter;
+    // endregion
 
+    // region Constants
     private static final int ALARM_MANAGER_REPEATING_TIME = 1000 * 30 * 1; // 30 seconds
     // endregion
 
+    // region Static fields
     public static String NEW_COUNT_PREFERENCE;
     public static String TOP_COUNT_PREFERENCE;
-
-    private FavoriteFriendsContentObserver favoriteFriendsContentObserver;
+    // endregion
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.friendslist_activity);
 
-        // init toolbar and drawer layout
+        // setTaskFinisedCallback toolbar and drawer layout
         initToolbar();
         initDrawerLayout();
 
@@ -203,6 +179,44 @@ public class FriendsListActivity extends AppCompatActivity
         progressBar = (ProgressBar) findViewById(R.id.progressbar_friends_activity);
         errorView = (TextView) findViewById(R.id.textview_friendslist_error);
         disableErrorView();
+        initFragments();
+        initViewPager();
+    }
+
+    private void initFragments() {
+        AllFriendsFragment.newInstance(this);
+        NewFriendsFragment.newInstance(this);
+        TopFriendsFragment.newInstance(this);
+        FavoriteFriendsFragment.newInstance(this);
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.friendslist_fragment_container, FavoriteFriendsFragment.getFavoriteFriendsFragment())
+                .commit();
+    }
+
+    private void initViewPager() {
+        viewPager = (ViewPager) findViewById(R.id.viewpager_friendslist_activity);
+        pagerTitleStrip = (PagerTitleStrip) findViewById(R.id.strip_friendslist_viewpager_title);
+        viewPager.setOffscreenPageLimit(FriendslistFragmentPagerAdapter.PAGE_COUNT);
+        initViewPagerAdapter();
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+
+            @Override
+            public void onPageSelected(int position) {
+            }
+
+            @Override
+            public void onPageScrolled(int arg0, float arg1, int arg2) {
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int arg0) {
+            }
+        });
+    }
+
+    private void initViewPagerAdapter() {
+        pagerAdapter = new FriendslistFragmentPagerAdapter(this, getSupportFragmentManager());
+        viewPager.setAdapter(pagerAdapter);
     }
 
     private void enableProgressBar() {
@@ -250,7 +264,7 @@ public class FriendsListActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        getContentResolver().registerContentObserver(FavoriteFriendsProvider.FAVORITE_FRIENDS_CONTENT_URI, true, favoriteFriendsContentObserver);
+        getContentResolver().registerContentObserver(FavoriteFriendsContentObserver.FAVORITE_FRIENDS_URI, false, favoriteFriendsContentObserver);
         registerReceiver(downloadServiceBroadcastReceiver, new IntentFilter(VKRequestAbstractService.NOTIFICATION));
     }
 
@@ -267,7 +281,7 @@ public class FriendsListActivity extends AppCompatActivity
 
     @Override
     public void onChange() {
-        //startFriendsLoaders();
+        startFriendsLoaders();
     }
 
     @Override
@@ -339,7 +353,7 @@ public class FriendsListActivity extends AppCompatActivity
                 setUserData();
             }
         } else if (loader instanceof FavoriteFriendsCursorLoader) {
-            favoriteFriendsCursor = cursor;
+            FavoriteFriendsFragment.setCursor(cursor);
         } else {
             disableProgressBar();
             if (cursor.getCount() < 1) {
@@ -347,23 +361,13 @@ public class FriendsListActivity extends AppCompatActivity
                 return;
             }
             if (loader instanceof FriendsCursorLoader) {
-                allFriendsCursor = cursor;
-                if (AllFriendsFragment.adapter != null) {
-                    AllFriendsFragment.adapter.notifyDataSetChanged();
-                }
+                AllFriendsFragment.setCursor(cursor);
             } else if (loader instanceof NewFriendsCursorLoader) {
-                newFriendsCursor = cursor;
+                NewFriendsFragment.setCursor(cursor);
             } else if (loader instanceof TopFriendsCursorLoader) {
-                topFriendsCursor = cursor;
-            }
-            if (isAllCursorsLoaded()) {
-                initViewPager();
+                TopFriendsFragment.setCursor(cursor);
             }
         }
-    }
-
-    private boolean isAllCursorsLoaded() {
-        return allFriendsCursor != null && newFriendsCursor != null && topFriendsCursor != null;
     }
 
     private void setUserData() {
@@ -377,31 +381,6 @@ public class FriendsListActivity extends AppCompatActivity
                     .setImageWidth(headerImageView.getWidth())
                     .load(user.getPhoto_100());
         }
-    }
-
-    private void initViewPager() {
-        viewPager = (ViewPager) findViewById(R.id.viewpager_friendslist_activity);
-        pagerTitleStrip = (PagerTitleStrip) findViewById(R.id.strip_friendslist_viewpager_title);
-        initViewPagerAdapter();
-        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-
-            @Override
-            public void onPageSelected(int position) {
-            }
-
-            @Override
-            public void onPageScrolled(int arg0, float arg1, int arg2) {
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int arg0) {
-            }
-        });
-    }
-
-    private void initViewPagerAdapter() {
-        pagerAdapter = new FriendslistFragmentPagerAdapter(this, getSupportFragmentManager(), allFriendsCursor, this);
-        viewPager.setAdapter(pagerAdapter);
     }
 
     @Override
@@ -447,18 +426,13 @@ public class FriendsListActivity extends AppCompatActivity
     }
 
     private void removeFavoriteFriendsFragment() {
-        fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.remove(favoriteFriendsFragment);
-        fragmentTransaction.commit();
+        FavoriteFriendsFragment.getFavoriteFriendsFragment().getView().setVisibility(View.INVISIBLE);
         viewPager.setVisibility(View.VISIBLE);
     }
 
     private void showFavoriteFriendsFragment() {
         viewPager.setVisibility(View.INVISIBLE);
-        favoriteFriendsFragment = FavoriteFriendsFragment.newInstance();
-        fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.add(R.id.friendslist_fragment_container, favoriteFriendsFragment);
-        fragmentTransaction.commit();
+        FavoriteFriendsFragment.getFavoriteFriendsFragment().getView().setVisibility(View.VISIBLE);
     }
 
     private void logout() {

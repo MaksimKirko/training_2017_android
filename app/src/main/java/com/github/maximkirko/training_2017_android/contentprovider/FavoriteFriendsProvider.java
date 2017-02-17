@@ -1,8 +1,11 @@
 package com.github.maximkirko.training_2017_android.contentprovider;
 
 import android.content.UriMatcher;
+import android.database.Cursor;
 import android.net.Uri;
+import android.text.TextUtils;
 
+import com.github.maximkirko.training_2017_android.application.VKSimpleChatApplication;
 import com.github.maximkirko.training_2017_android.db.DBHelper;
 
 /**

@@ -27,9 +27,9 @@ public class UserMapper {
         user.setPhoto_100(cursor.getString(cursor.getColumnIndex(DBHelper.USER_TABLE_FIELD_PHOTO_100)));
         user.setOnline(cursor.getInt(cursor.getColumnIndex(DBHelper.USER_TABLE_FIELD_ONLINE)) > 0);
         try {
+            user.setIs_favorite(cursor.getInt(cursor.getColumnIndex(DBHelper.FRIENDS_TABLE_FIELD_IS_FAVORITE)) > 0);
             user.setLast_seen(new Timestamp(cursor.getLong(cursor.getColumnIndex(DBHelper.FRIENDS_TABLE_FIELD_LAST_SEEN))));
             user.setRating(cursor.getInt(cursor.getColumnIndex(DBHelper.FRIENDS_TABLE_FIELD_RATING)));
-            user.setIs_favorite(cursor.getInt(cursor.getColumnIndex(DBHelper.FRIENDS_TABLE_FIELD_IS_FAVORITE)) > 0);
         } catch (IllegalStateException e) {
             Log.e(e.getClass().getSimpleName(), e.getMessage());
         }

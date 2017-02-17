@@ -7,44 +7,45 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.view.View;
 
 import com.github.maximkirko.training_2017_android.R;
 import com.github.maximkirko.training_2017_android.activity.core.fragment.AllFriendsFragment;
+import com.github.maximkirko.training_2017_android.activity.core.fragment.FavoriteFriendsFragment;
 import com.github.maximkirko.training_2017_android.activity.core.fragment.NewFriendsFragment;
 import com.github.maximkirko.training_2017_android.activity.core.fragment.TopFriendsFragment;
 import com.github.maximkirko.training_2017_android.asynctask.TaskFinishedCallback;
 
 import java.lang.ref.WeakReference;
 
-public class FriendslistFragmentPagerAdapter extends FragmentStatePagerAdapter {
+public class FriendslistFragmentPagerAdapter extends FragmentPagerAdapter {
+
+    public static int PAGE_COUNT = 3;
 
     private Context context;
-    private Cursor cursor;
-    private WeakReference<TaskFinishedCallback> taskFinishedCallbackWeakReference;
 
-    public FriendslistFragmentPagerAdapter(@NonNull Context context, @NonNull FragmentManager fm, @NonNull Cursor cursor, TaskFinishedCallback taskFinishedCallback) {
+    public FriendslistFragmentPagerAdapter(@NonNull Context context, @NonNull FragmentManager fm) {
         super(fm);
         this.context = context;
-        this.cursor = cursor;
-        taskFinishedCallbackWeakReference = new WeakReference<>(taskFinishedCallback);
     }
 
     @Override
     public Fragment getItem(int position) {
         switch (position) {
             case 0:
-                return AllFriendsFragment.newInstance(taskFinishedCallbackWeakReference.get());
+                FavoriteFriendsFragment.getFavoriteFriendsFragment().getView().setVisibility(View.INVISIBLE);
+                return AllFriendsFragment.getAllFriendsFragment();
             case 1:
-                return NewFriendsFragment.newInstance(taskFinishedCallbackWeakReference.get());
+                return NewFriendsFragment.getNewFriendsFragment();
             case 2:
-                return TopFriendsFragment.newInstance(taskFinishedCallbackWeakReference.get());
+                return TopFriendsFragment.getTopFriendsFragment();
         }
         return null;
     }
 
     @Override
     public int getCount() {
-        return 3;
+        return PAGE_COUNT;
     }
 
     @Override

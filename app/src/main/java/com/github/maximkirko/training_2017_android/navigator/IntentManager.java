@@ -30,7 +30,9 @@ public class IntentManager {
     }
 
     public static Intent getIntentForFriendsListActivity(Context context) {
-        return new Intent(context, FriendsListActivity.class);
+        Intent intent = new Intent(context, FriendsListActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        return intent;
     }
 
     public static Intent getIntentForSettingsActivity(Context context) {

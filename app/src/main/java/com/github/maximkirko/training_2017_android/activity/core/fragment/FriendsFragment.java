@@ -2,24 +2,25 @@ package com.github.maximkirko.training_2017_android.activity.core.fragment;
 
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.github.maximkirko.training_2017_android.R;
-import com.github.maximkirko.training_2017_android.activity.core.FriendsListActivity;
+import com.github.maximkirko.training_2017_android.adapter.FriendsCursorAdapter;
 import com.github.maximkirko.training_2017_android.adapter.viewholder.CheckBoxOnChangeListener;
+import com.github.maximkirko.training_2017_android.adapter.viewholder.UserClickListener;
 import com.github.maximkirko.training_2017_android.asynctask.FavoriteRemoveAsyncTask;
 import com.github.maximkirko.training_2017_android.asynctask.FavoriteSaveAsyncTask;
 import com.github.maximkirko.training_2017_android.asynctask.TaskFinishedCallback;
-import com.github.maximkirko.training_2017_android.navigator.IntentManager;
-import com.github.maximkirko.training_2017_android.adapter.FriendsCursorAdapter;
-import com.github.maximkirko.training_2017_android.adapter.viewholder.UserClickListener;
 import com.github.maximkirko.training_2017_android.itemanimator.LandingAnimator;
 import com.github.maximkirko.training_2017_android.itemdecorator.DefaultItemDecoration;
+import com.github.maximkirko.training_2017_android.navigator.IntentManager;
 
 import java.lang.ref.WeakReference;
 
@@ -30,7 +31,6 @@ import java.lang.ref.WeakReference;
 public abstract class FriendsFragment extends Fragment implements UserClickListener, CheckBoxOnChangeListener {
 
     protected View v;
-    protected Cursor cursor;
     protected WeakReference<TaskFinishedCallback> taskFinishedCallbackWeakReference;
 
     //    region Music RecyclerView settings
@@ -41,7 +41,7 @@ public abstract class FriendsFragment extends Fragment implements UserClickListe
     protected RecyclerView.ItemAnimator itemAnimator;
     //    endregion
 
-    protected void init(TaskFinishedCallback taskFinishedCallback) {
+    protected void setTaskFinisedCallback(TaskFinishedCallback taskFinishedCallback) {
         taskFinishedCallbackWeakReference = new WeakReference<>(taskFinishedCallback);
     }
 
@@ -50,7 +50,18 @@ public abstract class FriendsFragment extends Fragment implements UserClickListe
                              Bundle savedInstanceState) {
         setRetainInstance(false);
         v = inflater.inflate(R.layout.friendslist_fragment, container, false);
+        if (recyclerViewAdapter == null) {
+            initAdapter();
+            initRecyclerView();
+        }
         return v;
+    }
+
+    protected void swapCursor(Cursor cursor) {
+        if (recyclerViewAdapter != null) {
+            recyclerViewAdapter.setCursor(cursor);
+            recyclerViewAdapter.notifyDataSetChanged();
+        }
     }
 
     @Override
@@ -59,7 +70,7 @@ public abstract class FriendsFragment extends Fragment implements UserClickListe
     }
 
     protected void initAdapter() {
-        recyclerViewAdapter = new FriendsCursorAdapter(cursor, this, this);
+        recyclerViewAdapter = new FriendsCursorAdapter(null, this, this);
         initItemDecoration();
         initItemAnimator();
     }
@@ -91,14 +102,14 @@ public abstract class FriendsFragment extends Fragment implements UserClickListe
         }
     }
 
-    private void startFavoriteSaveTask(int id) {
+    protected void startFavoriteSaveTask(int id) {
         if (taskFinishedCallbackWeakReference != null) {
             FavoriteSaveAsyncTask favoriteSaveAsyncTask = new FavoriteSaveAsyncTask(getContext(), taskFinishedCallbackWeakReference.get());
             favoriteSaveAsyncTask.execute(id);
         }
     }
 
-    private void startFavoriteRemoveTask(int id) {
+    protected void startFavoriteRemoveTask(int id) {
         if (taskFinishedCallbackWeakReference != null) {
             FavoriteRemoveAsyncTask favoriteRemoveAsyncTask = new FavoriteRemoveAsyncTask(getContext(), taskFinishedCallbackWeakReference.get());
             favoriteRemoveAsyncTask.execute(id);

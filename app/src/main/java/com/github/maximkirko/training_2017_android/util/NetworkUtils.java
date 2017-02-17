@@ -34,6 +34,5 @@ public class NetworkUtils {
         connection.setDoInput(true);
         connection.connect();
         return new BufferedReader(new InputStreamReader((connection.getInputStream())));
-
     }
 }

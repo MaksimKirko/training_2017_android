@@ -39,6 +39,7 @@ public class FavoriteRemoveAsyncTask extends AsyncTask<Integer, Void, Void> {
     @Override
     protected void onPostExecute(Void aVoid) {
         super.onPostExecute(aVoid);
+        context.getContentResolver().notifyChange(FavoriteFriendsContentObserver.FAVORITE_FRIENDS_URI, null);
         if (taskFinishedCallbackWeakReference != null) {
             taskFinishedCallbackWeakReference.get().onTaskFinished();
         }

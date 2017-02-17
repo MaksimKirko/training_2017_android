@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.github.maximkirko.training_2017_android.model.User;
+import com.github.maximkirko.training_2017_android.navigator.IntentManager;
 import com.github.maximkirko.training_2017_android.reader.Reader;
 import com.github.maximkirko.training_2017_android.util.NetworkUtils;
 import com.github.maximkirko.training_2017_android.util.StringUtils;

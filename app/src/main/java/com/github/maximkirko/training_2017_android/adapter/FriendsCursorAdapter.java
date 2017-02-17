@@ -76,6 +76,6 @@ public class FriendsCursorAdapter extends CursorRecyclerAdapter<RecyclerView.Vie
 
     @Override
     public int getItemCount() {
-        return cursor.getCount() + 1;
+        return cursor == null ? 0 : cursor.getCount() + 1;
     }
 }

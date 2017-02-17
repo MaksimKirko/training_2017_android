@@ -12,6 +12,8 @@ import java.lang.ref.WeakReference;
 
 public class FavoriteFriendsContentObserver extends ContentObserver {
 
+    public static Uri FAVORITE_FRIENDS_URI = Uri.parse("content://favorite");
+
     private WeakReference<ContentObserverCallback> contentObserverCallbackWeakReference;
 
     public FavoriteFriendsContentObserver(Handler handler, ContentObserverCallback contentObserverCallback) {

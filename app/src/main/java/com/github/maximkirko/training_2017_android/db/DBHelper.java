@@ -14,6 +14,7 @@ import android.os.RemoteException;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.github.maximkirko.training_2017_android.activity.core.FriendsListActivity;
 import com.github.maximkirko.training_2017_android.contentprovider.FavoriteFriendsProvider;
 import com.github.maximkirko.training_2017_android.contentprovider.FriendsContentProvider;
 import com.github.maximkirko.training_2017_android.contentprovider.UserContentProvider;
@@ -142,22 +143,15 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     public void insertFavoriteFriend(@NonNull SQLiteDatabase db, @NonNull Context context, @NonNull User user) {
-        ArrayList<ContentProviderOperation> ops = new ArrayList<>();
-        ops.add(ContentProviderOperation.newInsert(FavoriteFriendsProvider.FAVORITE_FRIENDS_CONTENT_URI)
-                .withValue(USER_TABLE_FIELD_ID, user.getId())
-                .withValue(FAVORITE_FRIENDS_TABLE_FIELD_BECOME, System.currentTimeMillis())
-                .build());
-        try {
-            db.execSQL(CREATE_FAVORITE_FRIENDS_TABLE);
-            context.getContentResolver().applyBatch(FavoriteFriendsProvider.FAVORITE_FRIENDS_CONTENT_AUTHORITY, ops);
-            updateFriends(db, user.getId(), true);
-        } catch (RemoteException | OperationApplicationException e) {
-            Log.e(e.getClass().getSimpleName(), e.getMessage());
-        }
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(USER_TABLE_FIELD_ID, user.getId());
+        contentValues.put(FAVORITE_FRIENDS_TABLE_FIELD_BECOME, System.currentTimeMillis());
+        context.getContentResolver().insert(FavoriteFriendsProvider.FAVORITE_FRIENDS_CONTENT_URI, contentValues);
+        updateFriends(db, user.getId(), true);
     }
 
     public void updateFriends(SQLiteDatabase db, int id, boolean is_favorite) {
-        db.execSQL("UPDATE " + FRIEND_TABLE_NAME + " SET " + FRIENDS_TABLE_FIELD_IS_FAVORITE + " = \"" + is_favorite + "\" where id=" + id + ";");
+        db.execSQL("UPDATE " + FRIEND_TABLE_NAME + " SET " + FRIENDS_TABLE_FIELD_IS_FAVORITE + " = \"" + (is_favorite ? "1" : "0") + "\" where id=" + id + ";");
 //        ContentValues contentValues = new ContentValues();
 //        contentValues.put(FRIENDS_TABLE_FIELD_IS_FAVORITE, is_favorite);
 //        context.getContentResolver().update(FriendsContentProvider.FRIENDS_CONTENT_URI, contentValues, USER_TABLE_FIELD_ID + "=?", new String[]{id + ""});
@@ -165,7 +159,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public Cursor getFavoriteFriends(@NonNull SQLiteDatabase db) {
         db.execSQL(CREATE_FAVORITE_FRIENDS_TABLE);
-        String query = "SELECT * FROM " + FAVORITE_FRIENDS_TABLE_NAME + " f1 INNER JOIN " + FRIEND_TABLE_NAME + " f2 ON f1.id=f2.id";
+        String query = "SELECT * FROM " + FAVORITE_FRIENDS_TABLE_NAME + " f1 INNER JOIN " + FRIEND_TABLE_NAME + " f2 ON f1.id=f2.id ORDER BY " + DBHelper.FAVORITE_FRIENDS_TABLE_FIELD_BECOME + " DESC";
         return db.rawQuery(query, null);
     }
 

@@ -27,6 +27,7 @@ public class UserViewHolder extends RecyclerView.ViewHolder implements View.OnCl
     private WeakReference<UserClickListener> userClickListenerWeakReference;
     private WeakReference<CheckBoxOnChangeListener> checkBoxOnChangeListenerWeakReference;
     private ImageLoadingAsyncTask imageLoadingAsyncTask;
+    private boolean isFavorite;
 
     @Override
     public void onClick(View v) {
@@ -40,7 +41,7 @@ public class UserViewHolder extends RecyclerView.ViewHolder implements View.OnCl
         super(itemView);
         itemView.setLayoutParams(ItemSizeUtils.getLayoutParams(itemView.getContext()));
         userClickListenerWeakReference = new WeakReference<>(userClickListener);
-        checkBoxOnChangeListenerWeakReference = new WeakReference<CheckBoxOnChangeListener>(checkBoxOnChangeListener);
+        checkBoxOnChangeListenerWeakReference = new WeakReference<>(checkBoxOnChangeListener);
         itemView.setOnClickListener(this);
         initViews();
     }
@@ -50,11 +51,12 @@ public class UserViewHolder extends RecyclerView.ViewHolder implements View.OnCl
         onlineStatusView = (TextView) itemView.findViewById(R.id.textview_friendslist_item_online_status);
         userPhotoView = (ImageView) itemView.findViewById(R.id.imageview_friendslist_item_photo);
         isFavoriteView = (CheckBox) itemView.findViewById(R.id.checkbox_friendslist_item_is_favorite);
-        isFavoriteView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        isFavoriteView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(checkBoxOnChangeListenerWeakReference != null) {
-                    checkBoxOnChangeListenerWeakReference.get().onChecked(userId, isChecked);
+            public void onClick(View v) {
+                isFavoriteView.setChecked(!isFavorite);
+                if (checkBoxOnChangeListenerWeakReference != null) {
+                    checkBoxOnChangeListenerWeakReference.get().onChecked(userId, isFavoriteView.isChecked());
                 }
             }
         });
@@ -75,6 +77,7 @@ public class UserViewHolder extends RecyclerView.ViewHolder implements View.OnCl
     private void setViewsValues(User user) {
         nameView.setText(user.getFirst_name() + " " + user.getLast_name());
         onlineStatusView.setText(user.isOnline() ? itemView.getResources().getString(R.string.all_online_status_true) : "");
+        isFavorite = user.is_favorite();
         isFavoriteView.setChecked(user.is_favorite());
         int rating = user.getRating();
         if (rating != 0) {

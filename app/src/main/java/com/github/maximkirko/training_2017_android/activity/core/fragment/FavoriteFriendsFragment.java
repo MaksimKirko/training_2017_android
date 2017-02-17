@@ -1,9 +1,11 @@
 package com.github.maximkirko.training_2017_android.activity.core.fragment;
 
+import android.database.Cursor;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.view.View;
 
-import com.github.maximkirko.training_2017_android.activity.core.FriendsListActivity;
+import com.github.maximkirko.training_2017_android.asynctask.TaskFinishedCallback;
 
 /**
  * Created by MadMax on 14.02.2017.
@@ -11,22 +13,22 @@ import com.github.maximkirko.training_2017_android.activity.core.FriendsListActi
 
 public class FavoriteFriendsFragment extends FriendsFragment {
 
-    public static FavoriteFriendsFragment newInstance() {
-        FavoriteFriendsFragment favoriteFriendsFragment = new FavoriteFriendsFragment();
-        favoriteFriendsFragment.cursor = FriendsListActivity.getFavoriteFriendsCursor();
+    private static FavoriteFriendsFragment favoriteFriendsFragment;
+
+    public static FavoriteFriendsFragment getFavoriteFriendsFragment() {
         return favoriteFriendsFragment;
     }
 
-    public FavoriteFriendsFragment() {
+    public static FavoriteFriendsFragment newInstance(TaskFinishedCallback taskFinishedCallback) {
+        favoriteFriendsFragment = new FavoriteFriendsFragment();
+        favoriteFriendsFragment.setTaskFinisedCallback(taskFinishedCallback);
+        return favoriteFriendsFragment;
     }
 
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        initAdapter();
-        initRecyclerView();
-        if (cursor != null) {
-            recyclerViewAdapter.setCursor(cursor);
-            recyclerViewAdapter.notifyDataSetChanged();
-        }
+    public static void setCursor(Cursor cursor) {
+        favoriteFriendsFragment.swapCursor(cursor);
+    }
+
+    public FavoriteFriendsFragment() {
     }
 }
