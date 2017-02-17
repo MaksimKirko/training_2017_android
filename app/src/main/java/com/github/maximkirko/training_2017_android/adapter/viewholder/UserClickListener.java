@@ -6,4 +6,5 @@ package com.github.maximkirko.training_2017_android.adapter.viewholder;
 
 public interface UserClickListener {
     void onItemClick(int position);
+    void onItemLongClick(int position);
 }

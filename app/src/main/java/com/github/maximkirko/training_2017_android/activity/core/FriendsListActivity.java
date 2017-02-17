@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.Loader;
 import android.database.Cursor;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.NavigationView;
@@ -34,6 +35,7 @@ import com.github.maximkirko.training_2017_android.activity.core.fragment.NewFri
 import com.github.maximkirko.training_2017_android.activity.core.fragment.TopFriendsFragment;
 import com.github.maximkirko.training_2017_android.adapter.FriendslistFragmentPagerAdapter;
 import com.github.maximkirko.training_2017_android.application.VKSimpleChatApplication;
+import com.github.maximkirko.training_2017_android.asynctask.FriendRatingUpdateAsyncTask;
 import com.github.maximkirko.training_2017_android.asynctask.ImageLoadingAsyncTask;
 import com.github.maximkirko.training_2017_android.asynctask.TaskFinishedCallback;
 import com.github.maximkirko.training_2017_android.broadcastreceiver.BroadcastReceiverCallback;
@@ -315,7 +317,10 @@ public class FriendsListActivity extends AppCompatActivity
     }
 
     @Override
-    public void onTaskFinished() {
+    public void onTaskFinished(Class<? extends AsyncTask> asyncTaskClass) {
+        if (asyncTaskClass == FriendRatingUpdateAsyncTask.class) {
+            startFriendsLoaders();
+        }
         startLoader(FavoriteFriendsCursorLoader.LOADER_ID);
     }
 

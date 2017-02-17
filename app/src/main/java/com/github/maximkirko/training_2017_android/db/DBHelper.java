@@ -12,6 +12,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.os.RemoteException;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.github.maximkirko.training_2017_android.activity.core.FriendsListActivity;
@@ -104,6 +105,20 @@ public class DBHelper extends SQLiteOpenHelper {
                 .withValue(USER_TABLE_FIELD_PHOTO_100, user.getPhoto_100())
                 .withValue(USER_TABLE_FIELD_ONLINE, user.isOnline())
                 .build();
+    }
+
+    @Nullable
+    public User getFriendById(@NonNull Context context, int id) {
+        Uri uri = ContentUris.withAppendedId(FriendsContentProvider.FRIENDS_CONTENT_URI, id);
+        Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
+        if (cursor.moveToNext()) {
+            return UserMapper.convert(cursor);
+        }
+        return null;
+    }
+
+    public void updateFriendRating(@NonNull SQLiteDatabase db, int id, int rating) {
+        db.execSQL("UPDATE " + FRIEND_TABLE_NAME + " SET " + FRIENDS_TABLE_FIELD_RATING + "=" + rating + " where id=" + id + ";");
     }
 
     public void insertFriendsBatch(@NonNull SQLiteDatabase db, @NonNull Context context, @NonNull List<User> friends) {

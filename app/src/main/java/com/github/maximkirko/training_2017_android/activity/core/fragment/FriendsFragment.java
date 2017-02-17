@@ -1,9 +1,14 @@
 package com.github.maximkirko.training_2017_android.activity.core.fragment;
 
+import android.content.ContentUris;
+import android.content.DialogInterface;
 import android.database.Cursor;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -15,11 +20,17 @@ import com.github.maximkirko.training_2017_android.R;
 import com.github.maximkirko.training_2017_android.adapter.FriendsCursorAdapter;
 import com.github.maximkirko.training_2017_android.adapter.viewholder.CheckBoxOnChangeListener;
 import com.github.maximkirko.training_2017_android.adapter.viewholder.UserClickListener;
+import com.github.maximkirko.training_2017_android.application.VKSimpleChatApplication;
 import com.github.maximkirko.training_2017_android.asynctask.FavoriteRemoveAsyncTask;
 import com.github.maximkirko.training_2017_android.asynctask.FavoriteSaveAsyncTask;
+import com.github.maximkirko.training_2017_android.asynctask.FriendRatingUpdateAsyncTask;
 import com.github.maximkirko.training_2017_android.asynctask.TaskFinishedCallback;
+import com.github.maximkirko.training_2017_android.contentprovider.FriendsContentProvider;
+import com.github.maximkirko.training_2017_android.contentprovider.UserContentProvider;
 import com.github.maximkirko.training_2017_android.itemanimator.LandingAnimator;
 import com.github.maximkirko.training_2017_android.itemdecorator.DefaultItemDecoration;
+import com.github.maximkirko.training_2017_android.mapper.UserMapper;
+import com.github.maximkirko.training_2017_android.model.User;
 import com.github.maximkirko.training_2017_android.navigator.IntentManager;
 
 import java.lang.ref.WeakReference;
@@ -69,6 +80,29 @@ public abstract class FriendsFragment extends Fragment implements UserClickListe
         startActivity(IntentManager.getIntentForUserDetailsActivity(getActivity().getBaseContext(), id));
     }
 
+    @Override
+    public void onItemLongClick(int id) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setMessage(R.string.friendslist_item_rating_changing_dialog_title);
+        final User user = VKSimpleChatApplication.getDbHelper().getFriendById(getContext(), id);
+        if (user.getRating() < 1) {
+            builder.setPositiveButton(R.string.friendslist_item_rating_changing_dialog_increase, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    startFriendRatingUpdateTask(user.getId(), user.getRating() + 1);
+                }
+            });
+        }
+        if (user.getRating() > -1) {
+            builder.setNegativeButton(R.string.friendslist_item_rating_changing_dialog_decrease, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    startFriendRatingUpdateTask(user.getId(), user.getRating() - 1);
+                }
+            });
+        }
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
+
     protected void initAdapter() {
         recyclerViewAdapter = new FriendsCursorAdapter(null, this, this);
         initItemDecoration();
@@ -99,6 +133,13 @@ public abstract class FriendsFragment extends Fragment implements UserClickListe
             startFavoriteSaveTask(id);
         } else {
             startFavoriteRemoveTask(id);
+        }
+    }
+
+    protected void startFriendRatingUpdateTask(int id, int rating) {
+        if (taskFinishedCallbackWeakReference != null) {
+            FriendRatingUpdateAsyncTask friendRatingUpdateAsyncTask = new FriendRatingUpdateAsyncTask(getContext(), taskFinishedCallbackWeakReference.get());
+            friendRatingUpdateAsyncTask.execute(id, rating);
         }
     }
 

@@ -15,7 +15,7 @@ import com.github.maximkirko.training_2017_android.util.ItemSizeUtils;
 
 import java.lang.ref.WeakReference;
 
-public class UserViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+public class UserViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
 
     private TextView nameView;
     private TextView onlineStatusView;
@@ -31,10 +31,17 @@ public class UserViewHolder extends RecyclerView.ViewHolder implements View.OnCl
 
     @Override
     public void onClick(View v) {
-        UserClickListener userClickListener = this.userClickListenerWeakReference.get();
-        if (userClickListener != null) {
-            userClickListener.onItemClick(userId);
+        if (userClickListenerWeakReference != null) {
+            userClickListenerWeakReference.get().onItemClick(userId);
         }
+    }
+
+    @Override
+    public boolean onLongClick(View v) {
+        if (userClickListenerWeakReference != null) {
+            userClickListenerWeakReference.get().onItemLongClick(userId);
+        }
+        return true;
     }
 
     public UserViewHolder(@NonNull View itemView, @NonNull UserClickListener userClickListener, @NonNull CheckBoxOnChangeListener checkBoxOnChangeListener) {
@@ -43,6 +50,7 @@ public class UserViewHolder extends RecyclerView.ViewHolder implements View.OnCl
         userClickListenerWeakReference = new WeakReference<>(userClickListener);
         checkBoxOnChangeListenerWeakReference = new WeakReference<>(checkBoxOnChangeListener);
         itemView.setOnClickListener(this);
+        itemView.setOnLongClickListener(this);
         initViews();
     }
 

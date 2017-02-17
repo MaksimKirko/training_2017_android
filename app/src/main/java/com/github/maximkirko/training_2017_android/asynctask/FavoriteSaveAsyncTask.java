@@ -49,7 +49,7 @@ public class FavoriteSaveAsyncTask extends AsyncTask<Integer, Void, Void> {
         super.onPostExecute(aVoid);
         context.getContentResolver().notifyChange(FavoriteFriendsContentObserver.FAVORITE_FRIENDS_URI, null);
         if (taskFinishedCallbackWeakReference != null) {
-            taskFinishedCallbackWeakReference.get().onTaskFinished();
+            taskFinishedCallbackWeakReference.get().onTaskFinished(this.getClass());
         }
     }
 }

@@ -13,6 +13,10 @@
     <string name="friendslist_viewpager_title_2">NEW</string>
     <string name="friendslist_viewpager_title_3">TOP</string>
 
+    <string name="friendslist_item_rating_changing_dialog_title">Change rating</string>
+    <string name="friendslist_item_rating_changing_dialog_increase">+1</string>
+    <string name="friendslist_item_rating_changing_dialog_decrease">-1</string>
+
     <string name="friendslist_header_friendscount_title">Friends: </string>
     <string name="friendslist_header_friendscount_online_title">Online: </string>\
 
