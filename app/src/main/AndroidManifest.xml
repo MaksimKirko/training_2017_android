@@ -27,7 +27,22 @@
         <activity
             android:name=".activity.core.FriendsListActivity"
             android:label="FriendsListActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.app.default_searchable"
+                android:value=".activity.search.SearchActivity" />
+        </activity>
+        <activity
+            android:name=".activity.search.SearchActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:launchMode="singleTop">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
+        </activity>
         <activity
             android:name=".activity.core.UserDetailsActivity"
             android:label="UserDetailsActivity"

@@ -108,12 +108,10 @@ public class UserDetailsActivity extends AppCompatActivity implements View.OnCli
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         if (item.getItemId() == android.R.id.home) {
             startActivity(IntentManager.getIntentForFriendsListActivity(this));
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 }

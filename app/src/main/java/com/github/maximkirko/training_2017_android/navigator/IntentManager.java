@@ -8,6 +8,7 @@ import com.github.maximkirko.training_2017_android.activity.core.UserDetailsActi
 import com.github.maximkirko.training_2017_android.activity.intro.IntroActivity;
 import com.github.maximkirko.training_2017_android.activity.login.LoginActivity;
 import com.github.maximkirko.training_2017_android.activity.preference.SettingsActivity;
+import com.github.maximkirko.training_2017_android.activity.search.SearchActivity;
 
 /**
  * Created by MadMax on 08.02.2017.
@@ -31,11 +32,15 @@ public class IntentManager {
 
     public static Intent getIntentForFriendsListActivity(Context context) {
         Intent intent = new Intent(context, FriendsListActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         return intent;
     }
 
     public static Intent getIntentForSettingsActivity(Context context) {
         return new Intent(context, SettingsActivity.class);
+    }
+
+    public static Intent getIntentForSearchActivity(Context context) {
+        return new Intent(context, SearchActivity.class);
     }
 }
