@@ -172,7 +172,7 @@ public class DBHelper extends SQLiteOpenHelper {
         return db.rawQuery(query, null);
     }
 
-    public Cursor searchFriends(@NonNull SQLiteDatabase db, String tableName, @NonNull String searchString) {
+    public Cursor searchFriends(@NonNull SQLiteDatabase db, @NonNull String tableName, @NonNull String searchString) {
         String query = "SELECT * FROM " + FRIEND_TABLE_NAME + " WHERE ";
         if (tableName.equals(FAVORITE_FRIEND_TABLE_NAME)) {
             query += FRIENDS_TABLE_FIELD_IS_FAVORITE + "=1 AND ";

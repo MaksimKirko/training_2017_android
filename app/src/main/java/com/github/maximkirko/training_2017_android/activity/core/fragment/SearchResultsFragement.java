@@ -18,10 +18,6 @@ public class SearchResultsFragement extends FriendsFragment {
         return searchResultsFragement;
     }
 
-    public void setCursor(Cursor cursor) {
-        swapCursor(cursor);
-    }
-
     public SearchResultsFragement() {
     }
 }

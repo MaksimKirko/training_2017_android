@@ -33,6 +33,7 @@ import android.widget.TextView;
 import com.github.maximkirko.training_2017_android.R;
 import com.github.maximkirko.training_2017_android.activity.core.fragment.AllFriendsFragment;
 import com.github.maximkirko.training_2017_android.activity.core.fragment.FavoriteFriendsFragment;
+import com.github.maximkirko.training_2017_android.activity.core.fragment.FriendsFragment;
 import com.github.maximkirko.training_2017_android.activity.core.fragment.NewFriendsFragment;
 import com.github.maximkirko.training_2017_android.activity.core.fragment.SearchResultsFragement;
 import com.github.maximkirko.training_2017_android.activity.core.fragment.TopFriendsFragment;
@@ -63,6 +64,9 @@ import com.github.maximkirko.training_2017_android.service.VKRequestAbstractServ
 import com.github.maximkirko.training_2017_android.service.VKService;
 import com.github.maximkirko.training_2017_android.sharedpreference.AppSharedPreferences;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class FriendsListActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, BroadcastReceiverCallback, LoaderManager.LoaderCallbacks<Cursor>, TaskFinishedCallback, ContentObserverCallback {
 
@@ -80,7 +84,6 @@ public class FriendsListActivity extends AppCompatActivity
     private ProgressBar progressBar;
     // endregion
 
-
     // region Features
     private User user;
     private PendingIntent pendingIntent;
@@ -92,6 +95,9 @@ public class FriendsListActivity extends AppCompatActivity
     private FavoriteFriendsContentObserver favoriteFriendsContentObserver;
     private PagerAdapter pagerAdapter;
     // endregion
+
+    private List<FriendsFragment> pages;
+    private boolean isFavoriteFragmentActive = false;
 
     // region Constants
     private static final int ALARM_MANAGER_REPEATING_TIME = 1000 * 30 * 1; // 30 seconds
@@ -113,7 +119,6 @@ public class FriendsListActivity extends AppCompatActivity
 
         // initialize and show ProgressBar
         initViews();
-        enableProgressBar();
 
         getSettingsPreferences();
 
@@ -182,8 +187,9 @@ public class FriendsListActivity extends AppCompatActivity
 
     private void initViews() {
         progressBar = (ProgressBar) findViewById(R.id.progressbar_friends_activity);
+        progressBar.setVisibility(View.VISIBLE);
         errorView = (TextView) findViewById(R.id.textview_friendslist_error);
-        disableErrorView();
+        errorView.setVisibility(View.INVISIBLE);
         initFragments();
         initViewPager();
     }
@@ -192,12 +198,14 @@ public class FriendsListActivity extends AppCompatActivity
         AllFriendsFragment allFriendsFragment = AllFriendsFragment.newInstance(this);
         NewFriendsFragment newFriendsFragment = NewFriendsFragment.newInstance(this);
         TopFriendsFragment topFriendsFragment = TopFriendsFragment.newInstance(this);
+        pages = new ArrayList<>();
+        pages.add(allFriendsFragment);
+        pages.add(newFriendsFragment);
+        pages.add(topFriendsFragment);
+
         FavoriteFriendsFragment favoriteFriendsFragment = FavoriteFriendsFragment.newInstance(this);
         SearchResultsFragement searchResultsFragement = SearchResultsFragement.newInstance(this);
         getSupportFragmentManager().beginTransaction()
-                .add(allFriendsFragment, AllFriendsFragment.TAG)
-                .add(newFriendsFragment, NewFriendsFragment.TAG)
-                .add(topFriendsFragment, TopFriendsFragment.TAG)
                 .add(R.id.friendslist_fragment_container, favoriteFriendsFragment, FavoriteFriendsFragment.TAG)
                 .add(R.id.friendslist_fragment_container, searchResultsFragement, SearchResultsFragement.TAG)
                 .hide(favoriteFriendsFragment)
@@ -226,24 +234,8 @@ public class FriendsListActivity extends AppCompatActivity
     }
 
     private void initViewPagerAdapter() {
-        pagerAdapter = new FriendslistFragmentPagerAdapter(this, getSupportFragmentManager());
+        pagerAdapter = new FriendslistFragmentPagerAdapter(this, getSupportFragmentManager(), pages);
         viewPager.setAdapter(pagerAdapter);
-    }
-
-    private void enableProgressBar() {
-        progressBar.setVisibility(View.VISIBLE);
-    }
-
-    private void disableProgressBar() {
-        progressBar.setVisibility(View.INVISIBLE);
-    }
-
-    private void enableErrorView() {
-        errorView.setVisibility(View.VISIBLE);
-    }
-
-    private void disableErrorView() {
-        errorView.setVisibility(View.INVISIBLE);
     }
 
     private void getSettingsPreferences() {
@@ -369,22 +361,22 @@ public class FriendsListActivity extends AppCompatActivity
                 setUserData();
             }
         } else if (loader instanceof FavoriteFriendsCursorLoader) {
-            ((FavoriteFriendsFragment) getSupportFragmentManager().findFragmentByTag(FavoriteFriendsFragment.TAG)).setCursor(cursor);
+            ((FavoriteFriendsFragment) getSupportFragmentManager().findFragmentByTag(FavoriteFriendsFragment.TAG)).swapCursor(cursor);
         } else if (loader instanceof SearchFriendsCursorLoader) {
-            ((SearchResultsFragement) getSupportFragmentManager().findFragmentByTag(SearchResultsFragement.TAG)).setCursor(cursor);
+            ((SearchResultsFragement) getSupportFragmentManager().findFragmentByTag(SearchResultsFragement.TAG)).swapCursor(cursor);
             showFragment(SearchResultsFragement.TAG);
         } else {
-            disableProgressBar();
+            progressBar.setVisibility(View.INVISIBLE);
             if (cursor.getCount() < 1) {
-                enableErrorView();
+                errorView.setVisibility(View.VISIBLE);
                 return;
             }
             if (loader instanceof FriendsCursorLoader) {
-                ((AllFriendsFragment) getSupportFragmentManager().findFragmentByTag(AllFriendsFragment.TAG)).setCursor(cursor);
+                pages.get(0).swapCursor(cursor);
             } else if (loader instanceof NewFriendsCursorLoader) {
-                ((NewFriendsFragment) getSupportFragmentManager().findFragmentByTag(NewFriendsFragment.TAG)).setCursor(cursor);
+                pages.get(1).swapCursor(cursor);
             } else if (loader instanceof TopFriendsCursorLoader) {
-                ((TopFriendsFragment) getSupportFragmentManager().findFragmentByTag(TopFriendsFragment.TAG)).setCursor(cursor);
+                pages.get(2).swapCursor(cursor);
             }
         }
     }
@@ -441,8 +433,12 @@ public class FriendsListActivity extends AppCompatActivity
         searchView.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
-                viewPager.setVisibility(View.INVISIBLE);
                 hideFragment(SearchResultsFragement.TAG);
+                if (isFavoriteFragmentActive) {
+                    showFragment(FavoriteFriendsFragment.TAG);
+                } else {
+                    viewPager.setVisibility(View.VISIBLE);
+                }
                 return false;
             }
         });
@@ -455,6 +451,10 @@ public class FriendsListActivity extends AppCompatActivity
             @Override
             public boolean onQueryTextSubmit(String query) {
                 performSearch(query);
+                viewPager.setVisibility(View.INVISIBLE);
+                if(isFavoriteFragmentActive) {
+                    hideFragment(FavoriteFriendsFragment.TAG);
+                }
                 return false;
             }
         });
@@ -490,9 +490,13 @@ public class FriendsListActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
+        hideFragment(SearchResultsFragement.TAG);
         if (id == R.id.nav_friends) {
+            isFavoriteFragmentActive = false;
             hideFragment(FavoriteFriendsFragment.TAG);
+            viewPager.setVisibility(View.VISIBLE);
         } else if (id == R.id.nav_favorite_friends) {
+            isFavoriteFragmentActive = true;
             showFragment(FavoriteFriendsFragment.TAG);
         } else if (id == R.id.nav_logout) {
             logout();

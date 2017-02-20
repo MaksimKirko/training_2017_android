@@ -7,34 +7,26 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 import com.github.maximkirko.training_2017_android.R;
-import com.github.maximkirko.training_2017_android.activity.core.fragment.AllFriendsFragment;
-import com.github.maximkirko.training_2017_android.activity.core.fragment.NewFriendsFragment;
-import com.github.maximkirko.training_2017_android.activity.core.fragment.TopFriendsFragment;
+import com.github.maximkirko.training_2017_android.activity.core.fragment.FriendsFragment;
+
+import java.util.List;
 
 public class FriendslistFragmentPagerAdapter extends FragmentPagerAdapter {
 
     public static int PAGE_COUNT = 3;
 
     private Context context;
-    private FragmentManager fragmentManager;
+    private List<FriendsFragment> pages;
 
-    public FriendslistFragmentPagerAdapter(@NonNull Context context, @NonNull FragmentManager fragmentManager) {
+    public FriendslistFragmentPagerAdapter(@NonNull Context context, @NonNull FragmentManager fragmentManager, @NonNull List<FriendsFragment> pages) {
         super(fragmentManager);
-        this.fragmentManager = fragmentManager;
         this.context = context;
+        this.pages = pages;
     }
 
     @Override
     public Fragment getItem(int position) {
-        switch (position) {
-            case 0:
-                return fragmentManager.findFragmentByTag(AllFriendsFragment.TAG);
-            case 1:
-                return fragmentManager.findFragmentByTag(NewFriendsFragment.TAG);
-            case 2:
-                return fragmentManager.findFragmentByTag(TopFriendsFragment.TAG);
-        }
-        return null;
+        return pages.get(position);
     }
 
     @Override

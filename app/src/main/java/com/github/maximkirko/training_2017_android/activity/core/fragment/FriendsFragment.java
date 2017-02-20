@@ -68,7 +68,7 @@ public abstract class FriendsFragment extends Fragment implements UserClickListe
         return v;
     }
 
-    protected void swapCursor(Cursor cursor) {
+    public void swapCursor(Cursor cursor) {
         if (recyclerViewAdapter != null) {
             recyclerViewAdapter.setCursor(cursor);
             recyclerViewAdapter.notifyDataSetChanged();

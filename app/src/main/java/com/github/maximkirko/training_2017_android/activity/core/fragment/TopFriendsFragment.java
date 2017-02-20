@@ -18,10 +18,6 @@ public class TopFriendsFragment extends FriendsFragment {
         return topFriendsFragment;
     }
 
-    public void setCursor(Cursor cursor) {
-        swapCursor(cursor);
-    }
-
     public TopFriendsFragment() {
     }
 }

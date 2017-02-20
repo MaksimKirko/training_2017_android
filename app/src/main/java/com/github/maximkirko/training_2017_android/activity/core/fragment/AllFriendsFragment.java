@@ -23,10 +23,6 @@ public class AllFriendsFragment extends FriendsFragment {
         return allFriendsFragment;
     }
 
-    public void setCursor(Cursor cursor) {
-        swapCursor(cursor);
-    }
-
     public AllFriendsFragment() {
     }
 }
