@@ -1,11 +1,7 @@
 package com.github.maximkirko.training_2017_android.activity.core.fragment;
 
 import android.database.Cursor;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.view.View;
 
-import com.github.maximkirko.training_2017_android.activity.core.FriendsListActivity;
 import com.github.maximkirko.training_2017_android.asynctask.TaskFinishedCallback;
 
 /**
@@ -14,20 +10,16 @@ import com.github.maximkirko.training_2017_android.asynctask.TaskFinishedCallbac
 
 public class NewFriendsFragment extends FriendsFragment {
 
-    private static NewFriendsFragment newFriendsFragment;
-
-    public static NewFriendsFragment getNewFriendsFragment() {
-        return newFriendsFragment;
-    }
+    public static final String TAG = "NEW_FRIENDS_FRAGMENT";
 
     public static NewFriendsFragment newInstance(TaskFinishedCallback taskFinishedCallback) {
-        newFriendsFragment = new NewFriendsFragment();
+        NewFriendsFragment newFriendsFragment = new NewFriendsFragment();
         newFriendsFragment.setTaskFinisedCallback(taskFinishedCallback);
         return newFriendsFragment;
     }
 
-    public static void setCursor(Cursor cursor) {
-        newFriendsFragment.swapCursor(cursor);
+    public void setCursor(Cursor cursor) {
+        swapCursor(cursor);
     }
 
     public NewFriendsFragment() {

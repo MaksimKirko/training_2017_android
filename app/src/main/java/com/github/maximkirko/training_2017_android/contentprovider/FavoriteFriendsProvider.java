@@ -1,11 +1,8 @@
 package com.github.maximkirko.training_2017_android.contentprovider;
 
 import android.content.UriMatcher;
-import android.database.Cursor;
 import android.net.Uri;
-import android.text.TextUtils;
 
-import com.github.maximkirko.training_2017_android.application.VKSimpleChatApplication;
 import com.github.maximkirko.training_2017_android.db.DBHelper;
 
 /**
@@ -27,7 +24,7 @@ public class FavoriteFriendsProvider extends AbstractContentProvider {
         CONTENT_URI = FAVORITE_FRIENDS_CONTENT_URI;
         CONTENT_TYPE = FAVORITE_FRIENDS_CONTENT_TYPE;
         CONTENT_ITEM_TYPE = FAVORITE_FRIENDS_CONTENT_ITEM_TYPE;
-        TABLE_NAME = DBHelper.FAVORITE_FRIENDS_TABLE_NAME;
+        TABLE_NAME = DBHelper.FAVORITE_FRIEND_TABLE_NAME;
 
         uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
         uriMatcher.addURI(CONTENT_AUTHORITY, PATH, URI);

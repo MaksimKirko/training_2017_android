@@ -1,6 +1,5 @@
 package com.github.maximkirko.training_2017_android.db;
 
-import android.content.ContentProvider;
 import android.content.ContentProviderOperation;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -15,18 +14,14 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.github.maximkirko.training_2017_android.activity.core.FriendsListActivity;
 import com.github.maximkirko.training_2017_android.contentprovider.FavoriteFriendsProvider;
 import com.github.maximkirko.training_2017_android.contentprovider.FriendsContentProvider;
 import com.github.maximkirko.training_2017_android.contentprovider.UserContentProvider;
-import com.github.maximkirko.training_2017_android.loader.FavoriteFriendsCursorLoader;
 import com.github.maximkirko.training_2017_android.mapper.UserMapper;
 import com.github.maximkirko.training_2017_android.model.User;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static java.security.AccessController.getContext;
 
 public class DBHelper extends SQLiteOpenHelper {
 
@@ -43,14 +38,14 @@ public class DBHelper extends SQLiteOpenHelper {
     // region tables
     public static String FRIEND_TABLE_NAME = "friend";
     public static String USER_TABLE_NAME = "user";
-    public static String FAVORITE_FRIENDS_TABLE_NAME = "friend_favorite";
+    public static String FAVORITE_FRIEND_TABLE_NAME = "friend_favorite";
     // endregion
 
     // region query
     private static final String CREATE_USER_TABLE = CREATE_TABLE + USER_TABLE_NAME + "(id integer PRIMARY KEY, first_name text, last_name text, photo_100 text, online boolean);";
     private static final String CREATE_FRIEND_TABLE = CREATE_TABLE + FRIEND_TABLE_NAME + "(id integer PRIMARY KEY, first_name text, last_name text, photo_100 text, online boolean, " +
             "last_seen timestamp, rating integer, is_favorite boolean);";
-    private static final String CREATE_FAVORITE_FRIENDS_TABLE = CREATE_TABLE + FAVORITE_FRIENDS_TABLE_NAME + "(id integer PRIMARY KEY, become timestamp);";
+    private static final String CREATE_FAVORITE_FRIENDS_TABLE = CREATE_TABLE + FAVORITE_FRIEND_TABLE_NAME + "(id integer PRIMARY KEY, become timestamp);";
     // created timestamp,
     // endregion
 
@@ -81,7 +76,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         USER_TABLE_NAME += "_" + newVersion;
         FRIEND_TABLE_NAME += "_" + newVersion;
-        FAVORITE_FRIENDS_TABLE_NAME += "_" + newVersion;
+        FAVORITE_FRIEND_TABLE_NAME += "_" + newVersion;
         onCreate(db);
     }
 
@@ -167,14 +162,23 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public void updateFriends(SQLiteDatabase db, int id, boolean is_favorite) {
         db.execSQL("UPDATE " + FRIEND_TABLE_NAME + " SET " + FRIENDS_TABLE_FIELD_IS_FAVORITE + " = \"" + (is_favorite ? "1" : "0") + "\" where id=" + id + ";");
-//        ContentValues contentValues = new ContentValues();
-//        contentValues.put(FRIENDS_TABLE_FIELD_IS_FAVORITE, is_favorite);
-//        context.getContentResolver().update(FriendsContentProvider.FRIENDS_CONTENT_URI, contentValues, USER_TABLE_FIELD_ID + "=?", new String[]{id + ""});
     }
 
     public Cursor getFavoriteFriends(@NonNull SQLiteDatabase db) {
         db.execSQL(CREATE_FAVORITE_FRIENDS_TABLE);
-        String query = "SELECT * FROM " + FAVORITE_FRIENDS_TABLE_NAME + " f1 INNER JOIN " + FRIEND_TABLE_NAME + " f2 ON f1.id=f2.id ORDER BY " + DBHelper.FAVORITE_FRIENDS_TABLE_FIELD_BECOME + " DESC";
+        String query = "SELECT * FROM " + FAVORITE_FRIEND_TABLE_NAME + " f1 INNER JOIN "
+                + FRIEND_TABLE_NAME + " f2 ON f1.id=f2.id ORDER BY "
+                + DBHelper.FAVORITE_FRIENDS_TABLE_FIELD_BECOME + " DESC";
+        return db.rawQuery(query, null);
+    }
+
+    public Cursor searchFriends(@NonNull SQLiteDatabase db, String tableName, @NonNull String searchString) {
+        String query = "SELECT * FROM " + FRIEND_TABLE_NAME + " WHERE ";
+        if (tableName.equals(FAVORITE_FRIEND_TABLE_NAME)) {
+            query += FRIENDS_TABLE_FIELD_IS_FAVORITE + "=1 AND ";
+        }
+        query += USER_TABLE_FIELD_FIRST_NAME + " LIKE \"%" + searchString + "%\" OR "
+                + USER_TABLE_FIELD_LAST_NAME + " LIKE \"%" + searchString + "%\";";
         return db.rawQuery(query, null);
     }
 

@@ -1,6 +1,7 @@
 package com.github.maximkirko.training_2017_android.mapper;
 
 import android.database.Cursor;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
@@ -16,7 +17,7 @@ import java.sql.Timestamp;
 public class UserMapper {
 
     @Nullable
-    public static User convert(Cursor cursor) {
+    public static User convert(@NonNull Cursor cursor) {
         if (cursor.getCount() < 1) {
             return null;
         }

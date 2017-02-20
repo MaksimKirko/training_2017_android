@@ -13,7 +13,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.PagerTitleStrip;
@@ -30,12 +29,12 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.github.maximkirko.training_2017_android.R;
 import com.github.maximkirko.training_2017_android.activity.core.fragment.AllFriendsFragment;
 import com.github.maximkirko.training_2017_android.activity.core.fragment.FavoriteFriendsFragment;
 import com.github.maximkirko.training_2017_android.activity.core.fragment.NewFriendsFragment;
+import com.github.maximkirko.training_2017_android.activity.core.fragment.SearchResultsFragement;
 import com.github.maximkirko.training_2017_android.activity.core.fragment.TopFriendsFragment;
 import com.github.maximkirko.training_2017_android.adapter.FriendslistFragmentPagerAdapter;
 import com.github.maximkirko.training_2017_android.application.VKSimpleChatApplication;
@@ -47,11 +46,11 @@ import com.github.maximkirko.training_2017_android.broadcastreceiver.DeviceLoadi
 import com.github.maximkirko.training_2017_android.broadcastreceiver.DownloadServiceBroadcastReceiver;
 import com.github.maximkirko.training_2017_android.contentobserver.ContentObserverCallback;
 import com.github.maximkirko.training_2017_android.contentobserver.FavoriteFriendsContentObserver;
-import com.github.maximkirko.training_2017_android.contentprovider.FavoriteFriendsProvider;
 import com.github.maximkirko.training_2017_android.db.DBHelper;
 import com.github.maximkirko.training_2017_android.loader.FavoriteFriendsCursorLoader;
 import com.github.maximkirko.training_2017_android.loader.FriendsCursorLoader;
 import com.github.maximkirko.training_2017_android.loader.NewFriendsCursorLoader;
+import com.github.maximkirko.training_2017_android.loader.SearchFriendsCursorLoader;
 import com.github.maximkirko.training_2017_android.loader.TopFriendsCursorLoader;
 import com.github.maximkirko.training_2017_android.loader.UserDataCursorLoader;
 import com.github.maximkirko.training_2017_android.mapper.UserMapper;
@@ -190,12 +189,19 @@ public class FriendsListActivity extends AppCompatActivity
     }
 
     private void initFragments() {
-        AllFriendsFragment.newInstance(this);
-        NewFriendsFragment.newInstance(this);
-        TopFriendsFragment.newInstance(this);
-        FavoriteFriendsFragment.newInstance(this);
+        AllFriendsFragment allFriendsFragment = AllFriendsFragment.newInstance(this);
+        NewFriendsFragment newFriendsFragment = NewFriendsFragment.newInstance(this);
+        TopFriendsFragment topFriendsFragment = TopFriendsFragment.newInstance(this);
+        FavoriteFriendsFragment favoriteFriendsFragment = FavoriteFriendsFragment.newInstance(this);
+        SearchResultsFragement searchResultsFragement = SearchResultsFragement.newInstance(this);
         getSupportFragmentManager().beginTransaction()
-                .add(R.id.friendslist_fragment_container, FavoriteFriendsFragment.getFavoriteFriendsFragment())
+                .add(allFriendsFragment, AllFriendsFragment.TAG)
+                .add(newFriendsFragment, NewFriendsFragment.TAG)
+                .add(topFriendsFragment, TopFriendsFragment.TAG)
+                .add(R.id.friendslist_fragment_container, favoriteFriendsFragment, FavoriteFriendsFragment.TAG)
+                .add(R.id.friendslist_fragment_container, searchResultsFragement, SearchResultsFragement.TAG)
+                .hide(favoriteFriendsFragment)
+                .hide(searchResultsFragement)
                 .commit();
     }
 
@@ -205,7 +211,6 @@ public class FriendsListActivity extends AppCompatActivity
         viewPager.setOffscreenPageLimit(FriendslistFragmentPagerAdapter.PAGE_COUNT);
         initViewPagerAdapter();
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-
             @Override
             public void onPageSelected(int position) {
             }
@@ -346,6 +351,8 @@ public class FriendsListActivity extends AppCompatActivity
             return new TopFriendsCursorLoader(getApplicationContext());
         } else if (id == FavoriteFriendsCursorLoader.LOADER_ID) {
             return new FavoriteFriendsCursorLoader(getApplicationContext());
+        } else if (id == SearchFriendsCursorLoader.LOADER_ID) {
+            return new SearchFriendsCursorLoader(getApplicationContext());
         }
         return null;
     }
@@ -362,7 +369,10 @@ public class FriendsListActivity extends AppCompatActivity
                 setUserData();
             }
         } else if (loader instanceof FavoriteFriendsCursorLoader) {
-            FavoriteFriendsFragment.setCursor(cursor);
+            ((FavoriteFriendsFragment) getSupportFragmentManager().findFragmentByTag(FavoriteFriendsFragment.TAG)).setCursor(cursor);
+        } else if (loader instanceof SearchFriendsCursorLoader) {
+            ((SearchResultsFragement) getSupportFragmentManager().findFragmentByTag(SearchResultsFragement.TAG)).setCursor(cursor);
+            showFragment(SearchResultsFragement.TAG);
         } else {
             disableProgressBar();
             if (cursor.getCount() < 1) {
@@ -370,11 +380,11 @@ public class FriendsListActivity extends AppCompatActivity
                 return;
             }
             if (loader instanceof FriendsCursorLoader) {
-                AllFriendsFragment.setCursor(cursor);
+                ((AllFriendsFragment) getSupportFragmentManager().findFragmentByTag(AllFriendsFragment.TAG)).setCursor(cursor);
             } else if (loader instanceof NewFriendsCursorLoader) {
-                NewFriendsFragment.setCursor(cursor);
+                ((NewFriendsFragment) getSupportFragmentManager().findFragmentByTag(NewFriendsFragment.TAG)).setCursor(cursor);
             } else if (loader instanceof TopFriendsCursorLoader) {
-                TopFriendsFragment.setCursor(cursor);
+                ((TopFriendsFragment) getSupportFragmentManager().findFragmentByTag(TopFriendsFragment.TAG)).setCursor(cursor);
             }
         }
     }
@@ -390,6 +400,20 @@ public class FriendsListActivity extends AppCompatActivity
                     .setImageWidth(headerImageView.getWidth())
                     .load(user.getPhoto_100());
         }
+    }
+
+
+    private void showFragment(String tag) {
+        viewPager.setVisibility(View.INVISIBLE);
+        getSupportFragmentManager().beginTransaction()
+                .show(getSupportFragmentManager().findFragmentByTag(tag))
+                .commit();
+    }
+
+    private void hideFragment(String tag) {
+        getSupportFragmentManager().beginTransaction()
+                .hide(getSupportFragmentManager().findFragmentByTag(tag))
+                .commit();
     }
 
     @Override
@@ -414,6 +438,14 @@ public class FriendsListActivity extends AppCompatActivity
         SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         searchView.setQueryHint(getString(R.string.searchable_hint));
+        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                viewPager.setVisibility(View.INVISIBLE);
+                hideFragment(SearchResultsFragement.TAG);
+                return false;
+            }
+        });
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextChange(String newText) {
@@ -422,10 +454,23 @@ public class FriendsListActivity extends AppCompatActivity
 
             @Override
             public boolean onQueryTextSubmit(String query) {
-                startActivity(IntentManager.getIntentForSearchActivity(getBaseContext()));
+                performSearch(query);
                 return false;
             }
         });
+    }
+
+    private void performSearch(String query) {
+        getLoaderManager().initLoader(SearchFriendsCursorLoader.LOADER_ID, null, this);
+        Loader<Cursor> searchFriendsCursorLoader =
+                getLoaderManager().getLoader(SearchFriendsCursorLoader.LOADER_ID);
+        if (getSupportFragmentManager().findFragmentByTag(FavoriteFriendsFragment.TAG).isHidden()) {
+            ((SearchFriendsCursorLoader) searchFriendsCursorLoader).setTableName(DBHelper.FRIEND_TABLE_NAME);
+        } else {
+            ((SearchFriendsCursorLoader) searchFriendsCursorLoader).setTableName(DBHelper.FAVORITE_FRIEND_TABLE_NAME);
+        }
+        ((SearchFriendsCursorLoader) searchFriendsCursorLoader).setQuery(query);
+        searchFriendsCursorLoader.forceLoad();
     }
 
     @Override
@@ -446,25 +491,15 @@ public class FriendsListActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.nav_friends) {
-            removeFavoriteFriendsFragment();
+            hideFragment(FavoriteFriendsFragment.TAG);
         } else if (id == R.id.nav_favorite_friends) {
-            showFavoriteFriendsFragment();
+            showFragment(FavoriteFriendsFragment.TAG);
         } else if (id == R.id.nav_logout) {
             logout();
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
-    }
-
-    private void removeFavoriteFriendsFragment() {
-        FavoriteFriendsFragment.getFavoriteFriendsFragment().getView().setVisibility(View.INVISIBLE);
-        viewPager.setVisibility(View.VISIBLE);
-    }
-
-    private void showFavoriteFriendsFragment() {
-        viewPager.setVisibility(View.INVISIBLE);
-        FavoriteFriendsFragment.getFavoriteFriendsFragment().getView().setVisibility(View.VISIBLE);
     }
 
     private void logout() {

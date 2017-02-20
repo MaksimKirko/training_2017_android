@@ -1,31 +1,26 @@
 package com.github.maximkirko.training_2017_android.adapter;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentStatePagerAdapter;
-import android.view.View;
 
 import com.github.maximkirko.training_2017_android.R;
 import com.github.maximkirko.training_2017_android.activity.core.fragment.AllFriendsFragment;
-import com.github.maximkirko.training_2017_android.activity.core.fragment.FavoriteFriendsFragment;
 import com.github.maximkirko.training_2017_android.activity.core.fragment.NewFriendsFragment;
 import com.github.maximkirko.training_2017_android.activity.core.fragment.TopFriendsFragment;
-import com.github.maximkirko.training_2017_android.asynctask.TaskFinishedCallback;
-
-import java.lang.ref.WeakReference;
 
 public class FriendslistFragmentPagerAdapter extends FragmentPagerAdapter {
 
     public static int PAGE_COUNT = 3;
 
     private Context context;
+    private FragmentManager fragmentManager;
 
-    public FriendslistFragmentPagerAdapter(@NonNull Context context, @NonNull FragmentManager fm) {
-        super(fm);
+    public FriendslistFragmentPagerAdapter(@NonNull Context context, @NonNull FragmentManager fragmentManager) {
+        super(fragmentManager);
+        this.fragmentManager = fragmentManager;
         this.context = context;
     }
 
@@ -33,12 +28,11 @@ public class FriendslistFragmentPagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         switch (position) {
             case 0:
-                FavoriteFriendsFragment.getFavoriteFriendsFragment().getView().setVisibility(View.INVISIBLE);
-                return AllFriendsFragment.getAllFriendsFragment();
+                return fragmentManager.findFragmentByTag(AllFriendsFragment.TAG);
             case 1:
-                return NewFriendsFragment.getNewFriendsFragment();
+                return fragmentManager.findFragmentByTag(NewFriendsFragment.TAG);
             case 2:
-                return TopFriendsFragment.getTopFriendsFragment();
+                return fragmentManager.findFragmentByTag(TopFriendsFragment.TAG);
         }
         return null;
     }

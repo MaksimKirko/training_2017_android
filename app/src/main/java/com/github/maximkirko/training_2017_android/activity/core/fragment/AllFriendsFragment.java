@@ -15,20 +15,16 @@ import com.github.maximkirko.training_2017_android.asynctask.TaskFinishedCallbac
 
 public class AllFriendsFragment extends FriendsFragment {
 
-    private static AllFriendsFragment allFriendsFragment;
-
-    public static AllFriendsFragment getAllFriendsFragment() {
-        return allFriendsFragment;
-    }
+    public static final String TAG = "ALL_FRIENDS_FRAGMENT";
 
     public static AllFriendsFragment newInstance(TaskFinishedCallback taskFinishedCallback) {
-        allFriendsFragment = new AllFriendsFragment();
+        AllFriendsFragment allFriendsFragment = new AllFriendsFragment();
         allFriendsFragment.setTaskFinisedCallback(taskFinishedCallback);
         return allFriendsFragment;
     }
 
-    public static void setCursor(Cursor cursor) {
-        allFriendsFragment.swapCursor(cursor);
+    public void setCursor(Cursor cursor) {
+        swapCursor(cursor);
     }
 
     public AllFriendsFragment() {
