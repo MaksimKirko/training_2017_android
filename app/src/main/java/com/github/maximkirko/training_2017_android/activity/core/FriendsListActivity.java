@@ -21,7 +21,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -29,6 +28,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.github.maximkirko.training_2017_android.R;
@@ -48,7 +48,6 @@ import com.github.maximkirko.training_2017_android.broadcastreceiver.DeviceLoadi
 import com.github.maximkirko.training_2017_android.broadcastreceiver.DownloadServiceBroadcastReceiver;
 import com.github.maximkirko.training_2017_android.contentobserver.ContentObserverCallback;
 import com.github.maximkirko.training_2017_android.contentobserver.FavoriteFriendsContentObserver;
-import com.github.maximkirko.training_2017_android.contentprovider.SearchSuggestionProvider;
 import com.github.maximkirko.training_2017_android.db.DBHelper;
 import com.github.maximkirko.training_2017_android.loader.FavoriteFriendsCursorLoader;
 import com.github.maximkirko.training_2017_android.loader.FriendsCursorLoader;
@@ -430,11 +429,42 @@ public class FriendsListActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.nav_draw_friends, menu);
+
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setIconifiedByDefault(false);
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+//                performSearch(query);
+//                viewPager.setVisibility(View.INVISIBLE);
+//                if (isFavoriteFragmentActive) {
+//                    hideFragment(FavoriteFriendsFragment.TAG);
+//                }
+                startSearchableActivity(query);
+                return false;
+            }
+        });
+
         //initSearchView(menu);
         return true;
     }
 
-//    private void initSearchView(Menu menu) {
+    private void startSearchableActivity(String query) {
+        Intent intent = new Intent(this, SearchableActivity.class);
+        intent.putExtra(SearchManager.QUERY, query);
+        intent.setAction(Intent.ACTION_SEARCH);
+        startActivity(intent);
+    }
+
+    //    private void initSearchView(Menu menu) {
 //        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
 //        final SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
 //        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
@@ -509,17 +539,16 @@ public class FriendsListActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.action_search) {
-            onSearchRequested();
-            //startActivity(new Intent(this, SearchableActivity.class));
-            return true;
+        switch (item.getItemId()) {
+            case R.id.action_search:
+                onSearchRequested();
+                return true;
+            case R.id.action_settings:
+                startActivity(IntentManager.getIntentForSettingsActivity(this));
+                return true;
+            default:
+                return false;
         }
-        if (id == R.id.action_settings) {
-            startActivity(IntentManager.getIntentForSettingsActivity(this));
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     @SuppressWarnings("StatementWithEmptyBody")

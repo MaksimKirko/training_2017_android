@@ -1,15 +1,19 @@
 package com.github.maximkirko.training_2017_android.activity.core;
 
 import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.widget.SearchView;
 
 import com.github.maximkirko.training_2017_android.R;
-import com.github.maximkirko.training_2017_android.activity.core.fragment.FavoriteFriendsFragment;
 import com.github.maximkirko.training_2017_android.activity.core.fragment.FriendsFragment;
 import com.github.maximkirko.training_2017_android.activity.core.fragment.SearchResultsFragement;
 import com.github.maximkirko.training_2017_android.asynctask.TaskFinishedCallback;
@@ -21,7 +25,7 @@ import com.github.maximkirko.training_2017_android.loader.SearchFriendsCursorLoa
  * Created by MadMax on 22.02.2017.
  */
 
-public class SearchableActivity extends FragmentActivity implements android.app.LoaderManager.LoaderCallbacks<Cursor>, TaskFinishedCallback {
+public class SearchableActivity extends AppCompatActivity implements android.app.LoaderManager.LoaderCallbacks<Cursor>, TaskFinishedCallback {
 
     private static final String QUERY_EXTRAS = "QUERY_EXTRAS";
 
@@ -31,8 +35,8 @@ public class SearchableActivity extends FragmentActivity implements android.app.
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.searchable_activity);
+
         initFragment();
-        handleIntent(getIntent());
     }
 
     private void initFragment() {
@@ -44,16 +48,15 @@ public class SearchableActivity extends FragmentActivity implements android.app.
 
     @Override
     protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
         handleIntent(intent);
     }
 
     private void handleIntent(Intent intent) {
-        if(intent.getAction() != null) {
+        if (intent.getAction() != null) {
             if (intent.getAction().equals(Intent.ACTION_VIEW)) {
-                Intent countryIntent = new Intent(this, UserDetailsActivity.class);
-                countryIntent.setData(intent.getData());
-                startActivity(countryIntent);
+                Intent userIntent = new Intent(this, UserDetailsActivity.class);
+                userIntent.setData(intent.getData());
+                startActivity(userIntent);
                 finish();
             } else if (intent.getAction().equals(Intent.ACTION_SEARCH)) {
                 String query = intent.getStringExtra(SearchManager.QUERY);
@@ -77,11 +80,12 @@ public class SearchableActivity extends FragmentActivity implements android.app.
         getLoaderManager().initLoader(SearchFriendsCursorLoader.LOADER_ID, data, this);
         android.content.Loader<Cursor> searchFriendsCursorLoader =
                 getLoaderManager().getLoader(SearchFriendsCursorLoader.LOADER_ID);
-        if (getSupportFragmentManager().findFragmentByTag(FavoriteFriendsFragment.TAG).isHidden()) {
-            ((SearchFriendsCursorLoader) searchFriendsCursorLoader).setTableName(DBHelper.FRIEND_TABLE_NAME);
-        } else {
-            ((SearchFriendsCursorLoader) searchFriendsCursorLoader).setTableName(DBHelper.FAVORITE_FRIEND_TABLE_NAME);
-        }
+        ((SearchFriendsCursorLoader) searchFriendsCursorLoader).setTableName(DBHelper.FRIEND_TABLE_NAME);
+//        if (getSupportFragmentManager().findFragmentByTag(FavoriteFriendsFragment.TAG).isHidden()) {
+//            ((SearchFriendsCursorLoader) searchFriendsCursorLoader).setTableName(DBHelper.FRIEND_TABLE_NAME);
+//        } else {
+//            ((SearchFriendsCursorLoader) searchFriendsCursorLoader).setTableName(DBHelper.FAVORITE_FRIEND_TABLE_NAME);
+//        }
         ((SearchFriendsCursorLoader) searchFriendsCursorLoader).setQuery(query);
         searchFriendsCursorLoader.forceLoad();
     }
@@ -106,5 +110,28 @@ public class SearchableActivity extends FragmentActivity implements android.app.
     @Override
     public void onTaskFinished(Class<? extends AsyncTask> asyncTaskClass) {
         // TODO refresh loaders
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.nav_draw_friends, menu);
+
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setIconifiedByDefault(false);
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_search:
+                //onSearchRequested();
+                return true;
+            default:
+                return false;
+        }
     }
 }
