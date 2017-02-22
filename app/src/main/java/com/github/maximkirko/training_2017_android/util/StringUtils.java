@@ -1,6 +1,7 @@
 package com.github.maximkirko.training_2017_android.util;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -11,8 +12,8 @@ import java.io.IOException;
 
 public class StringUtils {
 
-    public static boolean isEmpty(String s) {
-        if (s.replaceAll("\\s+", "").isEmpty()) {
+    public static boolean isNullOrEmpty(@Nullable String s) {
+        if (s == null || s.replaceAll("\\s+", "").isEmpty()) {
             return true;
         }
         return false;

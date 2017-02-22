@@ -1,5 +1,6 @@
 package com.github.maximkirko.training_2017_android.db;
 
+import android.app.SearchManager;
 import android.content.ContentProviderOperation;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -8,6 +9,7 @@ import android.content.OperationApplicationException;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.os.RemoteException;
 import android.support.annotation.NonNull;
@@ -21,6 +23,7 @@ import com.github.maximkirko.training_2017_android.mapper.UserMapper;
 import com.github.maximkirko.training_2017_android.model.User;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class DBHelper extends SQLiteOpenHelper {
@@ -61,8 +64,16 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String FAVORITE_FRIENDS_TABLE_FIELD_BECOME = "become";
     // endregion
 
+    private HashMap<String, String> mAliasMap;
+
     public DBHelper(@NonNull Context context) {
         super(context, DB_NAME, null, DB_VER);
+        mAliasMap = new HashMap<>();
+        mAliasMap.put("_ID", USER_TABLE_FIELD_ID + " as " + "_id");
+        mAliasMap.put(SearchManager.SUGGEST_COLUMN_TEXT_1, USER_TABLE_FIELD_FIRST_NAME + " as " + SearchManager.SUGGEST_COLUMN_TEXT_1);
+        mAliasMap.put(SearchManager.SUGGEST_COLUMN_TEXT_2, USER_TABLE_FIELD_LAST_NAME + " as " + SearchManager.SUGGEST_COLUMN_TEXT_2);
+        mAliasMap.put(SearchManager.SUGGEST_COLUMN_ICON_1, USER_TABLE_FIELD_PHOTO_100 + " as " + SearchManager.SUGGEST_COLUMN_ICON_1);
+        mAliasMap.put(SearchManager.SUGGEST_COLUMN_INTENT_DATA_ID, USER_TABLE_FIELD_ID + " as " + SearchManager.SUGGEST_COLUMN_INTENT_DATA_ID);
     }
 
     @Override
@@ -110,6 +121,12 @@ public class DBHelper extends SQLiteOpenHelper {
             return UserMapper.convert(cursor);
         }
         return null;
+    }
+
+    @Nullable
+    public Cursor getCursorFriendById(@NonNull Context context, int id) {
+        Uri uri = ContentUris.withAppendedId(FriendsContentProvider.FRIENDS_CONTENT_URI, id);
+        return context.getContentResolver().query(uri, null, null, null, null);
     }
 
     public void updateFriendRating(@NonNull SQLiteDatabase db, int id, int rating) {
@@ -180,6 +197,35 @@ public class DBHelper extends SQLiteOpenHelper {
         query += USER_TABLE_FIELD_FIRST_NAME + " LIKE \"%" + searchString + "%\" OR "
                 + USER_TABLE_FIELD_LAST_NAME + " LIKE \"%" + searchString + "%\";";
         return db.rawQuery(query, null);
+    }
+
+    public Cursor getSuggestionsFriends(String[] selectionArgs) {
+        String selection = USER_TABLE_FIELD_FIRST_NAME + " like ? ";
+
+        if (selectionArgs != null) {
+            selectionArgs[0] = "%" + selectionArgs[0] + "%";
+        }
+
+        SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
+        queryBuilder.setProjectionMap(mAliasMap);
+
+        queryBuilder.setTables(FRIEND_TABLE_NAME);
+
+        Cursor c = queryBuilder.query(
+                getReadableDatabase(),
+                new String[]{"_ID",
+                        SearchManager.SUGGEST_COLUMN_TEXT_1,
+                        SearchManager.SUGGEST_COLUMN_TEXT_2,
+                        SearchManager.SUGGEST_COLUMN_ICON_1,
+                        SearchManager.SUGGEST_COLUMN_INTENT_DATA_ID},
+                selection,
+                selectionArgs,
+                null,
+                null,
+                USER_TABLE_FIELD_FIRST_NAME + " asc ", "10"
+        );
+        return c;
+
     }
 
     public void dropTable(@NonNull SQLiteDatabase db, String tableName) {

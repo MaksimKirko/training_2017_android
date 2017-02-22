@@ -4,6 +4,6 @@
     android:label="@string/searchable_label"
     android:searchSuggestAuthority="com.github.maximkirko.training_2016_android.contentprovider.SearchSuggestionProvider"
     android:searchSuggestSelection=" ?"
-    android:searchSuggestThreshold="1">
+    android:searchSuggestThreshold="3">
 
 </searchable>

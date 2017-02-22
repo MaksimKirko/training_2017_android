@@ -1,17 +1,12 @@
 package com.github.maximkirko.training_2017_android.activity.core.fragment;
 
-import android.content.ContentUris;
 import android.content.DialogInterface;
 import android.database.Cursor;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,11 +20,8 @@ import com.github.maximkirko.training_2017_android.asynctask.FavoriteRemoveAsync
 import com.github.maximkirko.training_2017_android.asynctask.FavoriteSaveAsyncTask;
 import com.github.maximkirko.training_2017_android.asynctask.FriendRatingUpdateAsyncTask;
 import com.github.maximkirko.training_2017_android.asynctask.TaskFinishedCallback;
-import com.github.maximkirko.training_2017_android.contentprovider.FriendsContentProvider;
-import com.github.maximkirko.training_2017_android.contentprovider.UserContentProvider;
 import com.github.maximkirko.training_2017_android.itemanimator.LandingAnimator;
 import com.github.maximkirko.training_2017_android.itemdecorator.DefaultItemDecoration;
-import com.github.maximkirko.training_2017_android.mapper.UserMapper;
 import com.github.maximkirko.training_2017_android.model.User;
 import com.github.maximkirko.training_2017_android.navigator.IntentManager;
 
@@ -51,6 +43,10 @@ public abstract class FriendsFragment extends Fragment implements UserClickListe
     protected RecyclerView.ItemDecoration itemDecoration;
     protected RecyclerView.ItemAnimator itemAnimator;
     //    endregion
+
+    public FriendsCursorAdapter getAdapter() {
+        return recyclerViewAdapter;
+    }
 
     protected void setTaskFinisedCallback(TaskFinishedCallback taskFinishedCallback) {
         taskFinishedCallbackWeakReference = new WeakReference<>(taskFinishedCallback);

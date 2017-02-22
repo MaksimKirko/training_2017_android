@@ -22,10 +22,13 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
@@ -100,7 +103,6 @@ public class FriendsListActivity extends AppCompatActivity
 
     private List<FriendsFragment> pages;
     private boolean isFavoriteFragmentActive = false;
-    private SearchRecentSuggestions suggestions;
 
     // region Constants
     private static final int ALARM_MANAGER_REPEATING_TIME = 1000 * 30 * 1; // 30 seconds
@@ -435,14 +437,32 @@ public class FriendsListActivity extends AppCompatActivity
         final SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         searchView.setQueryHint(getString(R.string.searchable_hint));
+
+        int searchPlateId = searchView.getContext().getResources().getIdentifier("android:id/search_src_text", null, null);
+        EditText searchPlate = (EditText) searchView.findViewById(searchPlateId);
+        searchPlate.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (isFavoriteFragmentActive) {
+                    ((FavoriteFriendsFragment) getSupportFragmentManager().findFragmentByTag(FavoriteFriendsFragment.TAG)).getAdapter().getFilter().filter(s.toString());
+                }
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextChange(String newText) {
                 Intent intent = getIntent();
-                if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-                    viewPager.setVisibility(View.INVISIBLE);
-                    if (isFavoriteFragmentActive) {
-                        hideFragment(FavoriteFriendsFragment.TAG);
+                if (!isFavoriteFragmentActive) {
+                    if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+                        viewPager.setVisibility(View.INVISIBLE);
                     }
                 }
                 return false;
@@ -589,6 +609,9 @@ public class FriendsListActivity extends AppCompatActivity
     }
 
     private void clearSearchHistory() {
+        SearchRecentSuggestions suggestions = new SearchRecentSuggestions(this,
+                SearchSuggestionProvider.AUTHORITY,
+                SearchSuggestionProvider.MODE);
         suggestions.clearHistory();
     }
 }

@@ -1,11 +1,14 @@
 package com.github.maximkirko.training_2017_android.adapter;
 
 import android.database.Cursor;
+import android.os.AsyncTask;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 
 import com.github.maximkirko.training_2017_android.R;
 import com.github.maximkirko.training_2017_android.adapter.itemtype.FriendsListItemTypeAware;
@@ -13,12 +16,16 @@ import com.github.maximkirko.training_2017_android.adapter.viewholder.CheckBoxOn
 import com.github.maximkirko.training_2017_android.adapter.viewholder.HeaderViewHolder;
 import com.github.maximkirko.training_2017_android.adapter.viewholder.UserClickListener;
 import com.github.maximkirko.training_2017_android.adapter.viewholder.UserViewHolder;
+import com.github.maximkirko.training_2017_android.application.VKSimpleChatApplication;
+import com.github.maximkirko.training_2017_android.asynctask.TaskFinishedCallback;
+import com.github.maximkirko.training_2017_android.db.DBHelper;
 import com.github.maximkirko.training_2017_android.mapper.UserMapper;
 import com.github.maximkirko.training_2017_android.model.User;
 import com.github.maximkirko.training_2017_android.util.UserUtils;
 
-public class FriendsCursorAdapter extends CursorRecyclerAdapter<RecyclerView.ViewHolder> {
+public class FriendsCursorAdapter extends CursorRecyclerAdapter<RecyclerView.ViewHolder> implements Filterable {
 
+    private FriendsFilter friendsFilter;
     private UserClickListener songClickListener;
     private CheckBoxOnChangeListener checkBoxOnChangeListener;
 
@@ -77,5 +84,33 @@ public class FriendsCursorAdapter extends CursorRecyclerAdapter<RecyclerView.Vie
     @Override
     public int getItemCount() {
         return cursor == null ? 0 : cursor.getCount() + 1;
+    }
+
+    @Override
+    public Filter getFilter() {
+        if (friendsFilter == null) {
+            friendsFilter = new FriendsFilter();
+        }
+        return friendsFilter;
+    }
+
+    class FriendsFilter extends Filter {
+
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            FilterResults results = new FilterResults();
+
+            DBHelper dbHelper = VKSimpleChatApplication.getDbHelper();
+            Cursor cursor = dbHelper.searchFriends(dbHelper.getReadableDatabase(), DBHelper.FAVORITE_FRIEND_TABLE_NAME, constraint.toString());
+
+            results.values = cursor;
+            results.count = cursor.getCount();
+            return results;
+        }
+
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            notifyDataSetChanged();
+        }
     }
 }
