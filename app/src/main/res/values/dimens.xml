@@ -19,6 +19,7 @@
     <dimen name="padding_friendlist_viewpager_title_top">4dp</dimen>
     <dimen name="padding_friendlist_viewpager_title_bottom">4dp</dimen>
     <dimen name="padding_top_user_details">36dp</dimen>
+    <dimen name="padding_suggestion_item_all">4dp</dimen>
 
     <dimen name="spacing_friendslist_nav_header_vertical">16dp</dimen>
 
@@ -30,6 +31,7 @@
     <dimen name="size_navigation_view_header_image">48dp</dimen>
     <dimen name="size_user_details_photo">128dp</dimen>
     <dimen name="size_splash_activity_image">128dp</dimen>
+    <dimen name="size_suggestion_item_image">32dp</dimen>
 
     <dimen name="height_friendslist_nav_header">160dp</dimen>
     <dimen name="height_friendslist_viewpager_title">24dp</dimen>

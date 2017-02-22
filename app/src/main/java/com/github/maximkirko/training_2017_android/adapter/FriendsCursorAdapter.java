@@ -99,10 +99,8 @@ public class FriendsCursorAdapter extends CursorRecyclerAdapter<RecyclerView.Vie
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
             FilterResults results = new FilterResults();
-
             DBHelper dbHelper = VKSimpleChatApplication.getDbHelper();
-            Cursor cursor = dbHelper.searchFriends(dbHelper.getReadableDatabase(), DBHelper.FAVORITE_FRIEND_TABLE_NAME, constraint.toString());
-
+            cursor = dbHelper.searchFriends(dbHelper.getReadableDatabase(), DBHelper.FAVORITE_FRIEND_TABLE_NAME, constraint.toString());
             results.values = cursor;
             results.count = cursor.getCount();
             return results;

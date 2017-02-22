@@ -194,8 +194,8 @@ public class DBHelper extends SQLiteOpenHelper {
         if (tableName.equals(FAVORITE_FRIEND_TABLE_NAME)) {
             query += FRIENDS_TABLE_FIELD_IS_FAVORITE + "=1 AND ";
         }
-        query += USER_TABLE_FIELD_FIRST_NAME + " LIKE \"%" + searchString + "%\" OR "
-                + USER_TABLE_FIELD_LAST_NAME + " LIKE \"%" + searchString + "%\";";
+        query += "(" + USER_TABLE_FIELD_FIRST_NAME + " LIKE \"%" + searchString + "%\" OR "
+                + USER_TABLE_FIELD_LAST_NAME + " LIKE \"%" + searchString + "%\");";
         return db.rawQuery(query, null);
     }
 

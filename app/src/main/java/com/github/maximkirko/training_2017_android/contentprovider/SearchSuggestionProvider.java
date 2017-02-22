@@ -8,13 +8,14 @@ import android.database.MergeCursor;
 import android.net.Uri;
 import android.util.Log;
 
+import com.github.maximkirko.training_2017_android.activity.core.FriendsListActivity;
 import com.github.maximkirko.training_2017_android.application.VKSimpleChatApplication;
 import com.github.maximkirko.training_2017_android.db.DBHelper;
 
 public class SearchSuggestionProvider extends SearchRecentSuggestionsProvider {
 
     public final static String AUTHORITY = "com.github.maximkirko.training_2016_android.contentprovider.SearchSuggestionProvider";
-    public final static int MODE = DATABASE_MODE_QUERIES;
+    public final static int MODE = DATABASE_MODE_QUERIES|DATABASE_MODE_2LINES;
 
     private static final int SUGGESTIONS_FRIEND = 1;
     private static final int SEARCH_FRIEND = 2;
@@ -44,27 +45,28 @@ public class SearchSuggestionProvider extends SearchRecentSuggestionsProvider {
     @Override
     public Cursor query(Uri uri, String[] projection, String selection,
                         String[] selectionArgs, String sortOrder) {
-        Cursor c = null;
+        Cursor customSuggestions = null;
         DBHelper dbHelper = VKSimpleChatApplication.getDbHelper();
         switch (mUriMatcher.match(uri)) {
             case SUGGESTIONS_FRIEND:
-                c = dbHelper.getSuggestionsFriends(selectionArgs);
+                customSuggestions = dbHelper.getSuggestionsFriends(selectionArgs);
                 break;
             case SEARCH_FRIEND:
-                c = dbHelper.searchFriends(dbHelper.getReadableDatabase(), DBHelper.FRIEND_TABLE_NAME, selectionArgs[0]);
-                return c;
+                customSuggestions = dbHelper.searchFriends(dbHelper.getReadableDatabase(), DBHelper.FRIEND_TABLE_NAME, selectionArgs[0]);
+                return customSuggestions;
             case GET_FRIEND:
                 String id = uri.getLastPathSegment();
-                c = dbHelper.getCursorFriendById(getContext(), Integer.parseInt(id));
+                customSuggestions = dbHelper.getCursorFriendById(getContext(), Integer.parseInt(id));
         }
 
-        Cursor c1 = null;
+        Cursor recentSuggestions = null;
         try {
-            c1 = super.query(uri, projection, selection, selectionArgs, sortOrder);
+            recentSuggestions = super.query(uri, projection, selection, selectionArgs, sortOrder);
         } catch (IllegalArgumentException e) {
             Log.e(e.getClass().getSimpleName(), e.getMessage());
         }
-        return new MergeCursor(new Cursor[]{c, c1});
-
+        customSuggestions = new MergeCursor(new Cursor[]{customSuggestions, recentSuggestions});
+        FriendsListActivity.suggestionsCursorAdapter.swapCursor(customSuggestions);
+        return customSuggestions;
     }
 }

@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.Loader;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -21,6 +22,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -31,7 +33,6 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.github.maximkirko.training_2017_android.R;
@@ -42,6 +43,7 @@ import com.github.maximkirko.training_2017_android.activity.core.fragment.NewFri
 import com.github.maximkirko.training_2017_android.activity.core.fragment.SearchResultsFragement;
 import com.github.maximkirko.training_2017_android.activity.core.fragment.TopFriendsFragment;
 import com.github.maximkirko.training_2017_android.adapter.FriendslistFragmentPagerAdapter;
+import com.github.maximkirko.training_2017_android.adapter.SuggestionsCursorAdapter;
 import com.github.maximkirko.training_2017_android.application.VKSimpleChatApplication;
 import com.github.maximkirko.training_2017_android.asynctask.FriendRatingUpdateAsyncTask;
 import com.github.maximkirko.training_2017_android.asynctask.ImageLoadingAsyncTask;
@@ -51,6 +53,7 @@ import com.github.maximkirko.training_2017_android.broadcastreceiver.DeviceLoadi
 import com.github.maximkirko.training_2017_android.broadcastreceiver.DownloadServiceBroadcastReceiver;
 import com.github.maximkirko.training_2017_android.contentobserver.ContentObserverCallback;
 import com.github.maximkirko.training_2017_android.contentobserver.FavoriteFriendsContentObserver;
+import com.github.maximkirko.training_2017_android.contentprovider.FriendsContentProvider;
 import com.github.maximkirko.training_2017_android.contentprovider.SearchSuggestionProvider;
 import com.github.maximkirko.training_2017_android.db.DBHelper;
 import com.github.maximkirko.training_2017_android.loader.FavoriteFriendsCursorLoader;
@@ -99,10 +102,9 @@ public class FriendsListActivity extends AppCompatActivity
     private DownloadServiceBroadcastReceiver downloadServiceBroadcastReceiver;
     private FavoriteFriendsContentObserver favoriteFriendsContentObserver;
     private PagerAdapter pagerAdapter;
-    // endregion
-
     private List<FriendsFragment> pages;
     private boolean isFavoriteFragmentActive = false;
+    // endregion
 
     // region Constants
     private static final int ALARM_MANAGER_REPEATING_TIME = 1000 * 30 * 1; // 30 seconds
@@ -112,6 +114,7 @@ public class FriendsListActivity extends AppCompatActivity
     // region Static fields
     public static String NEW_COUNT_PREFERENCE;
     public static String TOP_COUNT_PREFERENCE;
+    public static SuggestionsCursorAdapter suggestionsCursorAdapter;
     // endregion
 
     @Override
@@ -127,7 +130,8 @@ public class FriendsListActivity extends AppCompatActivity
         initViews();
 
         //initSearchRecentSuggestions();
-        getSettingsPreferences();
+        initSettingsPreferences();
+        initSuggestioncursorAdapter();
 
         initDeviceLoadingBroadcastReceiver();
         initDownloadServiceBroadcastReceiver();
@@ -245,9 +249,13 @@ public class FriendsListActivity extends AppCompatActivity
         viewPager.setAdapter(pagerAdapter);
     }
 
-    private void getSettingsPreferences() {
+    private void initSettingsPreferences() {
         NEW_COUNT_PREFERENCE = AppSharedPreferences.getString("new_count", "10");
         TOP_COUNT_PREFERENCE = AppSharedPreferences.getString("top_count", "10");
+    }
+
+    private void initSuggestioncursorAdapter() {
+        suggestionsCursorAdapter = new SuggestionsCursorAdapter(this, null);
     }
 
     private void initDeviceLoadingBroadcastReceiver() {
@@ -437,15 +445,12 @@ public class FriendsListActivity extends AppCompatActivity
         final SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         searchView.setQueryHint(getString(R.string.searchable_hint));
+        searchView.setSuggestionsAdapter(suggestionsCursorAdapter);
 
-        int searchPlateId = searchView.getContext().getResources().getIdentifier("android:id/search_src_text", null, null);
-        EditText searchPlate = (EditText) searchView.findViewById(searchPlateId);
+        EditText searchPlate = (EditText) searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
         searchPlate.addTextChangedListener(new TextWatcher() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (isFavoriteFragmentActive) {
-                    ((FavoriteFriendsFragment) getSupportFragmentManager().findFragmentByTag(FavoriteFriendsFragment.TAG)).getAdapter().getFilter().filter(s.toString());
-                }
             }
 
             @Override
@@ -454,11 +459,16 @@ public class FriendsListActivity extends AppCompatActivity
 
             @Override
             public void afterTextChanged(Editable s) {
+                if (isFavoriteFragmentActive) {
+                    ((FavoriteFriendsFragment) getSupportFragmentManager().findFragmentByTag(FavoriteFriendsFragment.TAG)).getAdapter().getFilter().filter(s.toString());
+                }
             }
         });
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextChange(String newText) {
+                Uri uri = Uri.parse("content://com.github.maximkirko.training_2016_android.contentprovider.SearchSuggestionProvider/search_suggest_query?limit=50");
+                getBaseContext().getContentResolver().query(uri, null, null, new String[]{searchView.getQuery().toString()}, null);
                 Intent intent = getIntent();
                 if (!isFavoriteFragmentActive) {
                     if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
