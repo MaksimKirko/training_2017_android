@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <searchable xmlns:android="http://schemas.android.com/apk/res/android"
     android:hint="@string/searchable_hint"
-    android:label="@string/searchable_label">
+    android:label="@string/searchable_label"
+    android:searchSuggestAuthority="com.github.maximkirko.training_2016_android.contentprovider.SearchSuggestionProvider"
+    android:searchSuggestSelection=" ?"
+    android:searchSuggestThreshold="3">
+
 </searchable>

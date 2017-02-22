@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.github.maximkirko.training_2017_android.R;
-import com.github.maximkirko.training_2017_android.adapter.itemtype.ItemTypeAware;
+import com.github.maximkirko.training_2017_android.adapter.itemtype.FriendsListItemTypeAware;
 import com.github.maximkirko.training_2017_android.adapter.viewholder.CheckBoxOnChangeListener;
 import com.github.maximkirko.training_2017_android.adapter.viewholder.HeaderViewHolder;
 import com.github.maximkirko.training_2017_android.adapter.viewholder.UserClickListener;
@@ -32,22 +32,22 @@ public class FriendsCursorAdapter extends CursorRecyclerAdapter<RecyclerView.Vie
         this.checkBoxOnChangeListener = checkBoxOnChangeListener;
     }
 
-    @ItemTypeAware.ItemType
+    @FriendsListItemTypeAware.FriendsListItemType
     @Override
     public int getItemViewType(int position) {
-        return ItemTypeAware.getItemViewType(position);
+        return FriendsListItemTypeAware.getItemViewType(position);
     }
 
     @Nullable
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, @ItemTypeAware.ItemType int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, @FriendsListItemTypeAware.FriendsListItemType int viewType) {
         View itemView;
         RecyclerView.ViewHolder viewHolder = null;
-        if (viewType == ItemTypeAware.TYPE_HEADER) {
+        if (viewType == FriendsListItemTypeAware.TYPE_HEADER) {
             itemView = LayoutInflater.from(viewGroup.getContext())
                     .inflate(R.layout.friendslist_recycler_view_header, viewGroup, false);
             viewHolder = new HeaderViewHolder(itemView);
-        } else if (viewType == ItemTypeAware.TYPE_ITEM) {
+        } else if (viewType == FriendsListItemTypeAware.TYPE_ITEM) {
             itemView = LayoutInflater.from(viewGroup.getContext())
                     .inflate(R.layout.friendslist_recycler_view_item, viewGroup, false);
             viewHolder = new UserViewHolder(itemView, songClickListener, checkBoxOnChangeListener);

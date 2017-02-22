@@ -12,6 +12,7 @@ import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.SearchRecentSuggestions;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.PagerAdapter;
@@ -47,6 +48,7 @@ import com.github.maximkirko.training_2017_android.broadcastreceiver.DeviceLoadi
 import com.github.maximkirko.training_2017_android.broadcastreceiver.DownloadServiceBroadcastReceiver;
 import com.github.maximkirko.training_2017_android.contentobserver.ContentObserverCallback;
 import com.github.maximkirko.training_2017_android.contentobserver.FavoriteFriendsContentObserver;
+import com.github.maximkirko.training_2017_android.contentprovider.SearchSuggestionProvider;
 import com.github.maximkirko.training_2017_android.db.DBHelper;
 import com.github.maximkirko.training_2017_android.loader.FavoriteFriendsCursorLoader;
 import com.github.maximkirko.training_2017_android.loader.FriendsCursorLoader;
@@ -98,6 +100,7 @@ public class FriendsListActivity extends AppCompatActivity
 
     private List<FriendsFragment> pages;
     private boolean isFavoriteFragmentActive = false;
+    private SearchRecentSuggestions suggestions;
 
     // region Constants
     private static final int ALARM_MANAGER_REPEATING_TIME = 1000 * 30 * 1; // 30 seconds
@@ -120,6 +123,7 @@ public class FriendsListActivity extends AppCompatActivity
         // initialize and show ProgressBar
         initViews();
 
+        //initSearchRecentSuggestions();
         getSettingsPreferences();
 
         initDeviceLoadingBroadcastReceiver();
@@ -237,6 +241,11 @@ public class FriendsListActivity extends AppCompatActivity
         pagerAdapter = new FriendslistFragmentPagerAdapter(this, getSupportFragmentManager(), pages);
         viewPager.setAdapter(pagerAdapter);
     }
+
+//    private void initSearchRecentSuggestions() {
+//        suggestions = new SearchRecentSuggestions(this,
+//                SearchSuggestionProvider.AUTHORITY, SearchSuggestionProvider.MODE);
+//    }
 
     private void getSettingsPreferences() {
         NEW_COUNT_PREFERENCE = AppSharedPreferences.getString("new_count", "10");
@@ -421,46 +430,71 @@ public class FriendsListActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.nav_draw_friends, menu);
-        initSearchView(menu);
+        //initSearchView(menu);
         return true;
     }
 
-    private void initSearchView(Menu menu) {
-        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-        searchView.setQueryHint(getString(R.string.searchable_hint));
-        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
-            @Override
-            public boolean onClose() {
-                hideFragment(SearchResultsFragement.TAG);
-                if (isFavoriteFragmentActive) {
-                    showFragment(FavoriteFriendsFragment.TAG);
-                } else {
-                    viewPager.setVisibility(View.VISIBLE);
-                }
-                return false;
-            }
-        });
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                performSearch(query);
-                viewPager.setVisibility(View.INVISIBLE);
-                if(isFavoriteFragmentActive) {
-                    hideFragment(FavoriteFriendsFragment.TAG);
-                }
-                return false;
-            }
-        });
-    }
-
+//    private void initSearchView(Menu menu) {
+//        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+//        final SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+//        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+//        searchView.setQueryHint(getString(R.string.searchable_hint));
+//        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+//            @Override
+//            public boolean onQueryTextChange(String newText) {
+//                Intent intent = getIntent();
+//                if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+//                    String query = intent.getStringExtra(SearchManager.QUERY);
+//                    performSearch(query);
+//                    viewPager.setVisibility(View.INVISIBLE);
+//                    if (isFavoriteFragmentActive) {
+//                        hideFragment(FavoriteFriendsFragment.TAG);
+//                    }
+//                }
+//                return false;
+//            }
+//
+//            @Override
+//            public boolean onQueryTextSubmit(String query) {
+//                performSearch(query);
+//                viewPager.setVisibility(View.INVISIBLE);
+//                if (isFavoriteFragmentActive) {
+//                    hideFragment(FavoriteFriendsFragment.TAG);
+//                }
+//                return false;
+//            }
+//        });
+//        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+//            @Override
+//            public boolean onClose() {
+//                hideFragment(SearchResultsFragement.TAG);
+//                if (isFavoriteFragmentActive) {
+//                    showFragment(FavoriteFriendsFragment.TAG);
+//                } else {
+//                    viewPager.setVisibility(View.VISIBLE);
+//                }
+//                return false;
+//            }
+//        });
+//        searchView.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
+//            @Override
+//            public boolean onSuggestionSelect(int position) {
+//                return false;
+//            }
+//
+//            @Override
+//            public boolean onSuggestionClick(int position) {
+//                Cursor cursor = (Cursor) searchView.getSuggestionsAdapter().getItem(position);
+//                String suggest = cursor.getString(cursor
+//                        .getColumnIndex(SearchManager.SUGGEST_COLUMN_TEXT_1));
+//                searchView.setQuery(suggest, true);
+//                return false;
+//            }
+//        });
+//    }
+//
     private void performSearch(String query) {
+        suggestions.saveRecentQuery(query, null);
         getLoaderManager().initLoader(SearchFriendsCursorLoader.LOADER_ID, null, this);
         Loader<Cursor> searchFriendsCursorLoader =
                 getLoaderManager().getLoader(SearchFriendsCursorLoader.LOADER_ID);
@@ -477,6 +511,8 @@ public class FriendsListActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_search) {
+            onSearchRequested();
+            //startActivity(new Intent(this, SearchableActivity.class));
             return true;
         }
         if (id == R.id.action_settings) {
@@ -510,6 +546,7 @@ public class FriendsListActivity extends AppCompatActivity
         clearSharedPreferences();
         clearCache();
         clearDB();
+        clearSearchHistory();
         startActivity(IntentManager.getIntentForLoginActivity(this));
         finish();
     }
@@ -529,5 +566,9 @@ public class FriendsListActivity extends AppCompatActivity
         DBHelper dbHelper = VKSimpleChatApplication.getDbHelper();
         dbHelper.dropTable(dbHelper.getWritableDatabase(), DBHelper.FRIEND_TABLE_NAME);
         dbHelper.dropTable(dbHelper.getWritableDatabase(), DBHelper.USER_TABLE_NAME);
+    }
+
+    private void clearSearchHistory() {
+        suggestions.clearHistory();
     }
 }

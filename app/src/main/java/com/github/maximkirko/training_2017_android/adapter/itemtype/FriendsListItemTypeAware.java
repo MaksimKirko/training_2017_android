@@ -10,7 +10,7 @@ import static java.lang.annotation.RetentionPolicy.SOURCE;
  * Created by MadMax on 02.02.2017.
  */
 
-public class ItemTypeAware {
+public class FriendsListItemTypeAware {
 
     public static final int HEADER_POSITION = 0;
 
@@ -19,11 +19,11 @@ public class ItemTypeAware {
 
     @Retention(SOURCE)
     @IntDef({TYPE_HEADER, TYPE_ITEM})
-    public @interface ItemType {
+    public @interface FriendsListItemType {
 
     }
 
-    @ItemType
+    @FriendsListItemType
     public static int getItemViewType(int position) {
         if (position == HEADER_POSITION) {
             return TYPE_HEADER;
