@@ -15,7 +15,7 @@
 
         <meta-data
             android:name="android.app.default_searchable"
-            android:value=".activity.core.SearchableActivity" />
+            android:value=".activity.core.FriendsListActivity" />
 
         <activity
             android:name=".activity.splash.SplashScreenActivity"
@@ -36,10 +36,6 @@
             android:label="FriendsListActivity"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.NoActionBar">
-        </activity>
-        <activity
-            android:name=".activity.core.SearchableActivity"
-            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
