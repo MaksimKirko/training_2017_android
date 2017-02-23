@@ -15,7 +15,7 @@ import com.github.maximkirko.training_2017_android.db.DBHelper;
 public class SearchSuggestionProvider extends SearchRecentSuggestionsProvider {
 
     public final static String AUTHORITY = "com.github.maximkirko.training_2016_android.contentprovider.SearchSuggestionProvider";
-    public final static int MODE = DATABASE_MODE_QUERIES|DATABASE_MODE_2LINES;
+    public final static int MODE = DATABASE_MODE_QUERIES | DATABASE_MODE_2LINES;
 
     private static final int SUGGESTIONS_FRIEND = 1;
     private static final int SEARCH_FRIEND = 2;
@@ -56,13 +56,17 @@ public class SearchSuggestionProvider extends SearchRecentSuggestionsProvider {
                 return customSuggestions;
             case GET_FRIEND:
                 String id = uri.getLastPathSegment();
-                customSuggestions = dbHelper.getCursorFriendById(getContext(), Integer.parseInt(id));
+                try {
+                    customSuggestions = dbHelper.getCursorFriendById(getContext(), Integer.parseInt(id));
+                } catch (IllegalStateException e) {
+                    Log.e(e.getClass().getSimpleName(), e.getMessage());
+                }
         }
 
         Cursor recentSuggestions = null;
         try {
             recentSuggestions = super.query(uri, projection, selection, selectionArgs, sortOrder);
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalStateException e) {
             Log.e(e.getClass().getSimpleName(), e.getMessage());
         }
         customSuggestions = new MergeCursor(new Cursor[]{customSuggestions, recentSuggestions});

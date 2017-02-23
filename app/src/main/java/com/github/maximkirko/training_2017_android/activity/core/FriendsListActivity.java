@@ -53,7 +53,6 @@ import com.github.maximkirko.training_2017_android.broadcastreceiver.DeviceLoadi
 import com.github.maximkirko.training_2017_android.broadcastreceiver.DownloadServiceBroadcastReceiver;
 import com.github.maximkirko.training_2017_android.contentobserver.ContentObserverCallback;
 import com.github.maximkirko.training_2017_android.contentobserver.FavoriteFriendsContentObserver;
-import com.github.maximkirko.training_2017_android.contentprovider.FriendsContentProvider;
 import com.github.maximkirko.training_2017_android.contentprovider.SearchSuggestionProvider;
 import com.github.maximkirko.training_2017_android.db.DBHelper;
 import com.github.maximkirko.training_2017_android.loader.FavoriteFriendsCursorLoader;
@@ -71,6 +70,7 @@ import com.github.maximkirko.training_2017_android.service.UserDataDownloadServi
 import com.github.maximkirko.training_2017_android.service.VKRequestAbstractService;
 import com.github.maximkirko.training_2017_android.service.VKService;
 import com.github.maximkirko.training_2017_android.sharedpreference.AppSharedPreferences;
+import com.github.maximkirko.training_2017_android.util.UserUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -468,12 +468,10 @@ public class FriendsListActivity extends AppCompatActivity
             @Override
             public boolean onQueryTextChange(String newText) {
                 Uri uri = Uri.parse("content://com.github.maximkirko.training_2016_android.contentprovider.SearchSuggestionProvider/search_suggest_query?limit=50");
-                getBaseContext().getContentResolver().query(uri, null, null, new String[]{searchView.getQuery().toString()}, null);
-                Intent intent = getIntent();
-                if (!isFavoriteFragmentActive) {
-                    if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-                        viewPager.setVisibility(View.INVISIBLE);
-                    }
+                try {
+                    getBaseContext().getContentResolver().query(uri, null, null, new String[]{searchView.getQuery().toString()}, null);
+                } catch (IllegalStateException e) {
+                    Log.e(e.getClass().getSimpleName(), e.getMessage());
                 }
                 return false;
             }
@@ -484,6 +482,8 @@ public class FriendsListActivity extends AppCompatActivity
                 if (isFavoriteFragmentActive) {
                     hideFragment(FavoriteFriendsFragment.TAG);
                 }
+                addQueryToRecent(query);
+                performSearch(query);
                 return false;
             }
         });
@@ -508,33 +508,37 @@ public class FriendsListActivity extends AppCompatActivity
             @Override
             public boolean onSuggestionClick(int position) {
                 Cursor cursor = (Cursor) searchView.getSuggestionsAdapter().getItem(position);
-                String suggest = cursor.getString(cursor
-                        .getColumnIndex(SearchManager.SUGGEST_COLUMN_TEXT_1));
+                User user = UserUtils.parseUserCursor(cursor);
+                if (UserUtils.isUserComplete(user)) {
+                    startActivity(IntentManager.getIntentForUserDetailsActivity(getBaseContext(), user.getId()));
+                    return false;
+                }
+                String suggest = cursor.getString(cursor.getColumnIndex(SearchManager.SUGGEST_COLUMN_TEXT_1));
                 searchView.setQuery(suggest, true);
                 return false;
             }
         });
     }
 
-    @Override
-    protected void onNewIntent(Intent intent) {
-        handleIntent(intent);
-    }
-
-    private void handleIntent(Intent intent) {
-        if (intent.getAction() != null) {
-            if (intent.getAction().equals(Intent.ACTION_VIEW)) {
-                Intent userIntent = new Intent(this, UserDetailsActivity.class);
-                userIntent.setData(intent.getData());
-                startActivity(userIntent);
-                finish();
-            } else if (intent.getAction().equals(Intent.ACTION_SEARCH)) {
-                String query = intent.getStringExtra(SearchManager.QUERY);
-                addQueryToRecent(query);
-                performSearch(query);
-            }
-        }
-    }
+//    @Override
+//    protected void onNewIntent(Intent intent) {
+//        handleIntent(intent);
+//    }
+//
+//    private void handleIntent(Intent intent) {
+//        if (intent.getAction() != null) {
+//            if (intent.getAction().equals(Intent.ACTION_VIEW)) {
+//                Intent userIntent = new Intent(this, UserDetailsActivity.class);
+//                userIntent.setData(intent.getData());
+//                startActivity(userIntent);
+//                finish();
+//            } else if (intent.getAction().equals(Intent.ACTION_SEARCH)) {
+//                String query = intent.getStringExtra(SearchManager.QUERY);
+//                addQueryToRecent(query);
+//                performSearch(query);
+//            }
+//        }
+//    }
 
     private void addQueryToRecent(String query) {
         SearchRecentSuggestions suggestions = new SearchRecentSuggestions(this,

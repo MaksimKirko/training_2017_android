@@ -1,5 +1,6 @@
 package com.github.maximkirko.training_2017_android.util;
 
+import android.app.SearchManager;
 import android.database.Cursor;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -74,5 +75,21 @@ public class UserUtils {
             users.add(UserMapper.convert(cursor));
         }
         return users;
+    }
+
+    public static boolean isUserComplete(User user) {
+        if (user.getId() == 0 || user.getFirst_name() == null || user.getLast_name() == null || user.getPhoto_100() == null) {
+            return false;
+        }
+        return true;
+    }
+
+    public static User parseUserCursor(Cursor cursor) {
+        User user = new User();
+        user.setId(cursor.getInt(cursor.getColumnIndex("_ID")));
+        user.setFirst_name(cursor.getString(cursor.getColumnIndex(SearchManager.SUGGEST_COLUMN_TEXT_1)));
+        user.setLast_name(cursor.getString(cursor.getColumnIndex(SearchManager.SUGGEST_COLUMN_TEXT_2)));
+        user.setPhoto_100(cursor.getString(cursor.getColumnIndex(SearchManager.SUGGEST_COLUMN_ICON_1)));
+        return user;
     }
 }
