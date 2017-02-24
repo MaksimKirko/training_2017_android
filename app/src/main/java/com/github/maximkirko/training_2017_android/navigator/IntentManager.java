@@ -2,6 +2,7 @@ package com.github.maximkirko.training_2017_android.navigator;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 
 import com.github.maximkirko.training_2017_android.activity.core.FriendsListActivity;
 import com.github.maximkirko.training_2017_android.activity.core.UserDetailsActivity;
@@ -31,7 +32,6 @@ public class IntentManager {
 
     public static Intent getIntentForFriendsListActivity(Context context) {
         Intent intent = new Intent(context, FriendsListActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         return intent;
     }
 

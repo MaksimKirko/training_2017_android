@@ -60,6 +60,11 @@ public class UserDetailsActivity extends AppCompatActivity implements View.OnCli
     }
 
     private void getIntentExtras() {
+        Uri uri = this.getIntent().getData();
+        if (uri != null) {
+            getUserFromDB(uri);
+            return;
+        }
         int id = this.getIntent().getIntExtra(USER_EXTRA, -1);
         initUser(id);
     }
@@ -72,6 +77,10 @@ public class UserDetailsActivity extends AppCompatActivity implements View.OnCli
             uri = FriendsContentProvider.FRIENDS_CONTENT_URI;
         }
         uri = ContentUris.withAppendedId(uri, id);
+        getUserFromDB(uri);
+    }
+
+    private void getUserFromDB(Uri uri) {
         Cursor cursor = getContentResolver().query(uri, null, null, null, null);
         if (cursor.moveToNext()) {
             user = UserMapper.convert(cursor);
@@ -110,6 +119,7 @@ public class UserDetailsActivity extends AppCompatActivity implements View.OnCli
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             startActivity(IntentManager.getIntentForFriendsListActivity(this));
+            finish();
             return true;
         }
         return super.onOptionsItemSelected(item);

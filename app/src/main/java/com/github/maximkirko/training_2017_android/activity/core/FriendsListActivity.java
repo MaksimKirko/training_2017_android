@@ -30,6 +30,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -446,7 +447,19 @@ public class FriendsListActivity extends AppCompatActivity
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         searchView.setQueryHint(getString(R.string.searchable_hint));
         searchView.setSuggestionsAdapter(suggestionsCursorAdapter);
-
+//        MenuItem menuHome = (MenuItem) searchView.findViewById(android.support.v7.appcompat.R.id.home);
+//        menuHome.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+//            @Override
+//            public boolean onMenuItemClick(MenuItem item) {
+//                hideFragment(SearchResultsFragement.TAG);
+//                if (isFavoriteFragmentActive) {
+//                    startLoader(FavoriteFriendsCursorLoader.LOADER_ID);
+//                    return true;
+//                }
+//                viewPager.setVisibility(View.VISIBLE);
+//                return true;
+//            }
+//        });
         EditText searchPlate = (EditText) searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
         searchPlate.addTextChangedListener(new TextWatcher() {
             @Override
@@ -511,34 +524,15 @@ public class FriendsListActivity extends AppCompatActivity
                 User user = UserUtils.parseUserCursor(cursor);
                 if (UserUtils.isUserComplete(user)) {
                     startActivity(IntentManager.getIntentForUserDetailsActivity(getBaseContext(), user.getId()));
-                    return false;
+                    finish();
+                    return true;
                 }
                 String suggest = cursor.getString(cursor.getColumnIndex(SearchManager.SUGGEST_COLUMN_TEXT_1));
                 searchView.setQuery(suggest, true);
-                return false;
+                return true;
             }
         });
     }
-
-//    @Override
-//    protected void onNewIntent(Intent intent) {
-//        handleIntent(intent);
-//    }
-//
-//    private void handleIntent(Intent intent) {
-//        if (intent.getAction() != null) {
-//            if (intent.getAction().equals(Intent.ACTION_VIEW)) {
-//                Intent userIntent = new Intent(this, UserDetailsActivity.class);
-//                userIntent.setData(intent.getData());
-//                startActivity(userIntent);
-//                finish();
-//            } else if (intent.getAction().equals(Intent.ACTION_SEARCH)) {
-//                String query = intent.getStringExtra(SearchManager.QUERY);
-//                addQueryToRecent(query);
-//                performSearch(query);
-//            }
-//        }
-//    }
 
     private void addQueryToRecent(String query) {
         SearchRecentSuggestions suggestions = new SearchRecentSuggestions(this,
