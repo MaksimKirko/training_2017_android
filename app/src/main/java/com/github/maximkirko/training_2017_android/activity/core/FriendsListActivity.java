@@ -16,6 +16,7 @@ import android.os.Handler;
 import android.provider.SearchRecentSuggestions;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.PagerTitleStrip;
 import android.support.v4.view.ViewPager;
@@ -30,7 +31,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -438,6 +438,24 @@ public class FriendsListActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.nav_draw_friends, menu);
         initSearchView(menu);
+
+        MenuItemCompat.setOnActionExpandListener(menu.findItem(R.id.action_search), new MenuItemCompat.OnActionExpandListener() {
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem item) {
+                return true;
+            }
+
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem item) {
+                hideFragment(SearchResultsFragement.TAG);
+                if (isFavoriteFragmentActive) {
+                    startLoader(FavoriteFriendsCursorLoader.LOADER_ID);
+                    return true;
+                }
+                viewPager.setVisibility(View.VISIBLE);
+                return true;
+            }
+        });
         return true;
     }
 
@@ -447,19 +465,6 @@ public class FriendsListActivity extends AppCompatActivity
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         searchView.setQueryHint(getString(R.string.searchable_hint));
         searchView.setSuggestionsAdapter(suggestionsCursorAdapter);
-//        MenuItem menuHome = (MenuItem) searchView.findViewById(android.support.v7.appcompat.R.id.home);
-//        menuHome.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-//            @Override
-//            public boolean onMenuItemClick(MenuItem item) {
-//                hideFragment(SearchResultsFragement.TAG);
-//                if (isFavoriteFragmentActive) {
-//                    startLoader(FavoriteFriendsCursorLoader.LOADER_ID);
-//                    return true;
-//                }
-//                viewPager.setVisibility(View.VISIBLE);
-//                return true;
-//            }
-//        });
         EditText searchPlate = (EditText) searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
         searchPlate.addTextChangedListener(new TextWatcher() {
             @Override
@@ -475,41 +480,6 @@ public class FriendsListActivity extends AppCompatActivity
                 if (isFavoriteFragmentActive) {
                     ((FavoriteFriendsFragment) getSupportFragmentManager().findFragmentByTag(FavoriteFriendsFragment.TAG)).getAdapter().getFilter().filter(s.toString());
                 }
-            }
-        });
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                Uri uri = Uri.parse("content://com.github.maximkirko.training_2016_android.contentprovider.SearchSuggestionProvider/search_suggest_query?limit=50");
-                try {
-                    getBaseContext().getContentResolver().query(uri, null, null, new String[]{searchView.getQuery().toString()}, null);
-                } catch (IllegalStateException e) {
-                    Log.e(e.getClass().getSimpleName(), e.getMessage());
-                }
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                viewPager.setVisibility(View.INVISIBLE);
-                if (isFavoriteFragmentActive) {
-                    hideFragment(FavoriteFriendsFragment.TAG);
-                }
-                addQueryToRecent(query);
-                performSearch(query);
-                return false;
-            }
-        });
-        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
-            @Override
-            public boolean onClose() {
-                hideFragment(SearchResultsFragement.TAG);
-                if (isFavoriteFragmentActive) {
-                    showFragment(FavoriteFriendsFragment.TAG);
-                } else {
-                    viewPager.setVisibility(View.VISIBLE);
-                }
-                return false;
             }
         });
         searchView.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
@@ -532,6 +502,34 @@ public class FriendsListActivity extends AppCompatActivity
                 return true;
             }
         });
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                Uri uri = Uri.parse("content://com.github.maximkirko.training_2016_android.contentprovider.SearchSuggestionProvider/search_suggest_query?limit=50");
+                try {
+                    getBaseContext().getContentResolver().query(uri, null, null, new String[]{searchView.getQuery().toString()}, null);
+                } catch (IllegalStateException e) {
+                    Log.e(e.getClass().getSimpleName(), e.getMessage());
+                }
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                viewPager.setVisibility(View.INVISIBLE);
+                if (isFavoriteFragmentActive) {
+                    hideFragment(FavoriteFriendsFragment.TAG);
+                }
+                attachQueryToFragment(query);
+                addQueryToRecent(query);
+                performSearch(query);
+                return false;
+            }
+        });
+    }
+
+    private void attachQueryToFragment(String query) {
+        ((SearchResultsFragement) getSupportFragmentManager().findFragmentByTag(SearchResultsFragement.TAG)).setQuery(query);
     }
 
     private void addQueryToRecent(String query) {

@@ -28,9 +28,14 @@ public class FriendsCursorAdapter extends CursorRecyclerAdapter<RecyclerView.Vie
     private FriendsFilter friendsFilter;
     private UserClickListener songClickListener;
     private CheckBoxOnChangeListener checkBoxOnChangeListener;
+    private String query;
 
     public void setCursor(Cursor cursor) {
         this.cursor = cursor;
+    }
+
+    public void setQuery(String query) {
+        this.query = query;
     }
 
     public FriendsCursorAdapter(Cursor c, UserClickListener songClickListener, CheckBoxOnChangeListener checkBoxOnChangeListener) {
@@ -69,7 +74,7 @@ public class FriendsCursorAdapter extends CursorRecyclerAdapter<RecyclerView.Vie
             ((HeaderViewHolder) viewHolder).onBindData(cursor.getCount(), UserUtils.getOnlineCount(cursor));
         } else if (viewHolder instanceof UserViewHolder) {
             User user = UserMapper.convert(cursor);
-            ((UserViewHolder) viewHolder).onBindData(user);
+            ((UserViewHolder) viewHolder).onBindData(user, query);
         }
     }
 

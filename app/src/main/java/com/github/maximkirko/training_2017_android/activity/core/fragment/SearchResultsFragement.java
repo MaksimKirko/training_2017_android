@@ -1,7 +1,5 @@
 package com.github.maximkirko.training_2017_android.activity.core.fragment;
 
-import android.database.Cursor;
-
 import com.github.maximkirko.training_2017_android.asynctask.TaskFinishedCallback;
 
 /**
@@ -19,5 +17,9 @@ public class SearchResultsFragement extends FriendsFragment {
     }
 
     public SearchResultsFragement() {
+    }
+
+    public void setQuery(String query) {
+        recyclerViewAdapter.setQuery(query);
     }
 }

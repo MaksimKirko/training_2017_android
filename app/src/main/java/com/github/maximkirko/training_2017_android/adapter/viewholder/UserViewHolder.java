@@ -1,10 +1,14 @@
 package com.github.maximkirko.training_2017_android.adapter.viewholder;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.view.View;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -71,7 +75,7 @@ public class UserViewHolder extends RecyclerView.ViewHolder implements View.OnCl
         raitingView = (TextView) itemView.findViewById(R.id.textview_friendslist_item_raiting);
     }
 
-    public void onBindData(@NonNull User user) {
+    public void onBindData(@NonNull User user, @Nullable String query) {
         imageLoadingAsyncTask = ImageLoadingAsyncTask.newLoader()
                 .setTargetView(userPhotoView)
                 .setPlaceHolder(R.drawable.all_default_user_image)
@@ -79,11 +83,15 @@ public class UserViewHolder extends RecyclerView.ViewHolder implements View.OnCl
                 .setImageWidth(itemView.getResources().getDimensionPixelSize(R.dimen.size_friendslist_item_image))
                 .load(user.getPhoto_100());
         this.userId = user.getId();
-        setViewsValues(user);
+        setViewsValues(user, query);
     }
 
-    private void setViewsValues(User user) {
-        nameView.setText(user.getFirst_name() + " " + user.getLast_name());
+    private void setViewsValues(@NonNull User user, @Nullable String query) {
+        Spannable name = new SpannableString(user.getFirst_name() + " " + user.getLast_name());
+        if (query != null) {
+            name = getHighlightedText(name, query);
+        }
+        nameView.setText(name);
         onlineStatusView.setText(user.isOnline() ? itemView.getResources().getString(R.string.all_online_status_true) : "");
         isFavorite = user.is_favorite();
         isFavoriteView.setChecked(user.is_favorite());
@@ -91,6 +99,12 @@ public class UserViewHolder extends RecyclerView.ViewHolder implements View.OnCl
         if (rating != 0) {
             raitingView.setText(rating > 0 ? "+" + rating : rating + "");
         }
+    }
+
+    private Spannable getHighlightedText(@NonNull Spannable spannable, @NonNull String query) {
+        int start = spannable.toString().toLowerCase().indexOf(query.toLowerCase());
+        spannable.setSpan(new ForegroundColorSpan(ContextCompat.getColor(itemView.getContext(), R.color.colorPrimaryDark)), start, start + query.length(), 0);
+        return spannable;
     }
 
     public void cancelTask() {
