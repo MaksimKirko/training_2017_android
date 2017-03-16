@@ -2,6 +2,7 @@ package com.github.maximkirko.training_2017_android.reader;
 
 import android.support.annotation.NonNull;
 import android.util.JsonReader;
+import android.util.Log;
 
 import com.github.maximkirko.training_2017_android.model.User;
 
@@ -77,7 +78,11 @@ public class UserJSONReader implements Reader<User> {
 
     private User readUser(JsonReader reader) throws IOException {
         User user = new User();
-        reader.beginObject();
+        try {
+            reader.beginObject();
+        } catch (IllegalStateException e) {
+            Log.e(e.getClass().getSimpleName(), jsonFriendsList);
+        }
         while (reader.hasNext()) {
             String name = reader.nextName();
             if (name.equals("id")) {
