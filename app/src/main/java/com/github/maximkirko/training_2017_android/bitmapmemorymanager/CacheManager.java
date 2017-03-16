@@ -7,7 +7,7 @@ import android.graphics.Bitmap;
  */
 
 public interface CacheManager {
-    Bitmap getBitmapFromCache(String key);
+    Bitmap getBitmapFromCache(String key, int imageHeight, int imageWidth);
 
-    void addBitmapToCache(String key, Bitmap bitmap);
+    void addBitmapToCache(String key, int imageHeight, int imageWidth, Bitmap bitmap);
 }

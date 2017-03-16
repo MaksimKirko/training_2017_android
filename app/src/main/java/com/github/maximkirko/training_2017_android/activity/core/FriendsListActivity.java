@@ -404,8 +404,8 @@ public class FriendsListActivity extends AppCompatActivity
             ImageLoadingAsyncTask.newLoader()
                     .setTargetView(headerImageView)
                     .setPlaceHolder(R.drawable.all_default_user_image)
-                    .setImageHeight(headerImageView.getHeight())
-                    .setImageWidth(headerImageView.getWidth())
+                    .setImageHeight(getResources().getDimensionPixelSize(R.dimen.size_navigation_view_header_image))
+                    .setImageWidth(getResources().getDimensionPixelSize(R.dimen.size_navigation_view_header_image))
                     .load(user.getPhoto_100());
         }
     }

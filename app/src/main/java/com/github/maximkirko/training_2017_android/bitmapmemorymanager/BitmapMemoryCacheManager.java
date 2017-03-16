@@ -17,16 +17,16 @@ public class BitmapMemoryCacheManager implements CacheManager {
         memoryCache = new LruCache<>(cacheSize);
     }
 
-    public Bitmap getBitmapFromCache(String key) {
+    public Bitmap getBitmapFromCache(String key, int imageHeight, int imageWidth) {
         if (memoryCache == null) {
             memoryCache = new LruCache<>(cacheSize);
         }
-        return memoryCache.get(key);
+        return memoryCache.get(key + "_" + imageHeight + "_" + imageWidth);
     }
 
-    public void addBitmapToCache(String key, Bitmap bitmap) {
-        if (getBitmapFromCache(key) == null) {
-            memoryCache.put(key, bitmap);
+    public void addBitmapToCache(String key, int imageHeight, int imageWidth, Bitmap bitmap) {
+        if (getBitmapFromCache(key, bitmap.getHeight(), bitmap.getWidth()) == null) {
+            memoryCache.put(key + "_" + imageHeight + "_" + imageWidth, bitmap);
         }
     }
 

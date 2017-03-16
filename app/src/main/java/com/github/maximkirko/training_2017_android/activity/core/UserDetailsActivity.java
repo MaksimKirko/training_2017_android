@@ -99,8 +99,8 @@ public class UserDetailsActivity extends AppCompatActivity implements View.OnCli
         ImageLoadingAsyncTask.newLoader()
                 .setTargetView(userPhotoView)
                 .setPlaceHolder(R.drawable.all_default_user_image)
-                .setImageHeight(userPhotoView.getHeight())
-                .setImageWidth(userPhotoView.getWidth())
+                .setImageHeight(getResources().getDimensionPixelSize(R.dimen.size_user_details_photo))
+                .setImageWidth(getResources().getDimensionPixelSize(R.dimen.size_user_details_photo))
                 .load(user.getPhoto_100());
 
         tvTitle.setText(user.getFirst_name() + " " + user.getLast_name());

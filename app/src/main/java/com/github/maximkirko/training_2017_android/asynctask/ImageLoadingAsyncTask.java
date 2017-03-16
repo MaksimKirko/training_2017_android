@@ -91,18 +91,15 @@ public class ImageLoadingAsyncTask extends AsyncTask<String, Void, Bitmap> {
 
     @Override
     protected Bitmap doInBackground(String... strings) {
-        Bitmap bitmap = bitmapMemoryManagerConfigurator.getBitmapMemoryCacheManager().getBitmapFromCache(url);
+        Bitmap bitmap = bitmapMemoryManagerConfigurator.getBitmapMemoryCacheManager().getBitmapFromCache(url, imageHeight, imageWidth);
         if (bitmap == null) {
-            bitmap = bitmapMemoryManagerConfigurator.getBitmapDiskCacheManager().getBitmapFromCache(url);
+            bitmap = bitmapMemoryManagerConfigurator.getBitmapDiskCacheManager().getBitmapFromCache(url, imageHeight, imageWidth);
             if (bitmap == null) {
-//                Log.i("IMAGE LOADING", "FROM NETWORK");
                 return getBitmapFromNetwork(url);
             }
-//            Log.i("IMAGE LOADING", "FROM DISK");
-            bitmapMemoryManagerConfigurator.getBitmapMemoryCacheManager().addBitmapToCache(url, bitmap);
+            bitmapMemoryManagerConfigurator.getBitmapMemoryCacheManager().addBitmapToCache(url, imageHeight, imageWidth, bitmap);
             return bitmap;
         }
-//        Log.i("IMAGE LOADING", "FROM CACHE");
         return bitmap;
     }
 
@@ -110,8 +107,8 @@ public class ImageLoadingAsyncTask extends AsyncTask<String, Void, Bitmap> {
     protected void onPostExecute(Bitmap bitmap) {
         super.onPostExecute(bitmap);
         targetView.get().setImageBitmap(bitmap);
-        bitmapMemoryManagerConfigurator.getBitmapDiskCacheManager().addBitmapToCache(Uri.parse(url).getLastPathSegment(), bitmap);
-        bitmapMemoryManagerConfigurator.getBitmapMemoryCacheManager().addBitmapToCache(url, bitmap);
+        bitmapMemoryManagerConfigurator.getBitmapDiskCacheManager().addBitmapToCache(Uri.parse(url).getLastPathSegment(), imageHeight, imageWidth, bitmap);
+        bitmapMemoryManagerConfigurator.getBitmapMemoryCacheManager().addBitmapToCache(url, imageHeight, imageWidth, bitmap);
     }
 
     private Bitmap getBitmapFromNetwork(String urlString) {
