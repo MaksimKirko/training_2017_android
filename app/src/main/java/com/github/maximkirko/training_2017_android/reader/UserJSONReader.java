@@ -2,7 +2,6 @@ package com.github.maximkirko.training_2017_android.reader;
 
 import android.support.annotation.NonNull;
 import android.util.JsonReader;
-import android.util.Log;
 
 import com.github.maximkirko.training_2017_android.model.User;
 
@@ -78,11 +77,7 @@ public class UserJSONReader implements Reader<User> {
 
     private User readUser(JsonReader reader) throws IOException {
         User user = new User();
-        try {
-            reader.beginObject();
-        } catch (IllegalStateException e) {
-            Log.e(e.getClass().getSimpleName(), jsonFriendsList);
-        }
+        reader.beginObject();
         while (reader.hasNext()) {
             String name = reader.nextName();
             if (name.equals("id")) {
@@ -95,14 +90,21 @@ public class UserJSONReader implements Reader<User> {
                 user.setPhoto_100(reader.nextString());
             } else if (name.equals("online")) {
                 user.setOnline(reader.nextInt() != 0);
+            } else if (name.equals("deactivated")) {
+                reader.nextString();
+                user.setLast_seen(new Timestamp(0));
             } else if (name.equals("last_seen")) {
                 reader.beginObject();
                 String last_seen_name = reader.nextName();
                 if (last_seen_name.equals("time")) {
                     user.setLast_seen(new Timestamp(reader.nextLong() * 1000));
                 }
-            } else if (name.equals("platform")) {
-                reader.nextInt();
+                if (reader.hasNext()) {
+                    name = reader.nextName();
+                    if (name.equals("platform")) {
+                        reader.nextInt();
+                    }
+                }
                 reader.endObject();
             } else {
                 reader.skipValue();

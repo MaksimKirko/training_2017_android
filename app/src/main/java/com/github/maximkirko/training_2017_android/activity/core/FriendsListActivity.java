@@ -1,5 +1,6 @@
 package com.github.maximkirko.training_2017_android.activity.core;
 
+import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.LoaderManager;
 import android.app.PendingIntent;
@@ -35,6 +36,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.maximkirko.training_2017_android.R;
 import com.github.maximkirko.training_2017_android.activity.core.fragment.AllFriendsFragment;
@@ -304,7 +306,13 @@ public class FriendsListActivity extends AppCompatActivity
     }
 
     @Override
-    public void onReceived(String serviceClass) {
+    public void onReceived(Intent intent) {
+        int result = intent.getIntExtra(FriendsDataDownloadService.RESULT_EXTRAS, Activity.RESULT_CANCELED);
+        if (result == Activity.RESULT_CANCELED) {
+            Toast toast = Toast.makeText(getBaseContext(), getString(R.string.all_no_network_error_message_text), Toast.LENGTH_LONG);
+            toast.show();
+        }
+        String serviceClass = intent.getStringExtra(VKRequestAbstractService.SERVICE_CLASS_EXTRA);
         if (serviceClass.equals(UserDataDownloadService.SERVICE_CLASS)) {
             startLoader(UserDataCursorLoader.LOADER_ID);
         } else if (serviceClass.equals(FriendsDataDownloadService.SERVICE_CLASS)) {

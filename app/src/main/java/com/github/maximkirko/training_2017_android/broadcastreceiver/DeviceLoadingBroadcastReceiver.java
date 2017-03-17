@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.github.maximkirko.training_2017_android.service.VKRequestAbstractService;
+
 import java.lang.ref.WeakReference;
 
 /**
@@ -28,8 +30,9 @@ public class DeviceLoadingBroadcastReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (callback != null) {
-            callback.get().onReceived(SERVICE_CLASS);
+        if (callback.get() != null) {
+            intent.putExtra(VKRequestAbstractService.SERVICE_CLASS_EXTRA, SERVICE_CLASS);
+            callback.get().onReceived(intent);
         }
     }
 }

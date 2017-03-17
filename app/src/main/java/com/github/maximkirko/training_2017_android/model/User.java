@@ -134,4 +134,18 @@ public class User implements Parcelable {
             return new User[size];
         }
     };
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", first_name='" + first_name + '\'' +
+                ", last_name='" + last_name + '\'' +
+                ", photo_100='" + photo_100 + '\'' +
+                ", online=" + online +
+                ", last_seen=" + last_seen +
+                ", is_favorite=" + is_favorite +
+                ", rating=" + rating +
+                '}';
+    }
 }

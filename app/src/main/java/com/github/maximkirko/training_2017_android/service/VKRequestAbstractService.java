@@ -39,7 +39,9 @@ public abstract class VKRequestAbstractService<T> extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         T data = getDataFromNetwork(requestUrl);
-        saveData(data);
+        if (data != null) {
+            saveData(data);
+        }
         publishResults();
     }
 
@@ -47,9 +49,14 @@ public abstract class VKRequestAbstractService<T> extends IntentService {
         String jsonResponse = null;
         try {
             jsonResponse = StringUtils.bufferedReaderToString(NetworkUtils.getConnectionInputStream(urlString));
-            result = Activity.RESULT_OK;
+            if (jsonResponse != null) {
+                result = Activity.RESULT_OK;
+            } else {
+                return null;
+            }
         } catch (IOException e) {
             Log.e(IOException.class.getSimpleName(), e.getMessage());
+            return null;
         }
         return getDataFromJson(jsonResponse);
     }
